@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Folder Include="src\Login\" />
+    <Folder Include="src\Components\" />
     <Folder Include="src\Signup\" />
   </ItemGroup>
 
