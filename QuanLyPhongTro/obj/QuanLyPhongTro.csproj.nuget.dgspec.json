@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj": {}
+    "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj": {}
   },
   "projects": {
-    "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj": {
+    "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
+        "projectUniqueName": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
         "projectName": "QuanLyPhongTro",
-        "projectPath": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
+        "projectPath": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
         "packagesPath": "C:\\Users\\KhangPC\\.nuget\\packages\\",
-        "outputPath": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\obj\\",
+        "outputPath": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

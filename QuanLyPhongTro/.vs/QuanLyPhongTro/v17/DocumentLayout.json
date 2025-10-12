@@ -1,17 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\",
+  "WorkspaceRootPath": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|d:\\laptrinhtrucquan\\laptrinhtrucquan\\quanlyphongtro\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|d:\\laptrinhtrucquan\\quanlyphongtro\\src\\renter\\renter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|solutionrelative:src\\renter\\renter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|d:\\laptrinhtrucquan\\quanlyphongtro\\src\\owner\\owner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|solutionrelative:src\\owner\\owner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|d:\\laptrinhtrucquan\\quanlyphongtro\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|d:\\laptrinhtrucquan\\laptrinhtrucquan\\quanlyphongtro\\quanlyphongtro.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|d:\\laptrinhtrucquan\\quanlyphongtro\\quanlyphongtro.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|solutionrelative:quanlyphongtro.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{FEC9C0E1-6743-40A3-80DC-1FD5ACFBB6DC}|QuanLyPhongTro.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
@@ -22,15 +30,39 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Renter.cs [Design]",
+              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\src\\Renter\\Renter.cs",
+              "RelativeDocumentMoniker": "src\\Renter\\Renter.cs",
+              "ToolTip": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\src\\Renter\\Renter.cs [Design]",
+              "RelativeToolTip": "src\\Renter\\Renter.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T10:59:32.155Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Owner.cs [Design]",
+              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\src\\Owner\\Owner.cs",
+              "RelativeDocumentMoniker": "src\\Owner\\Owner.cs",
+              "ToolTip": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\src\\Owner\\Owner.cs [Design]",
+              "RelativeToolTip": "src\\Owner\\Owner.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T10:58:59.011Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "QuanLyPhongTro.csproj",
-              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
+              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
               "RelativeDocumentMoniker": "QuanLyPhongTro.csproj",
-              "ToolTip": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
+              "ToolTip": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\QuanLyPhongTro.csproj",
               "RelativeToolTip": "QuanLyPhongTro.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
@@ -38,22 +70,22 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "MainForm.cs [Design]",
-              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\MainForm.cs",
+              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\MainForm.cs",
               "RelativeDocumentMoniker": "MainForm.cs",
               "ToolTip": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\MainForm.cs [Design]",
-              "RelativeToolTip": "..\\..\\QuanLyPhongTro\\MainForm.cs [Design]",
+              "RelativeToolTip": "MainForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-12T03:38:07.481Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\Program.cs",
+              "DocumentMoniker": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\LapTrinhTrucQuan\\LapTrinhTrucQuan\\QuanLyPhongTro\\Program.cs",
+              "ToolTip": "D:\\LapTrinhTrucQuan\\QuanLyPhongTro\\Program.cs",
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
