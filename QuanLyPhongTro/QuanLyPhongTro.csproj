@@ -8,17 +8,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="src\Login\**" />
-    <Compile Remove="src\Signup\**" />
-    <EmbeddedResource Remove="src\Login\**" />
-    <EmbeddedResource Remove="src\Signup\**" />
-    <None Remove="src\Login\**" />
-    <None Remove="src\Signup\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="src\" />
-  </ItemGroup>
-
 </Project>
