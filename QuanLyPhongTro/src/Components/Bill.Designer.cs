@@ -75,6 +75,7 @@
             stat.TabStop = true;
             stat.Text = "radioButton1";
             stat.UseVisualStyleBackColor = true;
+            stat.CheckedChanged += stat_CheckedChanged;
             // 
             // Bill
             // 

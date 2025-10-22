@@ -16,5 +16,10 @@ namespace QuanLyPhongTro.src.Components
         {
             InitializeComponent();
         }
+
+        private void stat_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
