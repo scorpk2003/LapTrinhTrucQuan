@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Mediator
 {
-    internal interface IMediator
+    public interface IMediator
     {
         public void Register<Type>(String subriberKey, Func<Type, Task> handler);
         public void Unregister(String subriberKey);
-        public Task Publish<Type>(Type message);
+        public Task Publish<Type>(String key,Type message);
         public void RegisterFactory(String key, Func<Control> factory);
     }
 }

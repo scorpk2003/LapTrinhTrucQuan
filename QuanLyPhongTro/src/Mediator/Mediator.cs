@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Mediator
 {
-    internal class Mediator: IMediator
+    public class Mediator: IMediator
     {
         private readonly Dictionary<Type, List<(string key, Func<Object, Task> Handler)>> _subcribers = new();
         private readonly Dictionary<string, Func<Control>> _factories = new();
         private readonly HashSet<string> _initialized = new HashSet<string>();
 
-        private static readonly Lazy<Mediator> _instance = new Lazy<Mediator>(() => new Mediator());
+        private static readonly Lazy<Mediator> _instance = new (() => new Mediator());
         public static Mediator Instance => _instance.Value;
 
         public void Register<Type>(string Key, Func<Type, Task> handler)
@@ -32,7 +32,7 @@ namespace QuanLyPhongTro.src.Mediator
             }
             _initialized.Remove(subriberKey);
         }
-        public async Task Publish<Type>(Type message) {
+        public async Task Publish<Type>(String  key,Type message) {
             var type = typeof(Type);
             if (_subcribers.ContainsKey(type))
             {
@@ -50,7 +50,8 @@ namespace QuanLyPhongTro.src.Mediator
             }
             if(_subcribers.TryGetValue(type, out var handlers))
             {
-                var task = handlers.Select(handler => handler.Handler(message));
+                var target = handlers.Where(h => h.key != key);
+                var task = target.Select(handler => handler.Handler(message));
                 await Task.WhenAll(task);
             }else
             {

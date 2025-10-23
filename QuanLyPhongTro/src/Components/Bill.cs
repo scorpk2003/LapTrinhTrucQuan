@@ -13,10 +13,17 @@ namespace QuanLyPhongTro.src.Components
 {
     public partial class Bill : UserControl
     {
-        private readonly IMediator _mediator = EvenMediator.Instance;
+        private readonly IMediator _mediator = Mediator.Mediator.Instance;
         public Bill()
         {
+            Name = "Bill";
             InitializeComponent();
+            _mediator.Register<Bill>(Name, GetBill);
+        }
+
+        private async Task GetBill(Bill b)
+        {
+            await _mediator.Publish<Bill>(Name, this);
         }
 
         private void stat_CheckedChanged(object sender, EventArgs e)
