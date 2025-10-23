@@ -9,11 +9,11 @@ namespace QuanLyPhongTro.src.Mediator
     internal class Mediator: IMediator
     {
         private readonly Dictionary<Type, List<(string key, Func<Object, Task> Handler)>> _subcribers = new();
-        private readonly Dictionary<string, Func<object>> _factories = new();
+        private readonly Dictionary<string, Func<Control>> _factories = new();
         private readonly HashSet<string> _initialized = new HashSet<string>();
 
         private static readonly Lazy<Mediator> _instance = new Lazy<Mediator>(() => new Mediator());
-        private static Mediator Instance => _instance.Value;
+        public static Mediator Instance => _instance.Value;
 
         public void Register<Type>(string Key, Func<Type, Task> handler)
         {
@@ -41,6 +41,10 @@ namespace QuanLyPhongTro.src.Mediator
                     if(!_initialized.Contains(item.Key))
                     {
                         var factoryInstance = item.Value();
+                        if (factoryInstance is Control control)
+                        {
+                            control.Disposed += (_, _) => Unregister(item.Key);
+                        }
                     }
                 }
             }
@@ -53,6 +57,6 @@ namespace QuanLyPhongTro.src.Mediator
                 throw new Exception("No subscriber for this message type");
             }
         }
-        public void RegisterFactory(string key, Func<object> factory) => _factories[key] = factory;
+        public void RegisterFactory(string key, Func<Control> factory) => _factories[key] = factory;
     }
 }

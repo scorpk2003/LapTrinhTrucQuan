@@ -11,6 +11,6 @@ namespace QuanLyPhongTro.src.Mediator
         public void Register<Type>(String subriberKey, Func<Type, Task> handler);
         public void Unregister(String subriberKey);
         public Task Publish<Type>(Type message);
-        public void RegisterFactory(String key, Func<object> factory);
+        public void RegisterFactory(String key, Func<Control> factory);
     }
 }
