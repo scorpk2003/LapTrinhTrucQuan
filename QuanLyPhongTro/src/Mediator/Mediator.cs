@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Mediator
 {
-    internal class Mediator: IMediator
+    internal class EvenMediator: IMediator
     {
         private readonly Dictionary<Type, List<(string key, Func<Object, Task> Handler)>> _subcribers = new();
         private readonly Dictionary<string, Func<object>> _factories = new();
         private readonly HashSet<string> _initialized = new HashSet<string>();
 
-        private static readonly Lazy<Mediator> _instance = new Lazy<Mediator>(() => new Mediator());
-        private static Mediator Instance => _instance.Value;
+        private static readonly Lazy<EvenMediator> _instance = new (() => new EvenMediator());
+        public static EvenMediator Instance => _instance.Value;
 
         public void Register<Type>(string Key, Func<Type, Task> handler)
         {

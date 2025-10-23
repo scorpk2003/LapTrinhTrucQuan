@@ -7,11 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using QuanLyPhongTro.src.Mediator;
 
 namespace QuanLyPhongTro.src.Components
 {
     public partial class Bill : UserControl
     {
+        private readonly IMediator _mediator = EvenMediator.Instance;
         public Bill()
         {
             InitializeComponent();
