@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuanLyPhongTro.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,14 @@ namespace QuanLyPhongTro.src.UserSession
             UserId = userID;
             Role = role;
             IsAuthenticated = true;
+        }
+
+        public Person GetInfo(string ID) {
+            Person user = new Person();
+            user.Username = "Demo User";
+            user.Role = "Admin";
+            user.Id = Guid.NewGuid();
+            return user;
         }
 
         public void Logout()

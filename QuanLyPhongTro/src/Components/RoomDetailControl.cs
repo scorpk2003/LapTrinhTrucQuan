@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace QuanLyPhongTro.src.Components
 {
-    public partial class RoomDetail : UserControl
+    public partial class RoomDetailControl : UserControl
     {
-        public RoomDetail()
+        public RoomDetailControl()
         {
             InitializeComponent();
             

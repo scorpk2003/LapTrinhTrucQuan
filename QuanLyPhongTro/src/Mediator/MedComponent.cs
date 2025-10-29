@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Mediator
 {
-    internal class Component
+    internal class MedComponent
     {
-        String Type { get; set; }
-        Control control { get; set; }
-        public Component() { 
+        public string Type { get; set; }
+        public Control control { get; set; }
+        public MedComponent() { 
             this.Type = "";
             this.control = new Control();
         }
-        public Component(String Type, Control control) {
+        public MedComponent(string Type, Control control) {
             this.Type = Type;
             this.control = control;
         }

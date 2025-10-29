@@ -4,25 +4,25 @@
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Components\Bill.cs">
+    <Compile Update="src\Components\BillControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\BillDetail.cs">
+    <Compile Update="src\Components\BillDetailControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\Notice.cs">
+    <Compile Update="src\Components\NoticeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\Report.cs">
+    <Compile Update="src\Components\ReportControl.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Components\Room.cs">
+    <Compile Update="src\Components\RoomControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\RoomDetail.cs">
+    <Compile Update="src\Components\RoomDetailControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\UserDetail.cs">
+    <Compile Update="src\Components\UserDetailControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="src\ListRoom.cs">

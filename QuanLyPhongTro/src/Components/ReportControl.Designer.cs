@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class Report
+    partial class ReportControl
     {
         /// <summary>
         /// Required designer variable.

@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class BillDetail
+    partial class BillDetailControl
     {
         /// <summary> 
         /// Required designer variable.

@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class Notice
+    partial class NoticeControl
     {
         /// <summary> 
         /// Required designer variable.

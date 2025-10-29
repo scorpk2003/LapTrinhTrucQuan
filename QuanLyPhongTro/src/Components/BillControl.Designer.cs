@@ -1,6 +1,9 @@
-﻿namespace QuanLyPhongTro.src.Components
+﻿
+using QuanLyPhongTro.Model;
+
+namespace QuanLyPhongTro.src.Components
 {
-    partial class Bill
+    partial class BillControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -87,8 +90,16 @@
             Controls.Add(name_room);
             Name = "Bill";
             Size = new Size(200, 250);
+            Load += Bill_Load;
+            Click += Bill_Click;
             ResumeLayout(false);
             PerformLayout();
+            _mediator.Register<Bill>(Name, GetBill);
+        }
+
+        private void Bill_Load(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         #endregion

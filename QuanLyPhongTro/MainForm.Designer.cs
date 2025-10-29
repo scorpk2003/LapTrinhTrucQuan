@@ -1,4 +1,6 @@
-﻿namespace QuanLyPhongTro
+﻿using QuanLyPhongTro.src.Mediator;
+
+namespace QuanLyPhongTro
 {
     partial class MainForm
     {
@@ -28,12 +30,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "MainForm";
+            button1 = new Button();
+            panel01 = new FlowLayoutPanel();
+            SuspendLayout();
+            // 
+            // button1
+            // 
+            button1.Location = new Point(92, 173);
+            button1.Name = "button1";
+            button1.Size = new Size(101, 66);
+            button1.TabIndex = 0;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // panel01
+            // 
+            panel01.Location = new Point(272, 12);
+            panel01.Name = "panel01";
+            panel01.Size = new Size(516, 426);
+            panel01.TabIndex = 1;
+            // 
+            // MainForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(panel01);
+            Controls.Add(button1);
+            Name = "MainForm";
+            Text = "MainForm";
+            ResumeLayout(false);
+            _mediator.Register<UserControl>("MainForm", getData);
         }
 
         #endregion
+
+        private Button button1;
+        private FlowLayoutPanel panel01;
     }
 }

@@ -9,7 +9,7 @@ namespace QuanLyPhongTro.src.Mediator
 {
     public class Mediator: IMediator
     {
-        private readonly Dictionary<Type, List<(string key, Func<Object, Task> Handler)>> _subcribers = new();
+        private readonly Dictionary<Type, List<(string key, Func<object, Task> Handler)>> _subcribers = new();
         private readonly Dictionary<string, Func<Control>> _factories = new();
         private readonly HashSet<string> _initialized = new HashSet<string>();
         private readonly ConcurrentDictionary<Type, SemaphoreSlim> _locks = new();
@@ -17,14 +17,14 @@ namespace QuanLyPhongTro.src.Mediator
         private static readonly Lazy<Mediator> _instance = new (() => new Mediator());
         public static Mediator Instance => _instance.Value;
 
-        public void Register<Type>(string Key, Func<Type, Task> handler)
+        public void Register<TMessage>(string Key, Func<TMessage, Task> handler)
         {
-            var type = typeof(Type);
+            var type = typeof(TMessage);
             if (!_subcribers.ContainsKey(type))
             {
                 _subcribers[type] = new List<(string key, Func<object, Task> Handler)>();
             }
-            _subcribers[type].Add((Key, async (msg) => await handler((Type)msg)));
+            _subcribers[type].Add((Key, async (msg) => await handler((TMessage)msg)));
             _initialized.Add(Key);
         }
         public void Unregister(string subriberKey) { 
@@ -34,17 +34,17 @@ namespace QuanLyPhongTro.src.Mediator
             }
             _initialized.Remove(subriberKey);
         }
-        public async Task Publish<Type>(String key, Type message) {
-            var type = typeof(Type);
+        public async Task Publish<TMessage>(string key, TMessage message) {
+            var type = typeof(TMessage);
             var semaphore = _locks.GetOrAdd(type, _ => new SemaphoreSlim(1, 1));
             await semaphore.WaitAsync();
             try
             {
-                if (_subcribers.ContainsKey(type))
+                if (!_subcribers.ContainsKey(type))
                 {
                     foreach (var item in _factories)
                     {
-                        if (!_initialized.Contains(item.Key))
+                        if (!_initialized.Contains(item.Key) )
                         {
                             var factoryInstance = item.Value();
                             if (factoryInstance is Control control)
@@ -56,7 +56,7 @@ namespace QuanLyPhongTro.src.Mediator
                 }
                 if (_subcribers.TryGetValue(type, out var handlers))
                 {
-                    var target = handlers.Where(h => h.key != key);
+                    var target = handlers.Where(h => h.key == key);
                     var task = target.Select(handler => handler.Handler(message));
                     await Task.WhenAll(task);
                 }

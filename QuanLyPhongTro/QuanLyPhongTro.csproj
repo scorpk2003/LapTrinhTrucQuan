@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Folder Include="image\" />
+    <Folder Include="src\Test\" />
   </ItemGroup>
 
   <ItemGroup>

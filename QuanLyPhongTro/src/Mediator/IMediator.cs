@@ -8,9 +8,9 @@ namespace QuanLyPhongTro.src.Mediator
 {
     public interface IMediator
     {
-        public void Register<Type>(String subriberKey, Func<Type, Task> handler);
-        public void Unregister(String subriberKey);
-        public Task Publish<Type>(String key, Type message);
-        public void RegisterFactory(String key, Func<Control> factory);
+        public void Register<TMessage>(string subcriberKey, Func<TMessage, Task> handler);
+        public void Unregister(string subcriberKey);
+        public Task Publish<TMessage>(string key, TMessage message);
+        public void RegisterFactory(string key, Func<Control> factory);
     }
 }

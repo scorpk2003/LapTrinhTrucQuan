@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace QuanLyPhongTro.src.Components
 {
-    public partial class BillDetail : UserControl
+    public partial class ReportControl : Form
     {
-        public BillDetail()
+        public ReportControl()
         {
             InitializeComponent();
         }
