@@ -1,4 +1,6 @@
-﻿using QuanLyPhongTro.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using QuanLyPhongTro.Data;
+using QuanLyPhongTro.Model;
 using System;
 using System.Linq;
 
@@ -6,10 +8,33 @@ namespace QuanLyPhongTro.Services
 {
     public class ContractService
     {
-        // EndContract(IdRenter) -> IdRenter = null, State = Empty
-        // Logic đúng: Cập nhật Status của Contract
         /// <summary>
-        /// Kết thúc một hợp đồng
+        /// Lấy hợp đồng đang hoạt động (Active) của một phòng
+        /// </summary>
+        /// <param name="roomId">ID của phòng</param>
+        /// <returns>Hợp đồng (đã bao gồm thông tin người thuê)</returns>
+        public Contract? GetActiveContractByRoom(Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return context.Contracts
+                        .AsNoTracking()
+                        .Include(c => c.Renter) // Tải thông tin Người thuê
+                        .Include(c => c.Room)   // Tải thông tin Phòng (nếu cần hiển thị)
+                        .FirstOrDefault(c => c.IdRoom == roomId && c.Status == "Active");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetActiveContractByRoom: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Kết thúc một hợp đồng (đặt Status = "Expired", cập nhật EndDate, và chuyển phòng về trạng thái "Trống")
         /// </summary>
         /// <param name="contractId">ID của hợp đồng</param>
         /// <returns>True nếu thành công</returns>
@@ -19,24 +44,30 @@ namespace QuanLyPhongTro.Services
             {
                 using (var context = new AppContextDB())
                 {
-                    var contract = context.Contracts.Find(contractId);
+                    var contract = context.Contracts.FirstOrDefault(c => c.Id == contractId);
                     if (contract == null)
                     {
                         return false; // Không tìm thấy hợp đồng
                     }
 
-                    // Cập nhật trạng thái
+                    // Cập nhật trạng thái hợp đồng
                     contract.Status = "Expired"; // Hoặc "Cancelled", "Ended"
                     contract.EndDate = DateTime.Now; // Cập nhật ngày kết thúc
 
+                    // Optional: clear link renter nếu business muốn
+                    // contract.IdRenter = null;
+
                     context.Contracts.Update(contract);
 
-                    // Bạn cũng có thể muốn cập nhật trạng thái của phòng (Room.Status = "Trống")
-                    var room = context.Rooms.Find(contract.IdRoom);
-                    if (room != null)
+                    // Cập nhật trạng thái phòng nếu có IdRoom
+                    if (contract.IdRoom.HasValue)
                     {
-                        room.Status = "Trống";
-                        context.Rooms.Update(room);
+                        var room = context.Rooms.FirstOrDefault(r => r.Id == contract.IdRoom.Value);
+                        if (room != null)
+                        {
+                            room.Status = "Trống";
+                            context.Rooms.Update(room);
+                        }
                     }
 
                     context.SaveChanges();

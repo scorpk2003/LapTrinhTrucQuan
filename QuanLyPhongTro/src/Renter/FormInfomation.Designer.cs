@@ -3,179 +3,197 @@
     partial class FormInformation
     {
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.Label lblHoTen;
-        private System.Windows.Forms.Label lblCCCD;
-        private System.Windows.Forms.Label lblSoDienThoai;
-        private System.Windows.Forms.Label lblEmail;
-        private System.Windows.Forms.Label lblDiaChi;
-        private System.Windows.Forms.TextBox txtHoTen;
-        private System.Windows.Forms.TextBox txtCCCD;
-        private System.Windows.Forms.TextBox txtSoDienThoai;
-        private System.Windows.Forms.TextBox txtEmail;
-        private System.Windows.Forms.TextBox txtDiaChi;
-        private System.Windows.Forms.Button btnUpdate;
-        private System.Windows.Forms.Button btnGoBack;
 
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
+            {
                 components.Dispose();
+            }
             base.Dispose(disposing);
         }
 
+        #region Windows Form Designer generated code
+
         private void InitializeComponent()
         {
-            lblHoTen = new Label();
-            lblCCCD = new Label();
-            lblSoDienThoai = new Label();
-            lblEmail = new Label();
-            lblDiaChi = new Label();
-            txtHoTen = new TextBox();
-            txtCCCD = new TextBox();
-            txtSoDienThoai = new TextBox();
-            txtEmail = new TextBox();
-            txtDiaChi = new TextBox();
-            btnUpdate = new Button();
-            btnGoBack = new Button();
-            SuspendLayout();
+            this.picAvatar = new System.Windows.Forms.PictureBox();
+            this.btnChonAnh = new System.Windows.Forms.Button();
+            this.lblUsername = new System.Windows.Forms.Label();
+            this.txtUsername = new System.Windows.Forms.TextBox();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.lblName = new System.Windows.Forms.Label();
+            this.txtCCCD = new System.Windows.Forms.TextBox();
+            this.lblCCCD = new System.Windows.Forms.Label();
+            this.txtPhone = new System.Windows.Forms.TextBox();
+            this.lblPhone = new System.Windows.Forms.Label();
+            this.btnEditSave = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            ((System.ComponentModel.ISupportInitialize)(this.picAvatar)).BeginInit();
+            this.SuspendLayout();
             // 
-            // lblHoTen
+            // picAvatar
             // 
-            lblHoTen.AutoSize = true;
-            lblHoTen.Font = new Font("Segoe UI", 9.900001F);
-            lblHoTen.Location = new Point(85, 87);
-            lblHoTen.Name = "lblHoTen";
-            lblHoTen.Size = new Size(171, 46);
-            lblHoTen.TabIndex = 0;
-            lblHoTen.Text = "Họ và tên:";
+            this.picAvatar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picAvatar.Location = new System.Drawing.Point(145, 20);
+            this.picAvatar.Name = "picAvatar";
+            this.picAvatar.Size = new System.Drawing.Size(150, 150);
+            this.picAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picAvatar.TabIndex = 0;
+            this.picAvatar.TabStop = false;
             // 
-            // lblCCCD
+            // btnChonAnh
             // 
-            lblCCCD.AutoSize = true;
-            lblCCCD.Font = new Font("Segoe UI", 9.900001F);
-            lblCCCD.Location = new Point(150, 165);
-            lblCCCD.Name = "lblCCCD";
-            lblCCCD.Size = new Size(112, 46);
-            lblCCCD.TabIndex = 2;
-            lblCCCD.Text = "CCCD:";
+            this.btnChonAnh.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnChonAnh.Location = new System.Drawing.Point(155, 180);
+            this.btnChonAnh.Name = "btnChonAnh";
+            this.btnChonAnh.Size = new System.Drawing.Size(130, 35);
+            this.btnChonAnh.TabIndex = 4;
+            this.btnChonAnh.Text = "Đổi ảnh";
+            this.btnChonAnh.UseVisualStyleBackColor = true;
             // 
-            // lblSoDienThoai
+            // lblUsername
             // 
-            lblSoDienThoai.AutoSize = true;
-            lblSoDienThoai.Font = new Font("Segoe UI", 9.900001F);
-            lblSoDienThoai.Location = new Point(46, 239);
-            lblSoDienThoai.Name = "lblSoDienThoai";
-            lblSoDienThoai.Size = new Size(224, 46);
-            lblSoDienThoai.TabIndex = 4;
-            lblSoDienThoai.Text = "Số điện thoại:";
+            this.lblUsername.AutoSize = true;
+            this.lblUsername.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblUsername.Location = new System.Drawing.Point(30, 235);
+            this.lblUsername.Name = "lblUsername";
+            this.lblUsername.Size = new System.Drawing.Size(126, 23);
+            this.lblUsername.TabIndex = 2;
+            this.lblUsername.Text = "Tên đăng nhập:";
             // 
-            // lblEmail
+            // txtUsername
             // 
-            lblEmail.AutoSize = true;
-            lblEmail.Font = new Font("Segoe UI", 9.900001F);
-            lblEmail.Location = new Point(150, 306);
-            lblEmail.Name = "lblEmail";
-            lblEmail.Size = new Size(106, 46);
-            lblEmail.TabIndex = 6;
-            lblEmail.Text = "Email:";
+            this.txtUsername.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtUsername.Location = new System.Drawing.Point(170, 232);
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.ReadOnly = true; // Tên đăng nhập không cho sửa
+            this.txtUsername.Size = new System.Drawing.Size(250, 30);
+            this.txtUsername.TabIndex = 5;
             // 
-            // lblDiaChi
+            // txtName
             // 
-            lblDiaChi.AutoSize = true;
-            lblDiaChi.Font = new Font("Segoe UI", 9.900001F);
-            lblDiaChi.Location = new Point(142, 372);
-            lblDiaChi.Name = "lblDiaChi";
-            lblDiaChi.Size = new Size(128, 46);
-            lblDiaChi.TabIndex = 8;
-            lblDiaChi.Text = "Địa chỉ:";
+            this.txtName.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtName.Location = new System.Drawing.Point(170, 278);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(250, 30);
+            this.txtName.TabIndex = 0;
             // 
-            // txtHoTen
+            // lblName
             // 
-            txtHoTen.Font = new Font("Segoe UI", 9.900001F);
-            txtHoTen.Location = new Point(334, 82);
-            txtHoTen.Name = "txtHoTen";
-            txtHoTen.Size = new Size(358, 51);
-            txtHoTen.TabIndex = 1;
+            this.lblName.AutoSize = true;
+            this.lblName.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblName.Location = new System.Drawing.Point(30, 281);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(84, 23);
+            this.lblName.TabIndex = 4;
+            this.lblName.Text = "Họ và tên:";
             // 
             // txtCCCD
             // 
-            txtCCCD.Font = new Font("Segoe UI", 9.900001F);
-            txtCCCD.Location = new Point(334, 162);
-            txtCCCD.Name = "txtCCCD";
-            txtCCCD.Size = new Size(358, 51);
-            txtCCCD.TabIndex = 3;
+            this.txtCCCD.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtCCCD.Location = new System.Drawing.Point(170, 324);
+            this.txtCCCD.Name = "txtCCCD";
+            this.txtCCCD.Size = new System.Drawing.Size(250, 30);
+            this.txtCCCD.TabIndex = 1;
             // 
-            // txtSoDienThoai
+            // lblCCCD
             // 
-            txtSoDienThoai.Font = new Font("Segoe UI", 9.900001F);
-            txtSoDienThoai.Location = new Point(334, 234);
-            txtSoDienThoai.Name = "txtSoDienThoai";
-            txtSoDienThoai.Size = new Size(358, 51);
-            txtSoDienThoai.TabIndex = 5;
+            this.lblCCCD.AutoSize = true;
+            this.lblCCCD.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblCCCD.Location = new System.Drawing.Point(30, 327);
+            this.lblCCCD.Name = "lblCCCD";
+            this.lblCCCD.Size = new System.Drawing.Size(60, 23);
+            this.lblCCCD.TabIndex = 6;
+            this.lblCCCD.Text = "CCCD:";
             // 
-            // txtEmail
+            // txtPhone
             // 
-            txtEmail.Font = new Font("Segoe UI", 9.900001F);
-            txtEmail.Location = new Point(334, 303);
-            txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(358, 51);
-            txtEmail.TabIndex = 7;
+            this.txtPhone.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtPhone.Location = new System.Drawing.Point(170, 370);
+            this.txtPhone.Name = "txtPhone";
+            this.txtPhone.Size = new System.Drawing.Size(250, 30);
+            this.txtPhone.TabIndex = 2;
             // 
-            // txtDiaChi
+            // lblPhone
             // 
-            txtDiaChi.Font = new Font("Segoe UI", 9.900001F);
-            txtDiaChi.Location = new Point(334, 372);
-            txtDiaChi.Name = "txtDiaChi";
-            txtDiaChi.Size = new Size(358, 51);
-            txtDiaChi.TabIndex = 9;
+            this.lblPhone.AutoSize = true;
+            this.lblPhone.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblPhone.Location = new System.Drawing.Point(30, 373);
+            this.lblPhone.Name = "lblPhone";
+            this.lblPhone.Size = new System.Drawing.Size(115, 23);
+            this.lblPhone.TabIndex = 8;
+            this.lblPhone.Text = "Số điện thoại:";
             // 
-            // btnUpdate
+            // btnEditSave
             // 
-            btnUpdate.BackColor = Color.MediumSeaGreen;
-            btnUpdate.Font = new Font("Segoe UI", 9.900001F);
-            btnUpdate.ForeColor = Color.White;
-            btnUpdate.Location = new Point(150, 451);
-            btnUpdate.Name = "btnUpdate";
-            btnUpdate.Size = new Size(148, 71);
-            btnUpdate.TabIndex = 10;
-            btnUpdate.Text = "Update";
-            btnUpdate.UseVisualStyleBackColor = false;
-            btnUpdate.Click += btnUpdate_Click;
+            this.btnEditSave.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnEditSave.Location = new System.Drawing.Point(170, 420);
+            this.btnEditSave.Name = "btnEditSave";
+            this.btnEditSave.Size = new System.Drawing.Size(120, 45);
+            this.btnEditSave.TabIndex = 3;
+            this.btnEditSave.Text = "Sửa";
+            this.btnEditSave.UseVisualStyleBackColor = true;
             // 
-            // btnGoBack
+            // btnClose
             // 
-            btnGoBack.BackColor = Color.IndianRed;
-            btnGoBack.Font = new Font("Segoe UI", 9.900001F);
-            btnGoBack.ForeColor = Color.White;
-            btnGoBack.Location = new Point(389, 451);
-            btnGoBack.Name = "btnGoBack";
-            btnGoBack.Size = new Size(161, 71);
-            btnGoBack.TabIndex = 11;
-            btnGoBack.Text = "Go Back";
-            btnGoBack.UseVisualStyleBackColor = false;
-            btnGoBack.Click += btnGoBack_Click;
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnClose.Location = new System.Drawing.Point(300, 420);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(120, 45);
+            this.btnClose.TabIndex = 6;
+            this.btnClose.Text = "Đóng";
+            this.btnClose.UseVisualStyleBackColor = true;
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
             // 
             // FormInformation
             // 
-            ClientSize = new Size(780, 568);
-            Controls.Add(lblHoTen);
-            Controls.Add(txtHoTen);
-            Controls.Add(lblCCCD);
-            Controls.Add(txtCCCD);
-            Controls.Add(lblSoDienThoai);
-            Controls.Add(txtSoDienThoai);
-            Controls.Add(lblEmail);
-            Controls.Add(txtEmail);
-            Controls.Add(lblDiaChi);
-            Controls.Add(txtDiaChi);
-            Controls.Add(btnUpdate);
-            Controls.Add(btnGoBack);
-            Name = "FormInformation";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Thông tin người thuê";
-            Load += FormInformation_Load;
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
+            this.ClientSize = new System.Drawing.Size(454, 491);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.btnEditSave);
+            this.Controls.Add(this.txtPhone);
+            this.Controls.Add(this.lblPhone);
+            this.Controls.Add(this.txtCCCD);
+            this.Controls.Add(this.lblCCCD);
+            this.Controls.Add(this.txtName);
+            this.Controls.Add(this.lblName);
+            this.Controls.Add(this.txtUsername);
+            this.Controls.Add(this.lblUsername);
+            this.Controls.Add(this.btnChonAnh);
+            this.Controls.Add(this.picAvatar);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "FormInformation";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Thông tin cá nhân";
+            ((System.ComponentModel.ISupportInitialize)(this.picAvatar)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
+
+        #endregion
+
+        private System.Windows.Forms.PictureBox picAvatar;
+        private System.Windows.Forms.Button btnChonAnh;
+        private System.Windows.Forms.Label lblUsername;
+        private System.Windows.Forms.TextBox txtUsername;
+        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.TextBox txtCCCD;
+        private System.Windows.Forms.Label lblCCCD;
+        private System.Windows.Forms.TextBox txtPhone;
+        private System.Windows.Forms.Label lblPhone;
+        private System.Windows.Forms.Button btnEditSave;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }

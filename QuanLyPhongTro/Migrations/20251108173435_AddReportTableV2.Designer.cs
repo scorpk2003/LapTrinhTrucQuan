@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyPhongTro.Data;
 
@@ -11,9 +12,11 @@ using QuanLyPhongTro.Data;
 namespace QuanLyPhongTro.Migrations
 {
     [DbContext(typeof(AppContextDB))]
-    partial class AppContextDBModelSnapshot : ModelSnapshot
+    [Migration("20251108173435_AddReportTableV2")]
+    partial class AddReportTableV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -415,7 +418,7 @@ namespace QuanLyPhongTro.Migrations
             modelBuilder.Entity("QuanLyPhongTro.Model.RoomImage", b =>
                 {
                     b.HasOne("QuanLyPhongTro.Model.Room", "Room")
-                        .WithMany("RoomImages")
+                        .WithMany()
                         .HasForeignKey("IdRoom");
 
                     b.Navigation("Room");
@@ -432,11 +435,6 @@ namespace QuanLyPhongTro.Migrations
                 {
                     b.Navigation("Person")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("QuanLyPhongTro.Model.Room", b =>
-                {
-                    b.Navigation("RoomImages");
                 });
 
             modelBuilder.Entity("QuanLyPhongTro.Model.Service", b =>

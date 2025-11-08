@@ -18,6 +18,7 @@ namespace QuanLyPhongTro.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<RoomImage> RoomImages { get; set; }
         public DbSet<BillDetail> BillDetails { get; set; }
+        public DbSet<Report> Reports { get; set; }
         // Cấu hình kết nối đến SQL Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

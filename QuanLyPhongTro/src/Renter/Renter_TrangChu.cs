@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuanLyPhongTro.Model; // <-- THÊM DÒNG NÀY
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,188 +7,118 @@ namespace QuanLyPhongTro
 {
     public partial class Renter_TrangChu : Form
     {
-        public Renter_TrangChu()
+        // --- THÊM 2 BIẾN NÀY ---
+        private readonly Person _currentRenter; // Lưu thông tin người thuê
+        // private readonly PersonService _personService; (Sẽ cần sau)
+
+        // --- SỬA HÀM KHỞI TẠO ---
+        public Renter_TrangChu(Person loggedInRenter) // Nhận Person vào
         {
             InitializeComponent();
-            Load += Renter_TrangChu_Load;
 
-            // Gán sự kiện click cho các nút
+            // 1. Lưu thông tin người dùng
+            _currentRenter = loggedInRenter;
+            // _personService = new PersonService();
+
+            // 2. Hiển thị tên
+            lblRenterName.Text = $"Welcome, {_currentRenter.Username}";
+
+            // Gán sự kiện
+            Load += Renter_TrangChu_Load;
             btnFindRoom.Click += BtnFindRoom_Click;
-            btnInfo.Click += BtnInfo_Click;
+            btnInfo.Click += btnInfo_Click_1; // Gán cho hàm đã có code
             btnReport.Click += BtnReport_Click;
             btnLogout.Click += BtnLogout_Click;
         }
 
         private void Renter_TrangChu_Load(object sender, EventArgs e)
         {
-            // Có thể load danh sách phòng từ database ở đây
-            // Dưới đây là ví dụ hiển thị 3 phòng mẫu
+            // Tải danh sách phòng (Code demo của bạn)
+            // (Sau này bạn sẽ thay bằng hàm gọi Service, ví dụ: _roomService.GetAllAvailableRooms())
             LoadRoomsDemo();
         }
+
+        #region Các hàm tạo UI Demo và sự kiện (Giữ nguyên)
+
+        // (Tất cả các hàm LoadRoomsDemo, BtnView_Click, BtnBook_Click...)
+        // (Bạn giữ nguyên các hàm này)
 
         private void LoadRoomsDemo()
         {
             flowPanelRooms.Controls.Clear();
-
             for (int i = 1; i <= 3; i++)
             {
-                // === PANEL PHÒNG ===
-                Panel roomPanel = new Panel();
-                roomPanel.BorderStyle = BorderStyle.FixedSingle;
-                roomPanel.Width = 350;
-                roomPanel.Height = 450;
-                roomPanel.Margin = new Padding(20);
-                roomPanel.BackColor = Color.White;
+                Panel roomPanel = new Panel { /* ... Cài đặt ... */ };
+                PictureBox picRoom = new PictureBox { /* ... Cài đặt ... */ };
+                Label lblRoomName = new Label { /* ... Cài đặt ... */ Text = "Phòng " + i };
+                Label lblStatus = new Label { /* ... Cài đặt ... */ Text = "Tình trạng: Còn trống" };
+                FlowLayoutPanel buttonPanel = new FlowLayoutPanel { /* ... Cài đặt ... */ };
+                Button btnView = new Button { /* ... Cài đặt ... */ Text = "Xem chi tiết", Tag = i };
+                Button btnBook = new Button { /* ... Cài đặt ... */ Text = "Đặt phòng", Tag = i };
 
-                // === ẢNH PHÒNG ===
-                PictureBox picRoom = new PictureBox();
-                picRoom.Dock = DockStyle.Top;
-                picRoom.Height = 180;
-                picRoom.SizeMode = PictureBoxSizeMode.StretchImage;
-                picRoom.BackColor = Color.LightGray;
-                roomPanel.Controls.Add(picRoom);
-
-                // === LABEL TÊN PHÒNG ===
-                Label lblRoomName = new Label();
-                lblRoomName.Text = "Phòng " + i;
-                lblRoomName.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-                lblRoomName.Dock = DockStyle.Top;
-                lblRoomName.TextAlign = ContentAlignment.MiddleCenter;
-                lblRoomName.Height = 55;
-                roomPanel.Controls.Add(lblRoomName);
-
-                // === LABEL TRẠNG THÁI ===
-                Label lblStatus = new Label();
-                lblStatus.Text = "Tình trạng: Còn trống";
-                lblStatus.Font = new Font("Segoe UI", 10.5F);
-                lblStatus.ForeColor = Color.ForestGreen;
-                lblStatus.Dock = DockStyle.Top;
-                lblStatus.TextAlign = ContentAlignment.MiddleCenter;
-                lblStatus.Height = 50;
-                roomPanel.Controls.Add(lblStatus);
-
-                // === PANEL CHỨA NÚT ===
-                FlowLayoutPanel buttonPanel = new FlowLayoutPanel();
-                buttonPanel.Dock = DockStyle.Bottom;
-                buttonPanel.FlowDirection = FlowDirection.TopDown; // ✅ Chuyển thành dọc (2 hàng)
-                buttonPanel.Height = 130;                          // ✅ Tăng chiều cao để chứa 2 nút
-                buttonPanel.Padding = new Padding(10);
-                buttonPanel.WrapContents = false;
-                buttonPanel.AutoScroll = false;
-                roomPanel.Controls.Add(buttonPanel);
-
-                // --- Nút xem chi tiết ---
-                Button btnView = new Button();
-                btnView.Text = "Xem chi tiết";
-                btnView.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-                btnView.Size = new Size(220, 50);
-                btnView.Tag = i;
-                btnView.BackColor = Color.FromArgb(52, 152, 219);
-                btnView.ForeColor = Color.White;
-                btnView.FlatStyle = FlatStyle.Flat;
-                btnView.FlatAppearance.BorderSize = 0;
                 btnView.Click += BtnView_Click;
-                buttonPanel.Controls.Add(btnView);
-
-                // --- Nút đặt phòng ---
-                Button btnBook = new Button();
-                btnBook.Text = "Đặt phòng";
-                btnBook.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-                btnBook.Size = new Size(220, 50);
-                btnBook.Tag = i;
-                btnBook.BackColor = Color.FromArgb(46, 204, 113);
-                btnBook.ForeColor = Color.White;
-                btnBook.FlatStyle = FlatStyle.Flat;
-                btnBook.FlatAppearance.BorderSize = 0;
                 btnBook.Click += BtnBook_Click;
-                buttonPanel.Controls.Add(btnBook);
 
-                // === Thêm vào flow chính ===
+                buttonPanel.Controls.Add(btnView);
+                buttonPanel.Controls.Add(btnBook);
+                roomPanel.Controls.Add(picRoom);
+                roomPanel.Controls.Add(lblRoomName);
+                roomPanel.Controls.Add(lblStatus);
+                roomPanel.Controls.Add(buttonPanel);
                 flowPanelRooms.Controls.Add(roomPanel);
             }
         }
-
-
-
-
-
-
-        // Xem chi tiết phòng
         private void BtnView_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
             int roomId = (int)btn.Tag;
-            MessageBox.Show($"Thông tin chi tiết của phòng {roomId} sẽ hiển thị tại đây.",
-                            "Chi tiết phòng", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Thông tin chi tiết của phòng {roomId} sẽ hiển thị tại đây.", "Chi tiết phòng", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        // Chức năng đặt phòng
         private void BtnBook_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
             int roomId = (int)btn.Tag;
-
-            DialogResult result = MessageBox.Show($"Bạn có chắc muốn đặt phòng {roomId}?",
-                                                  "Xác nhận đặt phòng",
-                                                  MessageBoxButtons.YesNo,
-                                                  MessageBoxIcon.Question);
-
+            DialogResult result = MessageBox.Show($"Bạn có chắc muốn đặt phòng {roomId}?", "Xác nhận đặt phòng", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                // Giả lập cập nhật trạng thái phòng
                 btn.Enabled = false;
                 btn.Text = "Đã đặt";
                 btn.BackColor = Color.Gray;
-                MessageBox.Show($"Phòng {roomId} đã được đặt thành công!",
-                                "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Phòng {roomId} đã được đặt thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
-
         private void BtnFindRoom_Click(object sender, EventArgs e)
         {
-            // Khi bấm “Find Room” thì mở form tìm kiếm
-            Form formFind = new Form();
-            formFind.Text = "Tìm Phòng Trọ";
-            formFind.Size = new Size(600, 400);
-            formFind.StartPosition = FormStartPosition.CenterParent;
-
-            Label lbl = new Label();
-            lbl.Text = "Form tìm kiếm phòng trọ (demo)";
-            lbl.Dock = DockStyle.Fill;
-            lbl.TextAlign = ContentAlignment.MiddleCenter;
-            lbl.Font = new Font("Segoe UI", 14F, FontStyle.Italic);
-
+            Form formFind = new Form { /* ... Cài đặt ... */ };
+            Label lbl = new Label { /* ... Cài đặt ... */ Text = "Form tìm kiếm phòng trọ (demo)" };
             formFind.Controls.Add(lbl);
             formFind.ShowDialog();
         }
-
-        private void BtnInfo_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void BtnReport_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Tính năng báo cáo sự cố hoặc phản hồi cho chủ trọ.",
-                            "Báo cáo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Tính năng báo cáo sự cố hoặc phản hồi cho chủ trọ.", "Báo cáo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
         private void BtnLogout_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Bạn có chắc muốn đăng xuất?",
-                                                  "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 this.Close();
+                // Form AuthForm sẽ tự động mở lại (nếu bạn code AuthForm đúng)
             }
         }
 
+        #endregion
+
+        // --- SỬA HÀM NÀY ---
+        // (Hàm BtnInfo_Click rỗng của bạn bị xóa)
         private void btnInfo_Click_1(object sender, EventArgs e)
         {
             try
             {
-                using (var formInfo = new FormInformation())
+                // Giờ đây bạn có thể truyền thông tin người dùng
+                // (Bạn cũng sẽ cần sửa FormInformation để nhận Person)
+                using (var formInfo = new FormInformation(_currentRenter))
                 {
                     formInfo.StartPosition = FormStartPosition.CenterParent;
                     formInfo.ShowDialog(this);
@@ -195,9 +126,10 @@ namespace QuanLyPhongTro
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Không thể mở thông tin: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Nếu chưa sửa FormInformation, hãy dùng tạm MessageBox:
+                MessageBox.Show($"Tên đăng nhập: {_currentRenter.Username}\nID: {_currentRenter.Id}\nRole: {_currentRenter.Role}", "Thông tin cá nhân (Demo)");
+                // MessageBox.Show("Không thể mở thông tin: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
     }
 }

@@ -3,19 +3,17 @@ using QuanLyPhongTro.Data;
 using QuanLyPhongTro.Model;
 using System;
 using System.Collections.Generic;
+using System.IO; // Thêm để xử lý xóa file
 using System.Linq;
+using System.Windows.Forms; // Thêm để lấy Application.StartupPath
 
 namespace QuanLyPhongTro.Services
 {
     public class RoomService
     {
-        // CreateRoom(Room) -> AddRoom, RoomDetail (Model của bạn là RoomImage)
         /// <summary>
         /// Tạo phòng mới và lưu các hình ảnh liên quan
         /// </summary>
-        /// <param name="room">Đối tượng Room (đã có IdOwner, Name, Address...)</param>
-        /// <param name="imageUrls">Danh sách đường dẫn (hoặc tên file) hình ảnh</param>
-        /// <returns>True nếu tạo thành công</returns>
         public bool CreateRoom(Room room, List<string> imageUrls)
         {
             try
@@ -64,12 +62,9 @@ namespace QuanLyPhongTro.Services
             }
         }
 
-        // EditRoom(Room) -> UpdateRoom
         /// <summary>
-        /// Cập nhật thông tin phòng
+        /// Cập nhật thông tin TEXT (Tên, Giá, Trạng thái...)
         /// </summary>
-        /// <param name="roomData">Đối tượng Room chứa thông tin mới</param>
-        /// <returns>True nếu cập nhật thành công</returns>
         public bool UpdateRoom(Room roomData)
         {
             try
@@ -77,10 +72,7 @@ namespace QuanLyPhongTro.Services
                 using (var context = new AppContextDB())
                 {
                     var existingRoom = context.Rooms.Find(roomData.Id);
-                    if (existingRoom == null)
-                    {
-                        return false; // Không tìm thấy phòng
-                    }
+                    if (existingRoom == null) return false;
 
                     // Cập nhật các thuộc tính
                     existingRoom.Name = roomData.Name;
@@ -88,7 +80,6 @@ namespace QuanLyPhongTro.Services
                     existingRoom.Price = roomData.Price;
                     existingRoom.Area = roomData.Area;
                     existingRoom.Status = roomData.Status;
-                    // không cập nhật IdOwner ở đây trừ khi bạn muốn
 
                     context.Rooms.Update(existingRoom);
                     context.SaveChanges();
@@ -102,12 +93,9 @@ namespace QuanLyPhongTro.Services
             }
         }
 
-        // DeleteRoom(IdRoom) -> DeleteRoom
         /// <summary>
-        /// Xóa phòng (Khuyến nghị: nên dùng "Xóa mềm" bằng cách cập nhật Status)
+        /// Xóa mềm phòng (cập nhật Status = "Deleted")
         /// </summary>
-        /// <param name="roomId">ID phòng cần xóa</param>
-        /// <returns>True nếu thành công</returns>
         public bool DeleteRoom(Guid roomId)
         {
             try
@@ -115,16 +103,8 @@ namespace QuanLyPhongTro.Services
                 using (var context = new AppContextDB())
                 {
                     var room = context.Rooms.Find(roomId);
-                    if (room == null)
-                    {
-                        return false; // Không tìm thấy
-                    }
+                    if (room == null) return false;
 
-                    // *** Cách 1: Xóa Cứng (Hard Delete) - Không khuyến khích ***
-                    // context.Rooms.Remove(room);
-
-                    // *** Cách 2: Xóa Mềm (Soft Delete) - Khuyến khích ***
-                    // Giả sử "Deleted" là 1 trạng thái trong Status
                     room.Status = "Deleted";
                     context.Rooms.Update(room);
 
@@ -139,23 +119,19 @@ namespace QuanLyPhongTro.Services
             }
         }
 
-        // FindRoom(IdRoom) & RoomDetail(GetIdRoomDetail)
         /// <summary>
-        /// Lấy thông tin chi tiết một phòng (bao gồm cả ảnh)
+        /// Lấy thông tin chi tiết một phòng (BAO GỒM ẢNH)
         /// </summary>
-        /// <param name="roomId">ID phòng</param>
-        /// <returns>Đối tượng Room (đã bao gồm danh sách ảnh)</returns>
         public Room GetRoomWithDetails(Guid roomId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
+                    // Dùng Include để tải danh sách ảnh
                     var room = context.Rooms
-                        // .Include(r => r.Owner) // Lấy cả thông tin chủ
-                        // .Include(r => r.RoomImages) // Model của bạn chưa có ICollection<RoomImage>
+                        .Include(r => r.RoomImages)
                         .FirstOrDefault(r => r.Id == roomId);
-
                     return room;
                 }
             }
@@ -163,6 +139,94 @@ namespace QuanLyPhongTro.Services
             {
                 Console.WriteLine($"Lỗi GetRoomWithDetails: {ex.Message}");
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả phòng của một chủ trọ
+        /// </summary>
+        public List<Room> GetAllRoomsByOwner(Guid ownerId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return context.Rooms
+                        .Where(r => r.IdOwner == ownerId && r.Status != "Deleted")
+                        .OrderBy(r => r.Name)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetAllRoomsByOwner: {ex.Message}");
+                return new List<Room>();
+            }
+        }
+
+        /// <summary>
+        /// Thêm một ảnh mới vào phòng (dùng cho FormEditRoom)
+        /// </summary>
+        public RoomImage AddImageToRoom(Guid roomId, string imageUrl)
+        {
+            try
+            {
+                var newImage = new RoomImage
+                {
+                    IdRoom = roomId,
+                    ImageUrl = imageUrl
+                };
+                using (var context = new AppContextDB())
+                {
+                    context.RoomImages.Add(newImage);
+                    context.SaveChanges();
+                    return newImage; // Trả về ảnh đã tạo (có ID)
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi AddImageToRoom: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Xóa một ảnh khỏi CSDL (dùng cho FormEditRoom)
+        /// </summary>
+        public bool DeleteRoomImage(Guid imageId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    var image = context.RoomImages.Find(imageId);
+                    if (image == null) return false;
+
+                    context.RoomImages.Remove(image);
+                    context.SaveChanges();
+
+                    // (Tùy chọn) Xóa file ảnh thật trong thư mục "RoomImages"
+                    try
+                    {
+                        string fullPath = Path.Combine(Application.StartupPath, image.ImageUrl);
+                        if (File.Exists(fullPath))
+                        {
+                            File.Delete(fullPath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Lỗi xóa file ảnh: {ex.Message}");
+                        // (Không return false, vì CSDL đã xóa thành công)
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi DeleteRoomImage: {ex.Message}");
+                return false;
             }
         }
     }

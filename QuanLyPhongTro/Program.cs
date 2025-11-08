@@ -1,3 +1,7 @@
+﻿using QuanLyPhongTro.Model; // Vẫn cần
+using System;
+using System.Windows.Forms;
+
 namespace QuanLyPhongTro
 {
     internal static class Program
@@ -8,10 +12,10 @@ namespace QuanLyPhongTro
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Owner_TrangChu());
+
+            // Chạy Form Auth (Form này sẽ tự xử lý việc đăng nhập)
+            Application.Run(new AuthForm());
         }
     }
 }
