@@ -45,7 +45,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.BackColor = Color.PaleGreen;
+            groupBox1.BackColor = AppColors.SubBackground;
             groupBox1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             groupBox1.Location = new Point(22, 119);
             groupBox1.Name = "groupBox1";
@@ -63,16 +63,17 @@
             pay_btn.TabIndex = 2;
             pay_btn.Text = "button1";
             pay_btn.UseVisualStyleBackColor = true;
+            pay_btn.Click += pay_btn_Click;
             // 
-            // BillDetail
+            // BillDetailControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.Honeydew;
+            BackColor = AppColors.Background;
             Controls.Add(pay_btn);
             Controls.Add(groupBox1);
             Controls.Add(name_lb);
-            Name = "BillDetail";
+            Name = "BillDetailControl";
             Size = new Size(450, 550);
             ResumeLayout(false);
             PerformLayout();

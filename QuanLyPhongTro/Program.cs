@@ -12,12 +12,11 @@ namespace QuanLyPhongTro
         [STAThread]
         static void Main()
         {
-            IMediator mediator = Mediator.Instance;
-            UserSession userSession = UserSession.Instance;
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            //mediator.RegisterFactory("Bill", () => new BillControl());
+            Mediator.Instance.RegisterFactory("BillControl", () => new BillControl());
+            Mediator.Instance.RegisterFactory("BillDetailControl", () => new BillDetailControl());
             Application.Run(new MainForm());
         }
     }

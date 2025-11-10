@@ -15,27 +15,47 @@ namespace QuanLyPhongTro.src.Components
 {
     public partial class BillControl : UserControl
     {
-        private readonly IMediator _mediator = Mediator.Mediator.Instance;
-        private readonly UserSession.UserSession _user = UserSession.UserSession.Instance;
-        private Mediator.MedComponent _component = new();
         public BillControl()
         {
             InitializeComponent();
+            Name = "BillControl" + Guid.NewGuid().ToString().Substring(0, 4);
+            System.Diagnostics.Debug.WriteLine($"[-- {Name} --] Mediator has code: {Mediator.Mediator.Instance.GetHashCode()}");
+            Mediator.Mediator.Instance.Register<Bill>(Name, async (bill) =>
+            {
+                await GetBill(bill);
+            });
         }
 
         private async Task GetBill(Bill bill)
         {
-            name_room.Text = "abc";
-            name_renter.Text = "abc";
-            if (bill.Status == "Unpaid")
+            try
             {
-                stat.Text = "Unpaid";
+                if(bill == null)
+                {
+                    throw new Exception("GetBill: bill is null");
+                }
+
+                // Bind Bill data here
+
+
+                // End Bind
+
+                if (bill.Status == "Unpaid")
+                {
+                    stat.Text = "Unpaid";
+                    stat.BackColor = Color.Red;
+                }
+                else
+                {
+                    stat.Text = "Paid";
+                    stat.BackColor = Color.Green;
+                }
+                await Task.CompletedTask;
             }
-            else
+            catch(Exception ex)
             {
-                stat.Text = "Paid";
+                MessageBox.Show("BillControl: " + ex.Message);
             }
-            await _mediator.Publish(Name, this);
         }
 
         private void stat_CheckedChanged(object sender, EventArgs e)
@@ -45,6 +65,9 @@ namespace QuanLyPhongTro.src.Components
 
         private void Bill_Click(object sender, EventArgs e)
         {
+            name_renter.Text = name_renter.Text == "Clicked!" ? "UnCliked" : "Clicked!";
+            stat.BackColor = AppColors.Success.IsEmpty ? AppColors.Fail: AppColors.Success;
+            System.Diagnostics.Debug.WriteLine($"[-- {Name} --] Clicked BillControl");
         }
     }
 }

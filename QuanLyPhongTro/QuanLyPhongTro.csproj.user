@@ -25,7 +25,7 @@
     <Compile Update="src\Components\UserDetailControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\ListRoom.cs">
+    <Compile Update="src\Components\ListRoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

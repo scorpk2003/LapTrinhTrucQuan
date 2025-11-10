@@ -46,22 +46,24 @@ namespace QuanLyPhongTro
             // 
             // panel01
             // 
-            panel01.Location = new Point(272, 12);
+            panel01.AutoScroll = true;
+            panel01.Location = new Point(298, 12);
             panel01.Name = "panel01";
-            panel01.Size = new Size(516, 426);
+            panel01.Size = new Size(490, 426);
             panel01.TabIndex = 1;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AutoSize = true;
+            ClientSize = new Size(799, 452);
             Controls.Add(panel01);
             Controls.Add(button1);
             Name = "MainForm";
             Text = "MainForm";
             ResumeLayout(false);
-            _mediator.Register<UserControl>("MainForm", getData);
         }
 
         #endregion

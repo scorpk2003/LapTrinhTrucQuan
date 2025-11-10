@@ -60,41 +60,44 @@ namespace QuanLyPhongTro.src.Components
             // dateTimePicker1
             // 
             dateTimePicker1.Enabled = false;
-            dateTimePicker1.Location = new Point(3, 155);
+            dateTimePicker1.Location = new Point(19, 143);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(194, 23);
+            dateTimePicker1.Size = new Size(153, 23);
             dateTimePicker1.TabIndex = 2;
             // 
             // stat
             // 
             stat.AutoSize = true;
+            stat.BackColor = Color.FromArgb(234, 64, 77);
             stat.Checked = true;
             stat.Enabled = false;
             stat.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            stat.Location = new Point(27, 202);
+            stat.Location = new Point(40, 197);
             stat.Name = "stat";
-            stat.Size = new Size(140, 29);
+            stat.Padding = new Padding(5);
+            stat.Size = new Size(101, 39);
             stat.TabIndex = 3;
             stat.TabStop = true;
-            stat.Text = "radioButton1";
-            stat.UseVisualStyleBackColor = true;
+            stat.Text = "Unpaid";
+            stat.UseVisualStyleBackColor = false;
             stat.CheckedChanged += stat_CheckedChanged;
             // 
-            // Bill
+            // BillControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(217, 245, 240);
+            BorderStyle = BorderStyle.FixedSingle;
             Controls.Add(stat);
             Controls.Add(dateTimePicker1);
             Controls.Add(name_renter);
             Controls.Add(name_room);
-            Name = "Bill";
-            Size = new Size(200, 250);
+            Name = "BillControl";
+            Size = new Size(198, 248);
             Load += Bill_Load;
             Click += Bill_Click;
             ResumeLayout(false);
             PerformLayout();
-            _mediator.Register<Bill>(Name, GetBill);
         }
 
         private void Bill_Load(object sender, EventArgs e)
