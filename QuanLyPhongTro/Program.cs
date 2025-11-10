@@ -12,6 +12,7 @@ namespace QuanLyPhongTro
         [STAThread]
         static void Main()
         {
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
             ApplicationConfiguration.Initialize();
 
             // Chạy Form Auth (Form này sẽ tự xử lý việc đăng nhập)

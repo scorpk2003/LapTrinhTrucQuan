@@ -229,5 +229,28 @@ namespace QuanLyPhongTro.Services
                 return false;
             }
         }
+
+        /// <summary>
+        /// Lấy tất cả các phòng đang "Còn trống"
+        /// </summary>
+        public List<Room> GetAllAvailableRooms()
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return context.Rooms
+                        .Include(r => r.RoomImages) // Tải kèm ảnh (để lấy ảnh đầu tiên)
+                        .Where(r => r.Status == "Còn trống")
+                        .OrderBy(r => r.Price) // Sắp xếp theo giá
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetAllAvailableRooms: {ex.Message}");
+                return new List<Room>();
+            }
+        }
     }
 }

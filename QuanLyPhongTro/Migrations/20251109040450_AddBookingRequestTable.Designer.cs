@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyPhongTro.Data;
 
@@ -11,9 +12,11 @@ using QuanLyPhongTro.Data;
 namespace QuanLyPhongTro.Migrations
 {
     [DbContext(typeof(AppContextDB))]
-    partial class AppContextDBModelSnapshot : ModelSnapshot
+    [Migration("20251109040450_AddBookingRequestTable")]
+    partial class AddBookingRequestTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,42 +164,6 @@ namespace QuanLyPhongTro.Migrations
                     b.HasIndex("IdRoom");
 
                     b.ToTable("Contracts");
-                });
-
-            modelBuilder.Entity("QuanLyPhongTro.Model.Expense", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("DateIncurred")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("IdOwner")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IdRoom")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdOwner");
-
-                    b.HasIndex("IdRoom");
-
-                    b.ToTable("Expense");
                 });
 
             modelBuilder.Entity("QuanLyPhongTro.Model.Payment", b =>
@@ -469,23 +436,6 @@ namespace QuanLyPhongTro.Migrations
                         .HasForeignKey("IdRoom");
 
                     b.Navigation("Renter");
-
-                    b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("QuanLyPhongTro.Model.Expense", b =>
-                {
-                    b.HasOne("QuanLyPhongTro.Model.Person", "Owner")
-                        .WithMany()
-                        .HasForeignKey("IdOwner")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QuanLyPhongTro.Model.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("IdRoom");
-
-                    b.Navigation("Owner");
 
                     b.Navigation("Room");
                 });

@@ -24,5 +24,7 @@ namespace QuanLyPhongTro.Model
         public decimal Quantity { get; set; }
 
         public decimal Total { get; set; }
+
+        public string Note { get; set; }
     }
 }

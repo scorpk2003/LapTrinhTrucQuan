@@ -7,6 +7,9 @@
     <Compile Update="src\Login\Login.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="src\Owner\FormCreateContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="src\Owner\FormEditRoom.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -22,6 +25,9 @@
     <Compile Update="src\Owner\Owner_TrangChu.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="src\Renter\FormRequestContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="src\Renter\RenterForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -29,6 +35,24 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="src\Signup\Signup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Renter\ucMyRoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\ucBillCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\ucBillManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\ucContractManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\ucIncidentManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\ucReportManagement.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

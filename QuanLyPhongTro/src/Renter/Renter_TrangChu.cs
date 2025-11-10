@@ -1,135 +1,222 @@
-﻿using QuanLyPhongTro.Model; // <-- THÊM DÒNG NÀY
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
 {
     public partial class Renter_TrangChu : Form
     {
-        // --- THÊM 2 BIẾN NÀY ---
-        private readonly Person _currentRenter; // Lưu thông tin người thuê
-        // private readonly PersonService _personService; (Sẽ cần sau)
+        private readonly Person _currentRenter;
+        private readonly RoomService _roomService;
+        private readonly PersonService _personService;
+        private readonly ContractService _contractService; // <-- THÊM MỚI
 
-        // --- SỬA HÀM KHỞI TẠO ---
-        public Renter_TrangChu(Person loggedInRenter) // Nhận Person vào
+        public event EventHandler Logout;
+
+        // --- CÁC BIẾN MỚI ---
+        private Contract _activeContract; // Lưu hợp đồng
+
+        // Các UserControl
+        private ucMyRoom _myRoomControl;
+        // private ucMyBills _myBillsControl; (Sẽ làm sau)
+        // private ucMyReports _myReportsControl; (Sẽ làm sau)
+
+        public Renter_TrangChu(Person loggedInRenter)
         {
             InitializeComponent();
-
-            // 1. Lưu thông tin người dùng
             _currentRenter = loggedInRenter;
-            // _personService = new PersonService();
+            _roomService = new RoomService();
+            _personService = new PersonService();
+            _contractService = new ContractService(); // <-- KHỞI TẠO
 
-            // 2. Hiển thị tên
-            lblRenterName.Text = $"Welcome, {_currentRenter.Username}";
+            this.Load += Renter_TrangChu_Load;
 
-            // Gán sự kiện
-            Load += Renter_TrangChu_Load;
-            btnFindRoom.Click += BtnFindRoom_Click;
-            btnInfo.Click += btnInfo_Click_1; // Gán cho hàm đã có code
+            // Gán sự kiện click
+            btnHome.Click += BtnHome_Click;
+            btnBills.Click += BtnBills_Click;
+            btnContract.Click += BtnContract_Click;
             btnReport.Click += BtnReport_Click;
+            btnProfile.Click += BtnInfo_Click;
             btnLogout.Click += BtnLogout_Click;
         }
 
         private void Renter_TrangChu_Load(object sender, EventArgs e)
         {
-            // Tải danh sách phòng (Code demo của bạn)
-            // (Sau này bạn sẽ thay bằng hàm gọi Service, ví dụ: _roomService.GetAllAvailableRooms())
-            LoadRoomsDemo();
+            lblRenterName.Text = $"Welcome, {_currentRenter.Username}";
+
+            // --- LOGIC CỐT LÕI ---
+            _activeContract = _contractService.GetActiveContractByRenter(_currentRenter.Id);
+
+            if (_activeContract == null)
+            {
+                // CHƯA CÓ PHÒNG -> Hiển thị Giao diện TÌM PHÒNG
+                panelMenu.Visible = false; // Ẩn menu chính
+                panelMainContent.Visible = false; // Ẩn dashboard
+
+                panelFindRoom.Visible = true; // Hiện panel tìm
+                panelFindRoom.Dock = DockStyle.Fill; // Lấp đầy
+                LoadAvailableRooms();
+            }
+            else
+            {
+                // ĐÃ CÓ PHÒNG -> Hiển thị Giao diện QUẢN LÝ
+                panelMenu.Visible = true; // Hiện menu chính
+                panelFindRoom.Visible = false; // Ẩn panel tìm
+                panelMainContent.Visible = true; // Hiện dashboard
+
+                ShowMyRoomView(); // Hiển thị Trang chủ (ucMyRoom)
+            }
         }
 
-        #region Các hàm tạo UI Demo và sự kiện (Giữ nguyên)
+        #region Xử lý Chuyển View (Cho người đã thuê)
 
-        // (Tất cả các hàm LoadRoomsDemo, BtnView_Click, BtnBook_Click...)
-        // (Bạn giữ nguyên các hàm này)
-
-        private void LoadRoomsDemo()
+        private void ShowMyRoomView()
         {
-            flowPanelRooms.Controls.Clear();
-            for (int i = 1; i <= 3; i++)
+            // Ẩn các control khác (nếu có)
+            // if (_myBillsControl != null) _myBillsControl.Visible = false;
+
+            if (_myRoomControl == null)
             {
-                Panel roomPanel = new Panel { /* ... Cài đặt ... */ };
-                PictureBox picRoom = new PictureBox { /* ... Cài đặt ... */ };
-                Label lblRoomName = new Label { /* ... Cài đặt ... */ Text = "Phòng " + i };
-                Label lblStatus = new Label { /* ... Cài đặt ... */ Text = "Tình trạng: Còn trống" };
-                FlowLayoutPanel buttonPanel = new FlowLayoutPanel { /* ... Cài đặt ... */ };
-                Button btnView = new Button { /* ... Cài đặt ... */ Text = "Xem chi tiết", Tag = i };
-                Button btnBook = new Button { /* ... Cài đặt ... */ Text = "Đặt phòng", Tag = i };
+                _myRoomControl = new ucMyRoom(_activeContract); // Truyền HĐ vào
+                _myRoomControl.Dock = DockStyle.Fill;
+                panelMainContent.Controls.Add(_myRoomControl);
+            }
+            _myRoomControl.BringToFront();
+            _myRoomControl.Visible = true;
+        }
 
+        private void ShowMyBillsView()
+        {
+            // (Sẽ code sau)
+            if (_myRoomControl != null) _myRoomControl.Visible = false;
+            MessageBox.Show("Mở UserControl Hóa đơn (Mục #2)");
+        }
+
+        private void ShowMyContractView()
+        {
+            // (Sẽ code sau)
+            if (_myRoomControl != null) _myRoomControl.Visible = false;
+            MessageBox.Show("Mở UserControl Hợp đồng (Mục #3)");
+        }
+
+        private void ShowMyReportsView()
+        {
+            // (Sẽ code sau)
+            if (_myRoomControl != null) _myRoomControl.Visible = false;
+            MessageBox.Show("Mở UserControl Gửi Sự cố (Mục #4)");
+        }
+
+        #endregion
+
+        #region Giao diện TÌM PHÒNG (Cho người chưa thuê)
+
+        private void LoadAvailableRooms()
+        {
+            // Dọn dẹp
+            flowPanelRooms.Controls.Clear();
+            List<Room> rooms = _roomService.GetAllAvailableRooms();
+
+            foreach (var room in rooms)
+            {
+                // (Code tạo Card phòng như cũ)
+                Panel roomPanel = new Panel { /* ... */ };
+                // ... (PictureBox, Labels...)
+
+                Button btnView = new Button();
+                btnView.Text = "Xem chi tiết";
+                btnView.Tag = room;
                 btnView.Click += BtnView_Click;
-                btnBook.Click += BtnBook_Click;
+                // ...
 
-                buttonPanel.Controls.Add(btnView);
-                buttonPanel.Controls.Add(btnBook);
-                roomPanel.Controls.Add(picRoom);
-                roomPanel.Controls.Add(lblRoomName);
-                roomPanel.Controls.Add(lblStatus);
-                roomPanel.Controls.Add(buttonPanel);
+                Button btnBook = new Button();
+                btnBook.Text = "Gửi yêu cầu thuê";
+                btnBook.Tag = room;
+                btnBook.Click += BtnBook_Click;
+                // ...
+
                 flowPanelRooms.Controls.Add(roomPanel);
             }
         }
+
+        // Xem chi tiết phòng
         private void BtnView_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            int roomId = (int)btn.Tag;
-            MessageBox.Show($"Thông tin chi tiết của phòng {roomId} sẽ hiển thị tại đây.", "Chi tiết phòng", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Room room = (Room)btn.Tag;
+            using (FormInfoRoom frm = new FormInfoRoom(room, _currentRenter, true))
+            {
+                frm.ShowDialog(this);
+            }
         }
+
+        // Chức năng đặt phòng
         private void BtnBook_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            int roomId = (int)btn.Tag;
-            DialogResult result = MessageBox.Show($"Bạn có chắc muốn đặt phòng {roomId}?", "Xác nhận đặt phòng", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
+            Room room = (Room)btn.Tag;
+
+            using (FormRequestContract frm = new FormRequestContract(_currentRenter.Id, room))
             {
-                btn.Enabled = false;
-                btn.Text = "Đã đặt";
-                btn.BackColor = Color.Gray;
-                MessageBox.Show($"Phòng {roomId} đã được đặt thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-        private void BtnFindRoom_Click(object sender, EventArgs e)
-        {
-            Form formFind = new Form { /* ... Cài đặt ... */ };
-            Label lbl = new Label { /* ... Cài đặt ... */ Text = "Form tìm kiếm phòng trọ (demo)" };
-            formFind.Controls.Add(lbl);
-            formFind.ShowDialog();
-        }
-        private void BtnReport_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Tính năng báo cáo sự cố hoặc phản hồi cho chủ trọ.", "Báo cáo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-        private void BtnLogout_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
-                this.Close();
-                // Form AuthForm sẽ tự động mở lại (nếu bạn code AuthForm đúng)
+                if (frm.ShowDialog(this) == DialogResult.OK)
+                {
+                    btn.Enabled = false;
+                    btn.Text = "Đã gửi yêu cầu";
+                    btn.BackColor = Color.Gray;
+                }
             }
         }
 
         #endregion
 
-        // --- SỬA HÀM NÀY ---
-        // (Hàm BtnInfo_Click rỗng của bạn bị xóa)
-        private void btnInfo_Click_1(object sender, EventArgs e)
+        #region Sự kiện Menu (Cho người đã thuê)
+
+        private void BtnHome_Click(object sender, EventArgs e)
         {
-            try
+            ShowMyRoomView();
+        }
+
+        private void BtnBills_Click(object sender, EventArgs e)
+        {
+            ShowMyBillsView();
+        }
+
+        private void BtnContract_Click(object sender, EventArgs e)
+        {
+            ShowMyContractView();
+        }
+
+        private void BtnInfo_Click(object sender, EventArgs e)
+        {
+            // (Mục #8)
+            using (var formInfo = new FormInformation(_currentRenter))
             {
-                // Giờ đây bạn có thể truyền thông tin người dùng
-                // (Bạn cũng sẽ cần sửa FormInformation để nhận Person)
-                using (var formInfo = new FormInformation(_currentRenter))
-                {
-                    formInfo.StartPosition = FormStartPosition.CenterParent;
-                    formInfo.ShowDialog(this);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Nếu chưa sửa FormInformation, hãy dùng tạm MessageBox:
-                MessageBox.Show($"Tên đăng nhập: {_currentRenter.Username}\nID: {_currentRenter.Id}\nRole: {_currentRenter.Role}", "Thông tin cá nhân (Demo)");
-                // MessageBox.Show("Không thể mở thông tin: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                formInfo.StartPosition = FormStartPosition.CenterParent;
+                formInfo.ShowDialog(this);
             }
         }
+
+        private void BtnReport_Click(object sender, EventArgs e)
+        {
+            // (Mục #4)
+            ShowMyReportsView();
+        }
+
+        private void BtnLogout_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Bạn có chắc muốn đăng xuất?",
+                                                  "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                Logout?.Invoke(this, EventArgs.Empty);
+                this.Close();
+            }
+        }
+
+        #endregion
     }
 }

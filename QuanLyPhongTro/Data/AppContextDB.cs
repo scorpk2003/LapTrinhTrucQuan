@@ -19,6 +19,9 @@ namespace QuanLyPhongTro.Data
         public DbSet<RoomImage> RoomImages { get; set; }
         public DbSet<BillDetail> BillDetails { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<BookingRequest> BookingRequests { get; set; }
+        public DbSet<Expense> Expense { get; set; }
+
         // Cấu hình kết nối đến SQL Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

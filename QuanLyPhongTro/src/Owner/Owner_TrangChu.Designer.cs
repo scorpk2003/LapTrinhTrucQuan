@@ -17,200 +17,253 @@
 
         private void InitializeComponent()
         {
-            panelTop = new Panel();
-            lblTitle = new Label();
-            lblOwnerName = new Label();
-            panelMenu = new Panel();
-            btnLogout = new Button();
-            btnReport = new Button();
-            btnContract = new Button();
-            btnBill = new Button();
-            btnCreate = new Button();
-            flowPanelRooms = new FlowLayoutPanel();
-            panelSearch = new Panel();
-            btnSearch = new Button();
-            txtSearch = new TextBox();
-            panelTop.SuspendLayout();
-            panelMenu.SuspendLayout();
-            panelSearch.SuspendLayout();
-            SuspendLayout();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.lblOwnerName = new System.Windows.Forms.Label();
+            this.panelMenu = new System.Windows.Forms.Panel();
+            this.btnLogout = new System.Windows.Forms.Button();
+            this.btnIncidents = new System.Windows.Forms.Button();
+            this.btnReport = new System.Windows.Forms.Button();
+            this.btnContract = new System.Windows.Forms.Button();
+            this.btnBill = new System.Windows.Forms.Button();
+            this.btnCreate = new System.Windows.Forms.Button();
+            this.btnHome = new System.Windows.Forms.Button();
+            this.panelSearch = new System.Windows.Forms.Panel();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.txtSearch = new System.Windows.Forms.TextBox();
+            this.flowPanelRooms = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRoomManagement = new System.Windows.Forms.Panel();
+            this.lblNoResults = new System.Windows.Forms.Label();
+            this.panelTop.SuspendLayout();
+            this.panelMenu.SuspendLayout();
+            this.panelSearch.SuspendLayout();
+            this.panelRoomManagement.SuspendLayout();
+            this.SuspendLayout();
             // 
             // panelTop
             // 
-            panelTop.BackColor = Color.FromArgb(25, 42, 86);
-            panelTop.Controls.Add(lblTitle);
-            panelTop.Controls.Add(lblOwnerName);
-            panelTop.Dock = DockStyle.Top;
-            panelTop.Location = new Point(0, 0);
-            panelTop.Margin = new Padding(8, 8, 8, 8);
-            panelTop.Name = "panelTop";
-            panelTop.Size = new Size(2500, 167);
-            panelTop.TabIndex = 0;
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(42)))), ((int)(((byte)(86)))));
+            this.panelTop.Controls.Add(this.lblTitle);
+            this.panelTop.Controls.Add(this.lblOwnerName);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Margin = new System.Windows.Forms.Padding(5);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(1487, 100);
+            this.panelTop.TabIndex = 0;
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(43, 48);
-            lblTitle.Margin = new Padding(8, 0, 8, 0);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(632, 81);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "🏠 Owner Dashboard";
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.White;
+            this.lblTitle.Location = new System.Drawing.Point(26, 29);
+            this.lblTitle.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(374, 48);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "🏠 Owner Dashboard";
             // 
             // lblOwnerName
             // 
-            lblOwnerName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblOwnerName.Font = new Font("Segoe UI", 12F, FontStyle.Italic);
-            lblOwnerName.ForeColor = Color.WhiteSmoke;
-            lblOwnerName.Location = new Point(1772, 58);
-            lblOwnerName.Margin = new Padding(8, 0, 8, 0);
-            lblOwnerName.Name = "lblOwnerName";
-            lblOwnerName.Size = new Size(700, 53);
-            lblOwnerName.TabIndex = 1;
-            lblOwnerName.Text = "Welcome, [Owner Name]";
-            lblOwnerName.TextAlign = ContentAlignment.MiddleRight;
+            this.lblOwnerName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblOwnerName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic);
+            this.lblOwnerName.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblOwnerName.Location = new System.Drawing.Point(1050, 35);
+            this.lblOwnerName.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lblOwnerName.Name = "lblOwnerName";
+            this.lblOwnerName.Size = new System.Drawing.Size(420, 32);
+            this.lblOwnerName.TabIndex = 1;
+            this.lblOwnerName.Text = "Welcome, [Owner Name]";
+            this.lblOwnerName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panelMenu
             // 
-            panelMenu.BackColor = Color.FromArgb(41, 128, 185);
-            panelMenu.Controls.Add(btnLogout);
-            panelMenu.Controls.Add(btnReport);
-            panelMenu.Controls.Add(btnContract);
-            panelMenu.Controls.Add(btnBill);
-            panelMenu.Controls.Add(btnCreate);
-            panelMenu.Dock = DockStyle.Left;
-            panelMenu.Location = new Point(0, 167);
-            panelMenu.Margin = new Padding(8, 8, 8, 8);
-            panelMenu.Name = "panelMenu";
-            panelMenu.Size = new Size(463, 1500);
-            panelMenu.TabIndex = 1;
+            this.panelMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(128)))), ((int)(((byte)(185)))));
+            this.panelMenu.Controls.Add(this.btnLogout);
+            this.panelMenu.Controls.Add(this.btnIncidents);
+            this.panelMenu.Controls.Add(this.btnReport);
+            this.panelMenu.Controls.Add(this.btnContract);
+            this.panelMenu.Controls.Add(this.btnBill);
+            this.panelMenu.Controls.Add(this.btnCreate);
+            this.panelMenu.Controls.Add(this.btnHome);
+            this.panelMenu.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelMenu.Location = new System.Drawing.Point(0, 100);
+            this.panelMenu.Margin = new System.Windows.Forms.Padding(5);
+            this.panelMenu.Name = "panelMenu";
+            this.panelMenu.Size = new System.Drawing.Size(278, 889);
+            this.panelMenu.TabIndex = 1;
             // 
             // btnLogout
             // 
-            btnLogout.Dock = DockStyle.Bottom;
-            btnLogout.Font = new Font("Segoe UI", 11F);
-            btnLogout.Location = new Point(0, 1408);
-            btnLogout.Margin = new Padding(17, 17, 17, 17);
-            btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(463, 92);
-            btnLogout.TabIndex = 5;
-            btnLogout.Text = "Đăng xuất";
-            btnLogout.UseVisualStyleBackColor = true;
+            this.btnLogout.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnLogout.Location = new System.Drawing.Point(0, 834);
+            this.btnLogout.Margin = new System.Windows.Forms.Padding(10);
+            this.btnLogout.Name = "btnLogout";
+            this.btnLogout.Size = new System.Drawing.Size(278, 55);
+            this.btnLogout.TabIndex = 5;
+            this.btnLogout.Text = "Đăng xuất";
+            this.btnLogout.UseVisualStyleBackColor = true;
+            // 
+            // btnIncidents
+            // 
+            this.btnIncidents.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnIncidents.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnIncidents.Location = new System.Drawing.Point(0, 275);
+            this.btnIncidents.Margin = new System.Windows.Forms.Padding(5);
+            this.btnIncidents.Name = "btnIncidents";
+            this.btnIncidents.Size = new System.Drawing.Size(278, 55);
+            this.btnIncidents.TabIndex = 7;
+            this.btnIncidents.Text = "Sự cố / Thông báo";
+            this.btnIncidents.UseVisualStyleBackColor = true;
             // 
             // btnReport
             // 
-            btnReport.Dock = DockStyle.Top;
-            btnReport.Font = new Font("Segoe UI", 11F);
-            btnReport.Location = new Point(0, 276);
-            btnReport.Margin = new Padding(8, 8, 8, 8);
-            btnReport.Name = "btnReport";
-            btnReport.Size = new Size(463, 92);
-            btnReport.TabIndex = 4;
-            btnReport.Text = "Báo cáo / Thống kê";
-            btnReport.UseVisualStyleBackColor = true;
+            this.btnReport.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnReport.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnReport.Location = new System.Drawing.Point(0, 220);
+            this.btnReport.Margin = new System.Windows.Forms.Padding(5);
+            this.btnReport.Name = "btnReport";
+            this.btnReport.Size = new System.Drawing.Size(278, 55);
+            this.btnReport.TabIndex = 4;
+            this.btnReport.Text = "Báo cáo / Thống kê";
+            this.btnReport.UseVisualStyleBackColor = true;
             // 
             // btnContract
             // 
-            btnContract.Dock = DockStyle.Top;
-            btnContract.Font = new Font("Segoe UI", 11F);
-            btnContract.Location = new Point(0, 184);
-            btnContract.Margin = new Padding(8, 8, 8, 8);
-            btnContract.Name = "btnContract";
-            btnContract.Size = new Size(463, 92);
-            btnContract.TabIndex = 3;
-            btnContract.Text = "Quản lí Hợp đồng";
-            btnContract.UseVisualStyleBackColor = true;
+            this.btnContract.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnContract.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnContract.Location = new System.Drawing.Point(0, 165);
+            this.btnContract.Margin = new System.Windows.Forms.Padding(5);
+            this.btnContract.Name = "btnContract";
+            this.btnContract.Size = new System.Drawing.Size(278, 55);
+            this.btnContract.TabIndex = 3;
+            this.btnContract.Text = "Quản lí Hợp đồng";
+            this.btnContract.UseVisualStyleBackColor = true;
             // 
             // btnBill
             // 
-            btnBill.Dock = DockStyle.Top;
-            btnBill.Font = new Font("Segoe UI", 11F);
-            btnBill.Location = new Point(0, 92);
-            btnBill.Margin = new Padding(8, 8, 8, 8);
-            btnBill.Name = "btnBill";
-            btnBill.Size = new Size(463, 92);
-            btnBill.TabIndex = 2;
-            btnBill.Text = "Quản lí Hóa đơn";
-            btnBill.UseVisualStyleBackColor = true;
+            this.btnBill.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnBill.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnBill.Location = new System.Drawing.Point(0, 110);
+            this.btnBill.Margin = new System.Windows.Forms.Padding(5);
+            this.btnBill.Name = "btnBill";
+            this.btnBill.Size = new System.Drawing.Size(278, 55);
+            this.btnBill.TabIndex = 2;
+            this.btnBill.Text = "Quản lí Hóa đơn";
+            this.btnBill.UseVisualStyleBackColor = true;
             // 
             // btnCreate
             // 
-            btnCreate.Dock = DockStyle.Top;
-            btnCreate.Font = new Font("Segoe UI", 11F);
-            btnCreate.Location = new Point(0, 0);
-            btnCreate.Margin = new Padding(8, 8, 8, 8);
-            btnCreate.Name = "btnCreate";
-            btnCreate.Size = new Size(463, 92);
-            btnCreate.TabIndex = 0;
-            btnCreate.Text = "Thêm phòng mới";
-            btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnCreate.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnCreate.Location = new System.Drawing.Point(0, 55);
+            this.btnCreate.Margin = new System.Windows.Forms.Padding(5);
+            this.btnCreate.Name = "btnCreate";
+            this.btnCreate.Size = new System.Drawing.Size(278, 55);
+            this.btnCreate.TabIndex = 0;
+            this.btnCreate.Text = "Thêm phòng mới";
+            this.btnCreate.UseVisualStyleBackColor = true;
             // 
-            // flowPanelRooms
+            // btnHome
             // 
-            flowPanelRooms.AutoScroll = true;
-            flowPanelRooms.BackColor = Color.WhiteSmoke;
-            flowPanelRooms.Dock = DockStyle.Fill;
-            flowPanelRooms.Location = new Point(463, 284);
-            flowPanelRooms.Margin = new Padding(8, 8, 8, 8);
-            flowPanelRooms.Name = "flowPanelRooms";
-            flowPanelRooms.Padding = new Padding(33, 33, 33, 33);
-            flowPanelRooms.Size = new Size(2037, 1383);
-            flowPanelRooms.TabIndex = 2;
+            this.btnHome.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnHome.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnHome.Location = new System.Drawing.Point(0, 0);
+            this.btnHome.Margin = new System.Windows.Forms.Padding(5);
+            this.btnHome.Name = "btnHome";
+            this.btnHome.Size = new System.Drawing.Size(278, 55);
+            this.btnHome.TabIndex = 6;
+            this.btnHome.Text = "Quản lí Phòng";
+            this.btnHome.UseVisualStyleBackColor = true;
             // 
             // panelSearch
             // 
-            panelSearch.BackColor = Color.White;
-            panelSearch.Controls.Add(btnSearch);
-            panelSearch.Controls.Add(txtSearch);
-            panelSearch.Dock = DockStyle.Top;
-            panelSearch.Location = new Point(463, 167);
-            panelSearch.Margin = new Padding(5, 5, 5, 5);
-            panelSearch.Name = "panelSearch";
-            panelSearch.Size = new Size(2037, 117);
-            panelSearch.TabIndex = 3;
+            this.panelSearch.BackColor = System.Drawing.Color.White;
+            this.panelSearch.Controls.Add(this.btnSearch);
+            this.panelSearch.Controls.Add(this.txtSearch);
+            this.panelSearch.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelSearch.Location = new System.Drawing.Point(0, 0);
+            this.panelSearch.Name = "panelSearch";
+            this.panelSearch.Size = new System.Drawing.Size(1209, 70);
+            this.panelSearch.TabIndex = 3;
             // 
             // btnSearch
             // 
-            btnSearch.Font = new Font("Segoe UI", 10F);
-            btnSearch.Location = new Point(733, 30);
-            btnSearch.Margin = new Padding(5, 5, 5, 5);
-            btnSearch.Name = "btnSearch";
-            btnSearch.Size = new Size(200, 60);
-            btnSearch.TabIndex = 1;
-            btnSearch.Text = "Tìm kiếm";
-            btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnSearch.Location = new System.Drawing.Point(440, 18);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(120, 36);
+            this.btnSearch.TabIndex = 1;
+            this.btnSearch.Text = "Tìm kiếm";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Visible = false; // Ẩn nút tìm kiếm
             // 
             // txtSearch
             // 
-            txtSearch.Font = new Font("Segoe UI", 12F);
-            txtSearch.Location = new Point(42, 30);
-            txtSearch.Margin = new Padding(5, 5, 5, 5);
-            txtSearch.Name = "txtSearch";
-            txtSearch.Size = new Size(664, 61);
-            txtSearch.TabIndex = 0;
+            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.txtSearch.Location = new System.Drawing.Point(25, 18);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(400, 39);
+            this.txtSearch.TabIndex = 0;
+            // 
+            // flowPanelRooms
+            // 
+            this.flowPanelRooms.AutoScroll = true;
+            this.flowPanelRooms.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.flowPanelRooms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowPanelRooms.Location = new System.Drawing.Point(0, 70);
+            this.flowPanelRooms.Margin = new System.Windows.Forms.Padding(5);
+            this.flowPanelRooms.Name = "flowPanelRooms";
+            this.flowPanelRooms.Padding = new System.Windows.Forms.Padding(20);
+            this.flowPanelRooms.Size = new System.Drawing.Size(1209, 819);
+            this.flowPanelRooms.TabIndex = 2;
+            // 
+            // panelRoomManagement
+            // 
+            this.panelRoomManagement.Controls.Add(this.lblNoResults);
+            this.panelRoomManagement.Controls.Add(this.flowPanelRooms);
+            this.panelRoomManagement.Controls.Add(this.panelSearch);
+            this.panelRoomManagement.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelRoomManagement.Location = new System.Drawing.Point(278, 100);
+            this.panelRoomManagement.Name = "panelRoomManagement";
+            this.panelRoomManagement.Size = new System.Drawing.Size(1209, 889);
+            this.panelRoomManagement.TabIndex = 4;
+            // 
+            // lblNoResults
+            // 
+            this.lblNoResults.AutoSize = true;
+            this.lblNoResults.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Italic);
+            this.lblNoResults.ForeColor = System.Drawing.Color.Gray;
+            this.lblNoResults.Location = new System.Drawing.Point(30, 90);
+            this.lblNoResults.Name = "lblNoResults";
+            this.lblNoResults.Size = new System.Drawing.Size(499, 38);
+            this.lblNoResults.TabIndex = 4;
+            this.lblNoResults.Text = "Không có phòng nào trùng với thông tin tìm kiếm.";
+            this.lblNoResults.Visible = false;
             // 
             // Owner_TrangChu
             // 
-            AutoScaleDimensions = new SizeF(240F, 240F);
-            AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(2500, 1667);
-            Controls.Add(flowPanelRooms);
-            Controls.Add(panelSearch);
-            Controls.Add(panelMenu);
-            Controls.Add(panelTop);
-            Margin = new Padding(8, 8, 8, 8);
-            Name = "Owner_TrangChu";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Owner Dashboard";
-            WindowState = FormWindowState.Maximized;
-            panelTop.ResumeLayout(false);
-            panelTop.PerformLayout();
-            panelMenu.ResumeLayout(false);
-            panelSearch.ResumeLayout(false);
-            panelSearch.PerformLayout();
-            ResumeLayout(false);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(1487, 989);
+            this.Controls.Add(this.panelRoomManagement);
+            this.Controls.Add(this.panelMenu);
+            this.Controls.Add(this.panelTop);
+            this.Margin = new System.Windows.Forms.Padding(5);
+            this.Name = "Owner_TrangChu";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Owner Dashboard";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
+            this.panelMenu.ResumeLayout(false);
+            this.panelSearch.ResumeLayout(false);
+            this.panelSearch.PerformLayout();
+            this.panelRoomManagement.ResumeLayout(false);
+            this.panelRoomManagement.PerformLayout();
+            this.ResumeLayout(false);
         }
 
         #endregion
@@ -228,5 +281,9 @@
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Button btnContract;
+        private System.Windows.Forms.Button btnHome;
+        private System.Windows.Forms.Panel panelRoomManagement;
+        private System.Windows.Forms.Label lblNoResults;
+        private System.Windows.Forms.Button btnIncidents;
     }
 }

@@ -27,6 +27,9 @@ namespace QuanLyPhongTro.Model
 
         public DateTime PaymentDate { get; set; } = DateTime.Now;
 
+        [MaxLength(50)]
+        public string Status { get; set; }
+
         // Chi tiết dịch vụ
         public ICollection<BillDetail> BillDetails { get; set; } = new List<BillDetail>();
 
