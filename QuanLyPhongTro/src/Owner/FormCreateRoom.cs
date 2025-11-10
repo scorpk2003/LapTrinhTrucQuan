@@ -1,7 +1,7 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Mediator;
+﻿using QuanLyPhongTro.src.Mediator;
 using QuanLyPhongTro.src.Messages;
+using QuanLyPhongTro.src.Model;
+using QuanLyPhongTro.src.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

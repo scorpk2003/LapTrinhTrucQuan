@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Model;
+using QuanLyPhongTro.src.Services;
 using ScottPlot; // v5
 using System;
 using System.Linq;
