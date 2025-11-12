@@ -17,158 +17,185 @@
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblRoomName = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
             this.label3 = new System.Windows.Forms.Label();
-            this.cboDuration = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.lblRenterName = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.txtNote = new System.Windows.Forms.TextBox();
-            this.btnSendRequest = new System.Windows.Forms.Button();
+            this.btnSend = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+
+            // --- THÊM DÒNG NÀY ---
+            this.numDuration = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.numDuration)).BeginInit();
             this.SuspendLayout();
             // 
-            // lblTitle
+            // label1
             // 
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.Location = new System.Drawing.Point(20, 20);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(325, 38);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Yêu cầu Thuê phòng";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label1.Location = new System.Drawing.Point(30, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(124, 28);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Phòng thuê:";
             // 
             // lblRoomName
             // 
             this.lblRoomName.AutoSize = true;
-            this.lblRoomName.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Italic);
-            this.lblRoomName.Location = new System.Drawing.Point(22, 60);
+            this.lblRoomName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblRoomName.Location = new System.Drawing.Point(220, 30);
             this.lblRoomName.Name = "lblRoomName";
-            this.lblRoomName.Size = new System.Drawing.Size(130, 30);
+            this.lblRoomName.Size = new System.Drawing.Size(121, 28);
             this.lblRoomName.TabIndex = 1;
             this.lblRoomName.Text = "(Tên phòng)";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label2.Location = new System.Drawing.Point(22, 110);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(222, 28);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Ngày muốn bắt đầu thuê:";
-            // 
-            // dtpStartDate
-            // 
-            this.dtpStartDate.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.dtpStartDate.Location = new System.Drawing.Point(27, 140);
-            this.dtpStartDate.Name = "dtpStartDate";
-            this.dtpStartDate.Size = new System.Drawing.Size(400, 34);
-            this.dtpStartDate.TabIndex = 0;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label3.Location = new System.Drawing.Point(22, 190);
+            this.label3.Location = new System.Drawing.Point(30, 80);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(129, 28);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Thời hạn thuê:";
+            this.label3.Size = new System.Drawing.Size(107, 28);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Người gửi:";
             // 
-            // cboDuration
+            // lblRenterName
             // 
-            this.cboDuration.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboDuration.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cboDuration.FormattingEnabled = true;
-            this.cboDuration.Items.AddRange(new object[] {
-            "6 tháng",
-            "12 tháng",
-            "24 tháng"});
-            this.cboDuration.Location = new System.Drawing.Point(27, 220);
-            this.cboDuration.Name = "cboDuration";
-            this.cboDuration.Size = new System.Drawing.Size(400, 36);
-            this.cboDuration.TabIndex = 1;
+            this.lblRenterName.AutoSize = true;
+            this.lblRenterName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblRenterName.Location = new System.Drawing.Point(220, 80);
+            this.lblRenterName.Name = "lblRenterName";
+            this.lblRenterName.Size = new System.Drawing.Size(155, 28);
+            this.lblRenterName.TabIndex = 3;
+            this.lblRenterName.Text = "(Tên người thuê)";
             // 
-            // label4
+            // label5
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label4.Location = new System.Drawing.Point(22, 270);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(193, 28);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Ghi chú cho chủ trọ:";
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label5.Location = new System.Drawing.Point(30, 130);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(183, 28);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Ngày muốn bắt đầu:";
+            // 
+            // dtpStartDate
+            // 
+            this.dtpStartDate.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.dtpStartDate.Location = new System.Drawing.Point(225, 130);
+            this.dtpStartDate.Name = "dtpStartDate";
+            this.dtpStartDate.Size = new System.Drawing.Size(350, 34);
+            this.dtpStartDate.TabIndex = 0;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label6.Location = new System.Drawing.Point(30, 180);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(147, 28);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Thời hạn (tháng):";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label7.Location = new System.Drawing.Point(30, 230);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(81, 28);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "Ghi chú:";
             // 
             // txtNote
             // 
             this.txtNote.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtNote.Location = new System.Drawing.Point(27, 300);
+            this.txtNote.Location = new System.Drawing.Point(35, 260);
             this.txtNote.Multiline = true;
             this.txtNote.Name = "txtNote";
-            this.txtNote.Size = new System.Drawing.Size(400, 100);
+            this.txtNote.Size = new System.Drawing.Size(540, 120);
             this.txtNote.TabIndex = 2;
             // 
-            // btnSendRequest
+            // btnSend
             // 
-            this.btnSendRequest.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnSendRequest.Location = new System.Drawing.Point(227, 420);
-            this.btnSendRequest.Name = "btnSendRequest";
-            this.btnSendRequest.Size = new System.Drawing.Size(200, 50);
-            this.btnSendRequest.TabIndex = 3;
-            this.btnSendRequest.Text = "Gửi yêu cầu";
-            this.btnSendRequest.UseVisualStyleBackColor = true;
+            this.btnSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(128)))), ((int)(((byte)(185)))));
+            this.btnSend.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnSend.ForeColor = System.Drawing.Color.White;
+            this.btnSend.Location = new System.Drawing.Point(435, 400);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(140, 50);
+            this.btnSend.TabIndex = 3;
+            this.btnSend.Text = "Gửi";
+            this.btnSend.UseVisualStyleBackColor = false;
             // 
             // btnCancel
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnCancel.Location = new System.Drawing.Point(87, 420);
+            this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(280, 400);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(120, 50);
+            this.btnCancel.Size = new System.Drawing.Size(140, 50);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Hủy";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
+            //
+            // numDuration
+            // 
+            this.numDuration.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.numDuration.Location = new System.Drawing.Point(225, 180);
+            this.numDuration.Maximum = new decimal(new int[] { 120, 0, 0, 0 });
+            this.numDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            this.numDuration.Name = "numDuration";
+            this.numDuration.Size = new System.Drawing.Size(120, 34);
+            this.numDuration.TabIndex = 1;
+            this.numDuration.Value = new decimal(new int[] { 12, 0, 0, 0 });
+            //
             // FormRequestContract
             // 
-            this.AcceptButton = this.btnSendRequest;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(458, 494);
+            this.ClientSize = new System.Drawing.Size(608, 474);
+            this.Controls.Add(this.numDuration);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnSendRequest);
+            this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtNote);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.cboDuration);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.dtpStartDate);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblRenterName);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.lblRoomName);
-            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormRequestContract";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Gửi yêu cầu thuê phòng";
+            this.Text = "Gửi Yêu cầu Thuê phòng";
+            ((System.ComponentModel.ISupportInitialize)(this.numDuration)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblRoomName;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cboDuration;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblRenterName;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DateTimePicker dtpStartDate;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtNote;
-        private System.Windows.Forms.Button btnSendRequest;
+        private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.NumericUpDown numDuration;
     }
 }

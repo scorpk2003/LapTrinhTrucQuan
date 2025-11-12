@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Windows.Forms;
 
@@ -7,64 +7,67 @@ namespace QuanLyPhongTro
 {
     public partial class FormRequestContract : Form
     {
-        private readonly Guid _renterId;
+        private readonly Person _renter;
         private readonly Room _room;
+        //private readonly PersonService _personService;
         private readonly BookingRequestService _requestService;
 
-        public FormRequestContract(Guid renterId, Room room)
+        public FormRequestContract(Person renter, Room room)
         {
             InitializeComponent();
-            _renterId = renterId;
+
+            _renter = renter;
             _room = room;
+            //_personService = new PersonService();
             _requestService = new BookingRequestService();
 
-            this.Load += FormRequestContract_Load;
-            this.btnSendRequest.Click += BtnSendRequest_Click;
+            // Gán sự kiện
+            this.btnSend.Click += BtnSend_Click;
             this.btnCancel.Click += (s, e) => this.Close();
+
+            // Tải dữ liệu
+            LoadDefaultData();
         }
 
-        private void FormRequestContract_Load(object sender, EventArgs e)
+        private void LoadDefaultData()
         {
             lblRoomName.Text = _room.Name;
-            dtpStartDate.Value = DateTime.Now.AddDays(1); // Mặc định là ngày mai
-            cboDuration.SelectedIndex = 1; // Mặc định 12 tháng
+            lblRenterName.Text = _renter.Username;
+
+            dtpStartDate.Value = DateTime.Now.Date.AddDays(1);
+            numDuration.Value = 12;
         }
 
-        private void BtnSendRequest_Click(object sender, EventArgs e)
+        private void BtnSend_Click(object sender, EventArgs e)
         {
-            // 1. Validate
-            int duration = 0;
-            if (cboDuration.SelectedItem == null)
+            if (dtpStartDate.Value.Date < DateTime.Now.Date)
             {
-                MessageBox.Show("Vui lòng chọn thời hạn thuê.");
+                MessageBox.Show("Ngày muốn thuê không thể là một ngày trong quá khứ.");
                 return;
             }
-            // "12 tháng" -> "12"
-            duration = int.Parse(cboDuration.SelectedItem.ToString().Split(' ')[0]);
 
-            // 2. Tạo đối tượng
-            var request = new BookingRequest
+            int duration = (int)numDuration.Value;
+
+            BookingRequest request = new BookingRequest
             {
-                IdRenter = _renterId,
                 IdRoom = _room.Id,
-                DesiredStartDate = dtpStartDate.Value,
+                IdRenter = _renter.Id,
+                DesiredStartDate = dtpStartDate.Value.Date,
                 DesiredDurationMonths = duration,
                 Note = txtNote.Text,
                 Status = "Pending"
             };
 
-            // 3. Gọi Service
             bool success = _requestService.CreateRequest(request);
-
             if (success)
             {
-                MessageBox.Show("Gửi yêu cầu thành công! Chủ trọ sẽ sớm liên hệ với bạn.", "Thành công");
+                MessageBox.Show("Gửi yêu cầu thành công! Vui lòng chờ chủ trọ xác nhận.");
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Gửi yêu cầu thất bại. Vui lòng thử lại.", "Lỗi");
+                MessageBox.Show("Gửi yêu cầu thất bại. (Có thể bạn đã gửi 1 yêu cầu cho phòng này rồi).");
             }
         }
     }

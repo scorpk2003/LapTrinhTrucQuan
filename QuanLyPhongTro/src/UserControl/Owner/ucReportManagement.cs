@@ -1,23 +1,38 @@
-﻿using QuanLyPhongTro.src.Model;
-using QuanLyPhongTro.src.Services;
-using ScottPlot; // v5
+﻿using QuanLyPhongTro.src.Mediator;
+using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.src.Test.Services; 
+using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
 {
     public partial class ucReportManagement : UserControl
     {
-        private readonly Guid _ownerId;
+        private Guid _ownerId;
         private readonly DashboardService _dashboardService;
 
-        public ucReportManagement(Guid ownerId)
+        public ucReportManagement()
         {
             InitializeComponent();
-            _ownerId = ownerId;
             _dashboardService = new DashboardService();
+            _ownerId = Guid.Empty;
+
+            Mediator.Instance.Register<Person>("UcReportManagement", (owner) =>
+            {
+                _ownerId = owner.Id;
+
+                if (cboYear.Items.Count > 0)
+                {
+                    cboYear.SelectedItem = DateTime.Now.Year;
+                }
+                LoadData(); 
+
+                return Task.CompletedTask;
+            });
 
             this.Load += UcReportManagement_Load;
             this.btnRefresh.Click += (s, e) => LoadData();
@@ -26,46 +41,38 @@ namespace QuanLyPhongTro
 
         private void UcReportManagement_Load(object sender, EventArgs e)
         {
-            // Nạp dữ liệu cho ComboBox Năm
             int currentYear = DateTime.Now.Year;
             cboYear.Items.Add(currentYear - 2);
             cboYear.Items.Add(currentYear - 1);
             cboYear.Items.Add(currentYear);
-            cboYear.SelectedItem = currentYear;
+
+            if (cboYear.SelectedItem == null)
+            {
+                cboYear.SelectedItem = currentYear;
+            }
 
             SetupDgv();
         }
 
         /// <summary>
-        /// Hàm này được Owner_TrangChu gọi
+        /// Hàm này được Owner_TrangChu gọi (qua Mediator)
         /// </summary>
         public void LoadData()
         {
-            LoadRevenueChart();
+            if (_ownerId == Guid.Empty) return;
+
             LoadOccupancyChart();
             LoadUnpaidBills();
         }
 
-        private void SetupDgv()
-        {
-            dgvUnpaidBills.AutoGenerateColumns = false;
-            dgvUnpaidBills.Columns.Clear();
-            dgvUnpaidBills.Columns.Add("RoomName", "Phòng");
-            dgvUnpaidBills.Columns.Add("RenterName", "Người thuê");
-            dgvUnpaidBills.Columns.Add("DueDate", "Hạn thanh toán");
-            dgvUnpaidBills.Columns.Add("Amount", "Số tiền");
-            dgvUnpaidBills.Columns.Add("Status", "Trạng thái");
-
-            dgvUnpaidBills.Columns["Amount"].DefaultCellStyle.Format = "N0";
-            dgvUnpaidBills.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        }
-
         /// <summary>
-        /// 1. Vẽ Biểu đồ Doanh thu (Bar Chart)
+        /// 1. Vẽ Biểu đồ Doanh thu (ĐÃ SỬA LỖI CĂN GIỮA)
         /// </summary>
         private void LoadRevenueChart()
         {
             if (cboYear.SelectedItem == null) return;
+            if (_ownerId == Guid.Empty) return;
+
             int year = (int)cboYear.SelectedItem;
 
             var monthlyData = _dashboardService.GetMonthlyRevenue(_ownerId, year) ?? new Dictionary<string, decimal>();
@@ -90,6 +97,9 @@ namespace QuanLyPhongTro
 
             string[] labels = { "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12" };
             revenueChart.Plot.Axes.Bottom.SetTicks(positions, labels);
+
+            revenueChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5);
+
             try { revenueChart.Plot.Axes.Left.Label.Text = "Doanh thu (VND)"; } catch { }
             try { revenueChart.Plot.Title($"Doanh thu năm {year}"); } catch { }
 
@@ -97,10 +107,12 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// 2. Vẽ Biểu đồ Tỷ lệ Lấp đầy (Pie Chart)
+        /// 2. Vẽ Biểu đồ Tỷ lệ Lấp đầy (ĐÃ MỞ LẠI NHÃN)
         /// </summary>
         private void LoadOccupancyChart()
         {
+            if (_ownerId == Guid.Empty) return;
+
             (int occupied, int total) = _dashboardService.GetOccupancyStats(_ownerId);
             int available = total - occupied;
             occupancyChart.Plot.Clear();
@@ -109,7 +121,23 @@ namespace QuanLyPhongTro
             {
                 double[] values = { (double)occupied, (double)available };
                 var pie = occupancyChart.Plot.Add.Pie(values);
-                // Không set thuộc tính không tương thích để tránh lỗi biên dịch v5
+
+                var rentedColor = ScottPlot.Color.FromHex("#28a745");
+                var availableColor = ScottPlot.Color.FromHex("#6c757d");
+
+                pie.Slices[0].Fill.Color = rentedColor;
+                pie.Slices[1].Fill.Color = availableColor;
+
+                // Gán nhãn cho Chú giải
+                //pie.Slices[0].LegendLabel = $"Đã thuê: {occupied} ({((double)occupied / total):P1})";
+                //pie.Slices[1].LegendLabel = $"Còn trống: {available} ({((double)available / total):P1})";
+
+                //// Ẩn nhãn trên miếng bánh (đã có chú giải)
+                //pie.ShowSliceLabels = false;
+                // --- HẾT ---
+
+                occupancyChart.Plot.Legend.IsVisible = true;
+                occupancyChart.Plot.Legend.Alignment = Alignment.MiddleRight;
             }
 
             try { occupancyChart.Plot.Title($"Tỷ lệ lấp đầy (Tổng: {total} phòng)"); } catch { }
@@ -121,6 +149,8 @@ namespace QuanLyPhongTro
         /// </summary>
         private void LoadUnpaidBills()
         {
+            if (_ownerId == Guid.Empty) return; // Bảo vệ
+
             var unpaidBills = _dashboardService.GetUnpaidBills(_ownerId) ?? new List<Bill>();
             dgvUnpaidBills.Rows.Clear();
 
@@ -134,6 +164,20 @@ namespace QuanLyPhongTro
                     bill.Status ?? string.Empty
                 );
             }
+        }
+
+        private void SetupDgv()
+        {
+            dgvUnpaidBills.AutoGenerateColumns = false;
+            dgvUnpaidBills.Columns.Clear();
+            dgvUnpaidBills.Columns.Add("RoomName", "Phòng");
+            dgvUnpaidBills.Columns.Add("RenterName", "Người thuê");
+            dgvUnpaidBills.Columns.Add("DueDate", "Hạn thanh toán");
+            dgvUnpaidBills.Columns.Add("Amount", "Số tiền");
+            dgvUnpaidBills.Columns.Add("Status", "Trạng thái");
+
+            dgvUnpaidBills.Columns["Amount"].DefaultCellStyle.Format = "N0";
+            dgvUnpaidBills.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
     }
 }

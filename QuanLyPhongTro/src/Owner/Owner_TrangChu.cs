@@ -1,7 +1,8 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Mediator;
+﻿using QuanLyPhongTro.src.Mediator;
 using QuanLyPhongTro.src.Messages;
+using QuanLyPhongTro.src.Test;
+using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing; // Cần để dùng Color
@@ -15,7 +16,7 @@ namespace QuanLyPhongTro
     {
         // Dữ liệu
         private List<Room> _roomList = new List<Room>(); // Danh sách phòng gốc
-        private readonly Mediator _mediator = Mediator.Instance;
+        //private readonly Mediator _mediator = Mediator.Instance;
         private readonly RoomService _roomService;
         private readonly Person _currentOwner;
 
@@ -58,8 +59,8 @@ namespace QuanLyPhongTro
             SetPlaceholder();
 
             // Mediator
-            _mediator.Register<RoomCreatedMessage>(this.Name, OnRoomCreated);
-            this.FormClosed += (s, e) => _mediator.Unregister(this.Name);
+            //_mediator.Register<RoomCreatedMessage>(this.Name, OnRoomCreated);
+            //this.FormClosed += (s, e) => _mediator.Unregister(this.Name);
 
             lblNoResults.Visible = false;
             ShowRoomView(); // Hiển thị View phòng
@@ -100,7 +101,7 @@ namespace QuanLyPhongTro
         /// <summary>
         // Hiển thị View (UserControl) Quản lí Hóa đơn
         /// </summary>
-        private void ShowBillManagementView()
+        private async Task ShowBillManagementView(Control control)
         {
             // Ẩn các control khác
             panelRoomManagement.Visible = false;
@@ -108,16 +109,28 @@ namespace QuanLyPhongTro
             if (_reportControl != null) _reportControl.Visible = false;
             if (_incidentControl != null) _incidentControl.Visible = false;
 
-            if (_billControl == null)
+            //if (_billControl == null)
+            //{
+            //    _billControl = new ucBillManagement(_currentOwner.Id);
+            //    _billControl.Dock = DockStyle.Fill;
+            //    this.Controls.Add(_billControl);
+            //}
+            if (control == null)
+                return;
+
+            if (!this.Controls.Contains(control))
             {
-                _billControl = new ucBillManagement(_currentOwner.Id);
+                _billControl = (ucBillManagement)control;
                 _billControl.Dock = DockStyle.Fill;
                 this.Controls.Add(_billControl);
             }
 
+
             _billControl.BringToFront();
             _billControl.Visible = true;
-            _billControl.LoadData();
+            //_billControl.LoadData();
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -133,7 +146,7 @@ namespace QuanLyPhongTro
 
             if (_contractControl == null)
             {
-                _contractControl = new ucContractManagement(_currentOwner.Id);
+                _contractControl = new ucContractManagement();
                 _contractControl.Dock = DockStyle.Fill;
                 this.Controls.Add(_contractControl);
             }
@@ -156,7 +169,7 @@ namespace QuanLyPhongTro
 
             if (_reportControl == null)
             {
-                _reportControl = new ucReportManagement(_currentOwner.Id);
+                _reportControl = new ucReportManagement();
                 _reportControl.Dock = DockStyle.Fill;
                 this.Controls.Add(_reportControl);
             }
@@ -179,7 +192,7 @@ namespace QuanLyPhongTro
 
             if (_incidentControl == null)
             {
-                _incidentControl = new ucIncidentManagement(_currentOwner.Id);
+                _incidentControl = new ucIncidentManagement();
                 _incidentControl.Dock = DockStyle.Fill;
                 this.Controls.Add(_incidentControl);
             }
@@ -200,10 +213,62 @@ namespace QuanLyPhongTro
             frm.ShowDialog();
         }
 
-        private void BtnBill_Click(object sender, EventArgs e) { ShowBillManagementView(); }
-        private void BtnContract_Click(object sender, EventArgs e) { ShowContractManagementView(); }
-        private void BtnReport_Click(object sender, EventArgs e) { ShowReportView(); }
-        private void BtnIncidents_Click(object sender, EventArgs e) { ShowIncidentView(); } // Nút mới
+        private void BtnBill_Click(object sender, EventArgs e) {
+            Mediator.Instance.PublishForm<Person>("UcBillManagement", _currentOwner, async (control) =>
+            {
+                await ShowBillManagementView(control);
+            });
+        }
+
+        private async void BtnContract_Click(object sender, EventArgs e)
+        {
+            Mediator.Instance.PublishForm<Person>("UcContractManagement", _currentOwner, async (control) =>
+            {
+                _contractControl = (ucContractManagement)control;
+                await ShowView(control, _contractControl);
+            });
+        }
+
+        private async void BtnReport_Click(object sender, EventArgs e)
+        {
+            Mediator.Instance.PublishForm<Person>("UcReportManagement", _currentOwner, async (control) =>
+            {
+                _reportControl = (ucReportManagement)control;
+                await ShowView(control, _reportControl);
+            });
+        }
+
+        private async void BtnIncidents_Click(object sender, EventArgs e)
+        {
+            Mediator.Instance.PublishForm<Person>("UcIncidentManagement", _currentOwner, async (control) =>
+            {
+                _incidentControl = (ucIncidentManagement)control;
+                await ShowView(control, _incidentControl);
+            });
+        }
+
+        private async Task ShowView<T>(Control control, T uc) where T : Control
+        {
+            // Ẩn các control khác
+            panelRoomManagement.Visible = false;
+            if (_billControl != null && uc != _billControl) _billControl.Visible = false;
+            if (_contractControl != null && uc != _contractControl) _contractControl.Visible = false;
+            if (_reportControl != null && uc != _reportControl) _reportControl.Visible = false;
+            if (_incidentControl != null && uc != _incidentControl) _incidentControl.Visible = false;
+
+            if (control == null) return;
+
+            // Thêm control vào Form nếu nó chưa có
+            if (!this.Controls.Contains(control))
+            {
+                control.Dock = DockStyle.Fill;
+                this.Controls.Add(control);
+            }
+
+            control.BringToFront();
+            control.Visible = true;
+            // Không cần 'await Task.CompletedTask;'
+        }
 
         private void BtnLogout_Click(object sender, EventArgs e)
         {

@@ -22,6 +22,7 @@
             this.cboFilterStatus = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.btnRenew = new System.Windows.Forms.Button();
             this.btnResolve = new System.Windows.Forms.Button();
             this.btnInProgress = new System.Windows.Forms.Button();
             this.dgvIncidents = new System.Windows.Forms.DataGridView();
@@ -80,6 +81,7 @@
             // panelBottom
             // 
             this.panelBottom.BackColor = System.Drawing.Color.White;
+            this.panelBottom.Controls.Add(this.btnRenew); // <-- Thêm
             this.panelBottom.Controls.Add(this.btnResolve);
             this.panelBottom.Controls.Add(this.btnInProgress);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -87,6 +89,18 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1200, 70);
             this.panelBottom.TabIndex = 1;
+            // 
+            // btnRenew
+            // 
+            this.btnRenew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRenew.BackColor = System.Drawing.Color.AliceBlue;
+            this.btnRenew.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnRenew.Location = new System.Drawing.Point(450, 10);
+            this.btnRenew.Name = "btnRenew";
+            this.btnRenew.Size = new System.Drawing.Size(210, 50);
+            this.btnRenew.TabIndex = 2;
+            this.btnRenew.Text = "Duyệt Gia Hạn";
+            this.btnRenew.UseVisualStyleBackColor = false;
             // 
             // btnResolve
             // 
@@ -154,5 +168,6 @@
         private System.Windows.Forms.Button btnResolve;
         private System.Windows.Forms.Button btnInProgress;
         private System.Windows.Forms.DataGridView dgvIncidents;
+        private System.Windows.Forms.Button btnRenew;
     }
 }

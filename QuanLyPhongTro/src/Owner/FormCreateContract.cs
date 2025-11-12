@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Windows.Forms;
 
@@ -7,74 +7,82 @@ namespace QuanLyPhongTro
 {
     public partial class FormCreateContract : Form
     {
-        private readonly BookingRequest _request; // Lưu yêu cầu gốc
+        private readonly BookingRequest _request;
         private readonly ContractService _contractService;
         private readonly BookingRequestService _requestService;
 
-        /// <summary>
-        /// Constructor này dùng để TẠO MỚI (chưa làm)
-        /// </summary>
-        public FormCreateContract(Guid ownerId)
-        {
-            InitializeComponent();
-            // (Code cho phép chủ trọ tự chọn phòng, tự chọn người thuê)
-        }
-
-        /// <summary>
-        /// Constructor này dùng để DUYỆT (tự điền)
-        /// </summary>
         public FormCreateContract(BookingRequest request)
         {
+            // (Không cần set Culture ở đây nữa)
             InitializeComponent();
             _request = request;
             _contractService = new ContractService();
             _requestService = new BookingRequestService();
 
-            this.Load += FormCreateContract_Load;
-            this.btnSave.Click += BtnSave_Click;
+            // Gán sự kiện
+            this.btnCreate.Click += BtnCreate_Click;
             this.btnCancel.Click += (s, e) => this.Close();
+
+            // Tải dữ liệu từ Yêu cầu (Request)
+            LoadDataFromRequest();
         }
 
-        private void FormCreateContract_Load(object sender, EventArgs e)
+        private void LoadDataFromRequest()
         {
-            // Tự động điền thông tin từ Yêu cầu
-            txtRoom.Text = _request.Room.Name;
-            txtRenter.Text = _request.Renter.Username;
-            dtpStartDate.Value = _request.DesiredStartDate;
-            dtpEndDate.Value = _request.DesiredStartDate.AddMonths(_request.DesiredDurationMonths);
+            if (_request == null) return;
 
-            // (Chủ trọ tự nhập tiền cọc)
-            numDeposit.Focus();
+            lblRoomName.Text = _request.Room.Name;
+            lblRenterName.Text = _request.Renter.Username;
+
+            if (_request.DesiredStartDate > DateTime.Now)
+                dtpStartDate.Value = _request.DesiredStartDate;
+
+            // Gán giá trị cho ô số
+            numDuration.Value = _request.DesiredDurationMonths;
+
+            txtNote.Text = _request.Note;
+
+            // Đặt tiền cọc mặc định
+            if (_request.Room.Price.HasValue)
+                nudDeposit.Value = _request.Room.Price.Value;
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+        private void BtnCreate_Click(object sender, EventArgs e)
         {
-            // 1. Tạo đối tượng Contract
-            var contract = new Contract
+            if (dtpStartDate.Value.Date < DateTime.Now.Date)
+            {
+                MessageBox.Show("Ngày bắt đầu không thể là một ngày trong quá khứ.");
+                return;
+            }
+
+            // Đọc giá trị từ ô số
+            int duration = (int)numDuration.Value;
+
+            Contract contract = new Contract
             {
                 IdRoom = _request.IdRoom,
                 IdRenter = _request.IdRenter,
-                StartDate = dtpStartDate.Value,
-                EndDate = dtpEndDate.Value,
-                Deposit = numDeposit.Value,
-                Status = "Active" // Sẽ được service gán
+                StartDate = dtpStartDate.Value.Date,
+                EndDate = dtpStartDate.Value.Date.AddMonths(duration),
+                Deposit = nudDeposit.Value,
+                Note = txtNote.Text,
+                Status = "Active"
             };
 
-            // 2. Gọi Service để tạo HĐ (và cập nhật phòng)
+            // Gọi Service
             bool success = _contractService.CreateContract(contract);
-
             if (success)
             {
-                // 3. Cập nhật Yêu cầu (Request) thành "Approved"
+                // Cập nhật trạng thái của Yêu cầu (Request)
                 _requestService.UpdateRequestStatus(_request.Id, "Approved");
 
-                MessageBox.Show("Tạo hợp đồng thành công! Phòng đã được cập nhật trạng thái 'Đã thuê'.", "Thành công");
+                MessageBox.Show("Tạo hợp đồng thành công!");
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Tạo hợp đồng thất bại. Phòng có thể đã được thuê trong lúc bạn xét duyệt.", "Lỗi");
+                MessageBox.Show("Tạo hợp đồng thất bại! Phòng có thể đã được cho thuê.");
             }
         }
     }

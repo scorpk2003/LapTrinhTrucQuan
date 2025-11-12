@@ -1,7 +1,7 @@
-﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Messages;
-using QuanLyPhongTro.src.Model;
-using QuanLyPhongTro.src.Services;
+﻿using QuanLyPhongTro.src.Messages;
+using QuanLyPhongTro.src.Test;
+using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,7 +15,7 @@ namespace QuanLyPhongTro
     {
         private readonly Guid _ownerId;
         private readonly RoomService _roomService;
-        private readonly Mediator _mediator;
+        //private readonly Mediator _mediator;
 
         // Dùng Dictionary để lưu tên file (hiển thị) và đường dẫn gốc (để copy)
         private readonly Dictionary<string, string> _imagePaths = new Dictionary<string, string>();
@@ -26,7 +26,7 @@ namespace QuanLyPhongTro
 
             _ownerId = ownerId;
             _roomService = new RoomService();
-            _mediator = Mediator.Instance;
+            //_mediator = Mediator.Instance;
 
             // Gán sự kiện cho các nút
             this.btnSave.Click += BtnSave_Click;
@@ -188,7 +188,7 @@ namespace QuanLyPhongTro
             if (success)
             {
                 // 4. Báo cho Owner_TrangChu biết qua Mediator
-                await _mediator.Publish(new RoomCreatedMessage(newRoom));
+                //await _mediator.Publish(new RoomCreatedMessage(newRoom));
                 MessageBox.Show("Tạo phòng thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Close(); // Tự động đóng form (sẽ gọi OnFormClosing)

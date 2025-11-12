@@ -1,5 +1,6 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Mediator;
+using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,32 @@ namespace QuanLyPhongTro
 {
     public partial class ucBillManagement : UserControl
     {
-        private readonly Guid _ownerId;
+        private Guid _ownerId;
         private readonly BillService _billService;
 
-        public ucBillManagement(Guid ownerId)
+        public ucBillManagement()
         {
             InitializeComponent();
-            _ownerId = ownerId;
             _billService = new BillService();
+            _ownerId = Guid.Empty;
+
+            Mediator.Instance.Register<Person>("UcBillManagement", (owner) =>
+            {
+                _ownerId = owner.Id;
+
+                cboMonth.SelectedItem = DateTime.Now.Month;
+                cboYear.SelectedItem = DateTime.Now.Year;
+
+                return Task.CompletedTask;
+            });
+            //_ownerId = ownerId;
+            //_billService = new BillService();
 
             this.Load += UcBillManagement_Load;
 
             // Gán sự kiện cho các nút filter
-            this.cboMonth.SelectedIndexChanged += (s, e) => LoadBillsByMonth();
-            this.cboYear.SelectedIndexChanged += (s, e) => LoadBillsByMonth();
+            this.cboMonth.SelectedIndexChanged += async (s, e) => await LoadBillsByMonth();
+            this.cboYear.SelectedIndexChanged += async (s, e) => await LoadBillsByMonth();
             this.btnShowUnpaid.Click += (s, e) => LoadUnpaidBills();
             this.btnGenerateBills.Click += BtnGenerateBills_Click;
         }
@@ -41,27 +54,27 @@ namespace QuanLyPhongTro
             cboYear.Items.Add(currentYear);
             cboYear.Items.Add(currentYear + 1);
 
-            // 3. Đặt giá trị mặc định là tháng/năm hiện tại
-            cboMonth.SelectedItem = DateTime.Now.Month;
-            cboYear.SelectedItem = currentYear;
+            
 
-            // 4. Tải dữ liệu (LoadData() sẽ được gọi từ Form cha)
         }
 
         /// <summary>
         /// (Public) Hàm này được Owner_TrangChu gọi
         /// </summary>
-        public void LoadData()
-        {
-            LoadBillsByMonth();
-        }
+        //public void LoadData()
+        //{
+        //    LoadBillsByMonth();
+        //}
 
         /// <summary>
         /// Tải HĐ theo tháng (chức năng chính)
         /// </summary>
-        private void LoadBillsByMonth()
+        private async Task LoadBillsByMonth()
         {
             if (cboMonth.SelectedItem == null || cboYear.SelectedItem == null)
+                return;
+
+            if (_ownerId == Guid.Empty)
                 return;
 
             int month = (int)cboMonth.SelectedItem;
@@ -69,6 +82,8 @@ namespace QuanLyPhongTro
 
             List<Bill> bills = _billService.GetBillsByMonth(month, year, _ownerId);
             PopulateBills(bills);
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -76,6 +91,8 @@ namespace QuanLyPhongTro
         /// </summary>
         private void LoadUnpaidBills()
         {
+            if (_ownerId == Guid.Empty) return;
+
             List<Bill> bills = _billService.GetUnpaidBills(_ownerId);
             PopulateBills(bills);
         }
@@ -95,8 +112,6 @@ namespace QuanLyPhongTro
             foreach (var bill in bills)
             {
                 var card = new ucBillCard(bill);
-
-                // Lắng nghe sự kiện từ Card
                 card.SendBillClicked += Card_OnSendBillClicked;
                 card.ExportPDFClicked += Card_OnExportPDFClicked;
 

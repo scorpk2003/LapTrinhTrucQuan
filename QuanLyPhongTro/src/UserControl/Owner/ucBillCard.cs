@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Model;
 using System;
 using System.Drawing;
 using System.Linq;
