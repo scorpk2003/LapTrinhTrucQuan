@@ -17,7 +17,8 @@ namespace QuanLyPhongTro.Data
         public DbSet<Service> Services { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<RoomImage> RoomImages { get; set; }
-
+        public DbSet<BillDetail> BillDetails { get; set; }
+        public DbSet<Report> Reports { get; set; }
         // Cấu hình kết nối đến SQL Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -25,7 +26,7 @@ namespace QuanLyPhongTro.Data
             {
 
                 optionsBuilder.UseSqlServer(
-                   @"Server=DESKTOP-J7JGKNG;Database=QLPT;User Id=sa;Password=1234;TrustServerCertificate=True;");
+                   @"Server=LAPTOP-79S96USJ\MSSQLSERVER2022;Database=QLPT;User Id=sa;Password=1234567;TrustServerCertificate=True;");
 
 
             }

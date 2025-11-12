@@ -25,5 +25,8 @@ namespace QuanLyPhongTro.Model
         public decimal? Price { get; set; }
         public decimal? Area { get; set; }
         public string Status { get; set; }
+
+        // Báo cho EF Core biết một Room có thể CÓ NHIỀU RoomImages
+        public ICollection<RoomImage> RoomImages { get; set; } = new List<RoomImage>();
     }
 }

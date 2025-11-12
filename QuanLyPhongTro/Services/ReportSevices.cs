@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.Services
 {
-    internal class RoomServicecs
+    internal class ReportSevices
     {
     }
 }

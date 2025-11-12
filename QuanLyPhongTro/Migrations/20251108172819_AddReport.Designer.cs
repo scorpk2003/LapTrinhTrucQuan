@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyPhongTro.Data;
 
@@ -11,9 +12,11 @@ using QuanLyPhongTro.Data;
 namespace QuanLyPhongTro.Migrations
 {
     [DbContext(typeof(AppContextDB))]
-    partial class AppContextDBModelSnapshot : ModelSnapshot
+    [Migration("20251108172819_AddReport")]
+    partial class AddReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,44 +211,6 @@ namespace QuanLyPhongTro.Migrations
                     b.ToTable("PersonDetails");
                 });
 
-            modelBuilder.Entity("QuanLyPhongTro.Model.Report", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("IdReporter")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IdRoom")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdReporter");
-
-                    b.HasIndex("IdRoom");
-
-                    b.ToTable("Reports");
-                });
-
             modelBuilder.Entity("QuanLyPhongTro.Model.Room", b =>
                 {
                     b.Property<Guid>("Id")
@@ -388,21 +353,6 @@ namespace QuanLyPhongTro.Migrations
                     b.Navigation("PersonDetail");
                 });
 
-            modelBuilder.Entity("QuanLyPhongTro.Model.Report", b =>
-                {
-                    b.HasOne("QuanLyPhongTro.Model.Person", "Reporter")
-                        .WithMany()
-                        .HasForeignKey("IdReporter");
-
-                    b.HasOne("QuanLyPhongTro.Model.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("IdRoom");
-
-                    b.Navigation("Reporter");
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("QuanLyPhongTro.Model.Room", b =>
                 {
                     b.HasOne("QuanLyPhongTro.Model.Person", "Owner")
@@ -415,7 +365,7 @@ namespace QuanLyPhongTro.Migrations
             modelBuilder.Entity("QuanLyPhongTro.Model.RoomImage", b =>
                 {
                     b.HasOne("QuanLyPhongTro.Model.Room", "Room")
-                        .WithMany("RoomImages")
+                        .WithMany()
                         .HasForeignKey("IdRoom");
 
                     b.Navigation("Room");
@@ -432,11 +382,6 @@ namespace QuanLyPhongTro.Migrations
                 {
                     b.Navigation("Person")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("QuanLyPhongTro.Model.Room", b =>
-                {
-                    b.Navigation("RoomImages");
                 });
 
             modelBuilder.Entity("QuanLyPhongTro.Model.Service", b =>
