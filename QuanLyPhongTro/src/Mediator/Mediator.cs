@@ -8,19 +8,21 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Mediator
 {
-    public class Mediator: IMediator
+    public class Mediator : IMediator
     {
         private readonly Dictionary<Type, List<(string key, Func<object, Task> Handler)>> _subscribers = new();
         private readonly Dictionary<string, Func<Control>> _factories = new();
         private readonly Dictionary<string, Control> _cacheControl = new();
         private readonly ConcurrentDictionary<Type, SemaphoreSlim> _locks = new();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+        private readonly HashSet<string> _formActive = new();
 
         private static readonly Lazy<Mediator> _instance = new Lazy<Mediator>(() => new Mediator());
         public static Mediator Instance => _instance.Value;
-        private readonly string _instanceId = Guid.NewGuid().ToString("N").Substring(0,8);
+        private readonly string _instanceId = Guid.NewGuid().ToString("N").Substring(0, 8);
         private readonly DateTime _createdAt = DateTime.Now;
-        private Mediator() {
+        private Mediator()
+        {
             var stackTrace = new StackTrace(true);
             Debug.WriteLine("\n\n\t\t╔════════════════════════════════════════════════════════════╗");
             Debug.WriteLine($"\t\t║ NEW MEDIATOR INSTANCE CREATED!");
@@ -50,7 +52,7 @@ namespace QuanLyPhongTro.src.Mediator
                 {
                     _subscribers[type] = new List<(string key, Func<object, Task> Handler)>();
                 }
-                if(_subscribers[type].Any(h => h.key == Key))
+                if (_subscribers[type].Any(h => h.key == Key))
                 {
                     throw new Exception("\n\t[Register] | Key already registered for " + type.Name + " Type | **Fail**");
                 }
@@ -70,14 +72,17 @@ namespace QuanLyPhongTro.src.Mediator
                 foreach (var key in _subscribers.Values)
                 {
                     key.RemoveAll(k => k.key == subriberKey);
+                    _cacheControl.Remove(subriberKey);
                 }
                 System.Diagnostics.Debug.WriteLine($"\n\t[Unregister] | Key='{subriberKey}' | **Success**");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception("\n\t[Unregister] | " + ex.Message + " | **Fail**");
             }
         }
-        public async Task Publish<TMessage>(string key, TMessage message) {
+        public async Task Publish<TMessage>(string key, TMessage message)
+        {
             var type = typeof(TMessage);
             var semaphore = _locks.GetOrAdd(type, _ => new SemaphoreSlim(1, 1));
             await semaphore.WaitAsync();
@@ -90,11 +95,11 @@ namespace QuanLyPhongTro.src.Mediator
 
                 if (!_subscribers.TryGetValue(type, out var handlers))
                 {
-                    throw new InvalidOperationException("\n\t[Publish] | No subscriber for " + type.Name +" Type | **Fail**");
+                    throw new InvalidOperationException("\n\t[Publish] | No subscriber for " + type.Name + " Type | **Fail**");
                 }
 
-                var target = handlers.Where(h => h.key == key).ToList();
-                if(!target.Any())
+                var target = handlers.Where(h => h.key.Contains(key)).ToList();
+                if (!target.Any())
                     throw new InvalidOperationException("\n\t[Publish] | No subscriber for Key " + key + " | **Fail**");
                 try
                 {
@@ -105,7 +110,7 @@ namespace QuanLyPhongTro.src.Mediator
                 {
                     throw new Exception("\n\t[Publish] | Handler " + ex.Message + " | **Fail**");
                 }
-                System.Diagnostics.Debug.WriteLine($"\n\t[Published] | Key='{key}', Type='{type.Name}' | **Success**");
+                System.Diagnostics.Debug.WriteLine($"\n\t[Publish] | Key='{key}', Type='{type.Name}' | **Success**");
             }
             catch (Exception ex)
             {
@@ -119,7 +124,7 @@ namespace QuanLyPhongTro.src.Mediator
         }
         public async Task PublishForm<TMessage>(string key, TMessage message, Action<Control> ControlReady)
         {
-            if(string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key))
                 throw new ArgumentException("\n\t[PublishForm] | Key is Empty | ", nameof(key));
             await Publish<TMessage>(key, message);
             try
@@ -190,7 +195,7 @@ namespace QuanLyPhongTro.src.Mediator
             {
                 if (string.IsNullOrEmpty(key))
                     throw new ArgumentException("\n\t[Register] - [Factory] | Key is Empty | ", nameof(key));
-                if(factory == null) 
+                if (factory == null)
                     throw new ArgumentNullException("\n\t[Register] - [Factory] | Factory is Null | ", nameof(factory));
                 System.Diagnostics.Debug.WriteLine($"[Register] - [Factory] | Key='{key}' | **Success**");
                 _factories[key] = factory;
@@ -206,7 +211,8 @@ namespace QuanLyPhongTro.src.Mediator
             _cacheControl.Remove(key);
             System.Diagnostics.Debug.WriteLine($"[Control] - [Clear] - [Cache] | **Success**");
         }
-        private async Task<Control?> AutoInit(Type MessageType, string key) {
+        private async Task<Control?> AutoInit(Type MessageType, string key)
+        {
             await _lock.WaitAsync();
             try
             {
@@ -219,43 +225,43 @@ namespace QuanLyPhongTro.src.Mediator
                 if (_factories.TryGetValue(key, out var factory))
                 {
 
-                    
-                        Control factoryInstance = null;
-                        if (Application.OpenForms.Count > 0)
+
+                    Control factoryInstance = null;
+                    if (Application.OpenForms.Count > 0)
+                    {
+                        var MainForm = Application.OpenForms[0];
+                        if (MainForm!.InvokeRequired)
                         {
-                            var MainForm = Application.OpenForms[0];
-                            if (MainForm!.InvokeRequired)
+                            await Task.Run(() =>
                             {
-                                await Task.Run(() =>
+                                MainForm.Invoke(new Action(() =>
                                 {
-                                    MainForm.Invoke(new Action(() =>
+                                    try
                                     {
-                                        try
-                                        {
-                                            factoryInstance = factory();
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            throw new Exception("\n\t[Auto-Init] | Thread UI: " + ex.Message + " | **Fail**");
-                                        }
-                                    }));
-                                });
-                            }
-                            else
-                            {
-                                factoryInstance = factory();
-                            }
+                                        factoryInstance = factory();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception("\n\t[Auto-Init] | Thread UI: " + ex.Message + " | **Fail**");
+                                    }
+                                }));
+                            });
                         }
                         else
                         {
                             factoryInstance = factory();
                         }
-                        if (factoryInstance == null)
-                            throw new Exception("\n\t[Auto-Init] - [Create] | Key not found |");
-                        _cacheControl[key] = factoryInstance;
-                        factoryInstance.Disposed += (_, _) => Unregister(factoryInstance.Name);
-                        System.Diagnostics.Debug.WriteLine($"\n\t[Auto-Init] | Key='{key}' factory='{factoryInstance.Name}' | **Success**");
-                        return factoryInstance;
+                    }
+                    else
+                    {
+                        factoryInstance = factory();
+                    }
+                    if (factoryInstance == null)
+                        throw new Exception("\n\t[Auto-Init] - [Create] | Key not found |");
+                    _cacheControl[key] = factoryInstance;
+                    factoryInstance.Disposed += (_, _) => Unregister(factoryInstance.Name);
+                    System.Diagnostics.Debug.WriteLine($"\n\t[Auto-Init] | Key='{key}' factory='{factoryInstance.Name}' | **Success**");
+                    return factoryInstance;
                 }
                 else
                 {
@@ -273,14 +279,18 @@ namespace QuanLyPhongTro.src.Mediator
             }
             return null;
         }
-        public void Dispose<TMessage>()
+        public bool TryLock(string key)
         {
-            var type = typeof(TMessage);
-            if (_subscribers.ContainsKey(type))
-            {
-                //_subscribers.Remove(type);
-                System.Diagnostics.Debug.WriteLine($"\n\t[Dispose] | Type='{type.Name}' | **Success**");
-            }
+            if (_formActive.Contains(key))
+                return false;
+            _formActive.Add(key);
+            System.Diagnostics.Debug.WriteLine($"\n\t[Lock] | Key='{key}' | **Success**");
+            return true;
+        }
+        public void ReleaseLock(string key)
+        {
+            _formActive.Remove(key);
+            System.Diagnostics.Debug.WriteLine($"\n\t[Release] [Lock] | Key='{key}' | **Success**");
         }
     }
 }

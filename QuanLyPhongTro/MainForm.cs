@@ -29,42 +29,43 @@ namespace QuanLyPhongTro
 
         private async void button1_Click(object sender, EventArgs a)
         {
-            await Mediator.Instance.PublishForm<string>("BillDetailControl", "Unpaid", async (control) =>
+            //await Mediator.Instance.PublishForm<string>("BillDetailControl", "Unpaid", async (control) =>
+            //{
+            //    await getData(control);
+            //});
+            int item = 5;
+            panel01.Controls.Clear();
+            foreach (Control control in panel01.Controls)
             {
-                await getData(control);
-            });
-            //int item = 5;
-            //panel01.Controls.Clear();
-            //foreach (Control control in panel01.Controls) {
-            //    control.Dispose();
-            //}
-            //List<Bill> bills = new List<Bill>();
-            //for (int i = 0; i < item; i++)
-            //{
-            //    Bill b = new Bill();
-            //    b.Id = Guid.NewGuid();
-            //    b.Status = "Unpaid";
-            //    b.TotalMoney = 100000 + i * 10000;
-            //    bills.Add(b);
-            //    System.Diagnostics.Debug.WriteLine($"Created Bill with Id: {b.Id}");
-            //}
-            //try
-            //{
-            //        await Mediator.Instance.PublishList<Bill>("BillControl", bills, (controls) =>
-            //        {
-            //            foreach (var control in controls)
-            //            {
-            //                panel01.SuspendLayout();
-            //                //Task.Delay(100).Wait();
-            //                panel01.Controls.Add(control);
-            //                panel01.ResumeLayout();
-            //            }
-            //        });
-            //    }
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("MainForm: " + ex.Message);
-            //}
+                control.Dispose();
+            }
+            List<Bill> bills = new List<Bill>();
+            for (int i = 0; i < item; i++)
+            {
+                Bill b = new Bill();
+                b.Id = Guid.NewGuid();
+                b.Status = "Unpaid";
+                b.TotalMoney = 100000 + i * 10000;
+                bills.Add(b);
+                System.Diagnostics.Debug.WriteLine($"Created Bill with Id: {b.Id}");
+            }
+            try
+            {
+                await Mediator.Instance.PublishList<Bill>("BillControl", bills, (controls) =>
+                {
+                    foreach (var control in controls)
+                    {
+                        panel01.SuspendLayout();
+                        //Task.Delay(100).Wait();
+                        panel01.Controls.Add(control);
+                        panel01.ResumeLayout();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("MainForm: " + ex.Message);
+            }
         }
 
         private async Task getData(Control component)

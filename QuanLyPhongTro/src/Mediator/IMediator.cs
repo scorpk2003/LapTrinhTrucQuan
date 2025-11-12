@@ -14,6 +14,7 @@ namespace QuanLyPhongTro.src.Mediator
         public void RegisterFactory(string key, Func<Control> factory);
         public Task PublishForm<TMessage>(string key, TMessage message, Action<Control> ControlReady);
         public Task PublishList<TMessage>(string key, IEnumerable<TMessage> message, Action<List<Control>> ControlReady);
-        public void Dispose<TMessage>();
+        public bool TryLock(string key);
+        public void ReleaseLock(string key);
     }
 }

@@ -15,6 +15,7 @@ namespace QuanLyPhongTro.src.Components
 {
     public partial class BillControl : UserControl
     {
+        private Bill bill_session;
         public BillControl()
         {
             InitializeComponent();
@@ -22,7 +23,9 @@ namespace QuanLyPhongTro.src.Components
             System.Diagnostics.Debug.WriteLine($"[-- {Name} --] Mediator has code: {Mediator.Mediator.Instance.GetHashCode()}");
             Mediator.Mediator.Instance.Register<Bill>(Name, async (bill) =>
             {
-                await GetBill(bill);
+                if (bill_session == null)
+                    bill_session = bill;
+                await GetBill(bill_session);
             });
         }
 
@@ -37,6 +40,7 @@ namespace QuanLyPhongTro.src.Components
 
                 // Bind Bill data here
 
+                name_renter.Text = bill.Id.ToString().Substring(0, 4);
 
                 // End Bind
 
@@ -63,10 +67,24 @@ namespace QuanLyPhongTro.src.Components
 
         }
 
-        private void Bill_Click(object sender, EventArgs e)
+        private async void Bill_Click(object sender, EventArgs e)
         {
-            name_renter.Text = name_renter.Text == "Clicked!" ? "UnCliked" : "Clicked!";
-            stat.BackColor = AppColors.Success.IsEmpty ? AppColors.Fail: AppColors.Success;
+            if (!Mediator.Mediator.Instance.TryLock("BillDetailControl")) return;
+            Form Detail = new();
+            Detail.Width = 450;
+            Detail.Height = 600;
+            BillDetail detail = new();
+            detail.Bill = bill_session;
+            await Mediator.Mediator.Instance.PublishForm<BillDetail>("BillDetailControl", detail, async (control) =>
+            {
+                Detail.Controls.Add(control);
+                Detail.FormClosed += (_, _) =>
+                {
+                    Mediator.Mediator.Instance.ReleaseLock("BillDetailControl");
+                };
+                Detail.Show();
+                await Task.CompletedTask;
+            });
             System.Diagnostics.Debug.WriteLine($"[-- {Name} --] Clicked BillControl");
         }
     }
