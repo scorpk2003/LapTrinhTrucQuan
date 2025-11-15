@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QuanLyPhongTro.src.Models;
 
-using QuanLyPhongTro.Models;
-
-namespace QuanLyPhongTro.Services
+namespace QuanLyPhongTro.src.Services
 {
     public class PersonService
     {

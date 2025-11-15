@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace QuanLyPhongTro.Models;
+namespace QuanLyPhongTro.src.Models;
 
 [Table("Service")]
 public partial class Service

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace QuanLyPhongTro.Models;
+namespace QuanLyPhongTro.src.Models;
 
 [Table("Notice")]
 public partial class Notice

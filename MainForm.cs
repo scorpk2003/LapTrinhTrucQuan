@@ -1,5 +1,6 @@
 ﻿using QuanLyPhongTro.Models;
 using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace QuanLyPhongTro.Models;
+namespace QuanLyPhongTro.src.Models;
 
 public partial class AppContextDB : DbContext
 {

@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using QuanLyPhongTro.Models;
+using QuanLyPhongTro.src.Models;
 
 #nullable disable
 
 namespace QuanLyPhongTro.Migrations
 {
     [DbContext(typeof(AppContextDB))]
-    [Migration("20251115094527_InitialCreate")]
-    partial class InitialCreate
+    partial class AppContextDBModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

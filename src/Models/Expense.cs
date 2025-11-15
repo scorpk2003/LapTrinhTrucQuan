@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ScottPlot;
 
 
-namespace QuanLyPhongTro.Models
+namespace QuanLyPhongTro.src.Models
 {
     public class Expense
     {

@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
-using QuanLyPhongTro.Models;
+using QuanLyPhongTro.src.Models;
 using System;
 
-namespace QuanLyPhongTro.Services
+namespace QuanLyPhongTro.src.Services
 {
     public class ReportService
     {

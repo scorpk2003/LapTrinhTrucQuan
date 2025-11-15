@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
-using QuanLyPhongTro.Models;
+using QuanLyPhongTro.src.Models;
 using System;
 using System.Collections.Generic;
 using System.IO; // Thêm để xử lý xóa file
 using System.Linq;
 using System.Windows.Forms; // Thêm để lấy Application.StartupPath
 
-namespace QuanLyPhongTro.Services
+namespace QuanLyPhongTro.src.Services
 {
     public class RoomService
     {

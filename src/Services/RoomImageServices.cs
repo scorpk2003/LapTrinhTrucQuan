@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuanLyPhongTro.Services
+namespace QuanLyPhongTro.src.Services
 {
     public class RoomImageServices
     {

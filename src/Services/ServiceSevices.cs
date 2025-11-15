@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using QuanLyPhongTro.Models;
+using QuanLyPhongTro.src.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace QuanLyPhongTro.Services
+namespace QuanLyPhongTro.src.Services
 {
     public class ServiceServices
     {
