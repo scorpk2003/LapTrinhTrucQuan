@@ -1,7 +1,6 @@
 ﻿using QuanLyPhongTro.src.Messages;
-using QuanLyPhongTro.src.Test;
-using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,7 +18,7 @@ namespace QuanLyPhongTro
 
         // Dùng Dictionary để lưu tên file (hiển thị) và đường dẫn gốc (để copy)
         private readonly Dictionary<string, string> _imagePaths = new Dictionary<string, string>();
-
+        private List<string> _copiedImagePaths = new List<string>();
         public FormCreateRoom(Guid ownerId)
         {
             InitializeComponent();
@@ -152,7 +151,7 @@ namespace QuanLyPhongTro
                 Address = txtAddress.Text,
                 Price = numPrice.Value,
                 Area = numArea.Value,
-                Status = "Còn trống",
+                Status = "Trống",
                 IdOwner = _ownerId
             };
 
@@ -179,6 +178,7 @@ namespace QuanLyPhongTro
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi lưu ảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CleanupCopiedImages();
                 return;
             }
 
@@ -190,22 +190,54 @@ namespace QuanLyPhongTro
                 // 4. Báo cho Owner_TrangChu biết qua Mediator
                 //await _mediator.Publish(new RoomCreatedMessage(newRoom));
                 MessageBox.Show("Tạo phòng thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                this.DialogResult = DialogResult.OK;
 
-                this.Close(); // Tự động đóng form (sẽ gọi OnFormClosing)
+                this.Close();
             }
             else
             {
                 MessageBox.Show("Tạo phòng thất bại! Vui lòng kiểm tra lại thông tin.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // (Nên có logic xóa các ảnh đã copy nếu việc lưu DB thất bại)
+                CleanupCopiedImages();
+                return;
             }
+        }
+
+        /// <summary>
+        /// (Hàm trợ giúp) Dọn dẹp các file ảnh đã được copy
+        /// (Được gọi khi việc lưu Room vào CSDL thất bại)
+        /// </summary>
+        private void CleanupCopiedImages()
+        {
+            if (_copiedImagePaths == null || _copiedImagePaths.Count == 0)
+            {
+                return;
+            }
+
+            foreach (string path in _copiedImagePaths)
+            {
+                try
+                {
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    
+                    Console.WriteLine($"Lỗi khi xóa ảnh (dọn dẹp): {ex.Message}");
+                }
+            }
+
+            _copiedImagePaths.Clear();
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            this.Close(); // Tự động đóng form (sẽ gọi OnFormClosing)
+            this.Close();
         }
 
-        // Đảm bảo giải phóng hình ảnh khi form đóng (dù nhấn Hủy hay Lưu)
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (picPreview.Image != null)

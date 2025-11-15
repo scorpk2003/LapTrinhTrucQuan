@@ -1,11 +1,11 @@
-﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Messages;
-using QuanLyPhongTro.src.Test;
-using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Login;
+using QuanLyPhongTro.src.Mediator;
 using System;
 using System.Collections.Generic;
-using System.Drawing; // Cần để dùng Color
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,260 +14,131 @@ namespace QuanLyPhongTro
 {
     public partial class Owner_TrangChu : Form
     {
-        // Dữ liệu
-        private List<Room> _roomList = new List<Room>(); // Danh sách phòng gốc
-        //private readonly Mediator _mediator = Mediator.Instance;
-        private readonly RoomService _roomService;
         private readonly Person _currentOwner;
+        private readonly RoomService _roomService;
+        private List<Room> _allRooms; 
 
-        // Event
-        public event EventHandler Logout;
-
-        // Các View (UserControls)
         private ucBillManagement _billControl;
         private ucContractManagement _contractControl;
         private ucReportManagement _reportControl;
         private ucIncidentManagement _incidentControl;
 
-        // Hằng số cho Placeholder
-        private const string PlaceholderText = "Nhập tên, địa chỉ, giá, diện tích...";
+        public event EventHandler Logout;
+
+        private const string PlaceholderText = "Nhập tên, địa chỉ...";
 
         public Owner_TrangChu(Person loggedInOwner)
         {
             InitializeComponent();
-
-            _roomService = new RoomService();
             _currentOwner = loggedInOwner;
-            lblOwnerName.Text = $"Welcome, {_currentOwner.Username}";
+            _roomService = new RoomService();
 
-            // Gán sự kiện cho các nút menu
+            this.Load += Owner_TrangChu_Load;
+
             btnHome.Click += BtnHome_Click;
             btnCreate.Click += BtnCreate_Click;
             btnBill.Click += BtnBill_Click;
             btnContract.Click += BtnContract_Click;
             btnReport.Click += BtnReport_Click;
-            btnIncidents.Click += BtnIncidents_Click; // Nút mới
+            btnIncidents.Click += BtnIncidents_Click;
             btnLogout.Click += BtnLogout_Click;
 
-            // Gán sự kiện "Instant Search"
-            this.txtSearch.TextChanged += TxtSearch_TextChanged;
-            this.btnSearch.Visible = false; // Ẩn nút tìm kiếm cũ
+            txtSearch.TextChanged += (s, e) => FilterAndDisplayRooms();
 
-            // Gán sự kiện cho Placeholder
             this.txtSearch.Enter += TxtSearch_Enter;
             this.txtSearch.Leave += TxtSearch_Leave;
             SetPlaceholder();
 
-            // Mediator
-            //_mediator.Register<RoomCreatedMessage>(this.Name, OnRoomCreated);
-            //this.FormClosed += (s, e) => _mediator.Unregister(this.Name);
+            nudPriceFrom.ValueChanged += (s, e) => FilterAndDisplayRooms();
+            nudPriceTo.ValueChanged += (s, e) => FilterAndDisplayRooms();
+            nudAreaFrom.ValueChanged += (s, e) => FilterAndDisplayRooms();
+            nudAreaTo.ValueChanged += (s, e) => FilterAndDisplayRooms();
+            cboFilterStatus.SelectedIndexChanged += (s, e) => FilterAndDisplayRooms();
 
-            lblNoResults.Visible = false;
-            ShowRoomView(); // Hiển thị View phòng
+            btnResetPrice.Click += BtnResetPrice_Click;
+            btnResetArea.Click += BtnResetArea_Click;
+            btnResetStatus.Click += BtnResetStatus_Click;
+        }
+
+        private void Owner_TrangChu_Load(object sender, EventArgs e)
+        {
+            lblOwnerName.Text = $"Chào mừng, {_currentOwner.Username}";
+
+            nudPriceFrom.Maximum = 999999999;
+            nudPriceTo.Maximum = 999999999;
+            nudAreaFrom.Maximum = 9999;
+            nudAreaTo.Maximum = 9999;
+
+            // Nạp ComboBox Trạng thái
+            cboFilterStatus.Items.Add("Tất cả");
+            cboFilterStatus.Items.Add("Trống");
+            cboFilterStatus.Items.Add("Đã thuê");
+            cboFilterStatus.SelectedIndex = 0; // Mặc định là "Tất cả"
+
+
+            // Tải trang chủ (danh sách phòng) khi khởi động
+            BtnHome_Click(sender, e);
+        }
+
+        #region Xử lý Menu Click và Mediator
+
+        // Quay về Trang chủ (Quản lý phòng)
+        private void BtnHome_Click(object sender, EventArgs e)
+        {
+            panelRoomManagement.Visible = true;
+            panelRoomManagement.BringToFront();
+
+            if (_billControl != null) _billControl.Visible = false;
+            if (_contractControl != null) _contractControl.Visible = false;
+            if (_reportControl != null) _reportControl.Visible = false;
+            if (_incidentControl != null) _incidentControl.Visible = false;
+
             LoadRooms();
         }
 
-        /// <summary>
-        /// Tải lại danh sách phòng khi có tin nhắn (từ FormCreateRoom)
-        /// </summary>
-        private Task OnRoomCreated(RoomCreatedMessage message)
-        {
-            if (message.NewRoom.IdOwner == _currentOwner.Id)
-            {
-                if (this.InvokeRequired) { this.Invoke(new Action(LoadRooms)); }
-                else { LoadRooms(); }
-            }
-            return Task.CompletedTask;
-        }
-
-        #region Xử lý Sự kiện Click Menu (Chuyển View)
-
-        /// <summary>
-        /// Hiển thị View (Panel) Quản lí Phòng
-        /// </summary>
-        private void ShowRoomView()
-        {
-            // Ẩn các control khác
-            if (_billControl != null) _billControl.Visible = false;
-            if (_contractControl != null) _contractControl.Visible = false;
-            if (_reportControl != null) _reportControl.Visible = false;
-            if (_incidentControl != null) _incidentControl.Visible = false;
-
-            // Hiển thị panel phòng
-            panelRoomManagement.Visible = true;
-            panelRoomManagement.BringToFront();
-        }
-
-        /// <summary>
-        // Hiển thị View (UserControl) Quản lí Hóa đơn
-        /// </summary>
-        private async Task ShowBillManagementView(Control control)
-        {
-            // Ẩn các control khác
-            panelRoomManagement.Visible = false;
-            if (_contractControl != null) _contractControl.Visible = false;
-            if (_reportControl != null) _reportControl.Visible = false;
-            if (_incidentControl != null) _incidentControl.Visible = false;
-
-            //if (_billControl == null)
-            //{
-            //    _billControl = new ucBillManagement(_currentOwner.Id);
-            //    _billControl.Dock = DockStyle.Fill;
-            //    this.Controls.Add(_billControl);
-            //}
-            if (control == null)
-                return;
-
-            if (!this.Controls.Contains(control))
-            {
-                _billControl = (ucBillManagement)control;
-                _billControl.Dock = DockStyle.Fill;
-                this.Controls.Add(_billControl);
-            }
-
-
-            _billControl.BringToFront();
-            _billControl.Visible = true;
-            //_billControl.LoadData();
-
-            await Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Hiển thị View (UserControl) Quản lí Hợp đồng
-        /// </summary>
-        private void ShowContractManagementView()
-        {
-            // Ẩn các control khác
-            panelRoomManagement.Visible = false;
-            if (_billControl != null) _billControl.Visible = false;
-            if (_reportControl != null) _reportControl.Visible = false;
-            if (_incidentControl != null) _incidentControl.Visible = false;
-
-            if (_contractControl == null)
-            {
-                _contractControl = new ucContractManagement();
-                _contractControl.Dock = DockStyle.Fill;
-                this.Controls.Add(_contractControl);
-            }
-
-            _contractControl.BringToFront();
-            _contractControl.Visible = true;
-            _contractControl.LoadData();
-        }
-
-        /// <summary>
-        /// Hiển thị View (UserControl) Báo cáo Thống kê
-        /// </summary>
-        private void ShowReportView()
-        {
-            // Ẩn các control khác
-            panelRoomManagement.Visible = false;
-            if (_billControl != null) _billControl.Visible = false;
-            if (_contractControl != null) _contractControl.Visible = false;
-            if (_incidentControl != null) _incidentControl.Visible = false;
-
-            if (_reportControl == null)
-            {
-                _reportControl = new ucReportManagement();
-                _reportControl.Dock = DockStyle.Fill;
-                this.Controls.Add(_reportControl);
-            }
-
-            _reportControl.BringToFront();
-            _reportControl.Visible = true;
-            _reportControl.LoadData();
-        }
-
-        /// <summary>
-        /// Hiển thị View (UserControl) Quản lí Sự cố
-        /// </summary>
-        private void ShowIncidentView()
-        {
-            // Ẩn các control khác
-            panelRoomManagement.Visible = false;
-            if (_billControl != null) _billControl.Visible = false;
-            if (_contractControl != null) _contractControl.Visible = false;
-            if (_reportControl != null) _reportControl.Visible = false;
-
-            if (_incidentControl == null)
-            {
-                _incidentControl = new ucIncidentManagement();
-                _incidentControl.Dock = DockStyle.Fill;
-                this.Controls.Add(_incidentControl);
-            }
-
-            _incidentControl.BringToFront();
-            _incidentControl.Visible = true;
-            _incidentControl.LoadData();
-        }
-
-        // --- Các hàm gọi ---
-
-        private void BtnHome_Click(object sender, EventArgs e) { ShowRoomView(); }
-
+        // Mở Form Thêm phòng
         private void BtnCreate_Click(object sender, EventArgs e)
         {
-            ShowRoomView(); // Hiển thị view phòng trước khi mở
-            FormCreateRoom frm = new FormCreateRoom(_currentOwner.Id);
-            frm.ShowDialog();
+            using (FormCreateRoom frm = new FormCreateRoom(_currentOwner.Id))
+            {
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadRooms();
+                }
+            }
         }
 
-        private void BtnBill_Click(object sender, EventArgs e) {
-            Mediator.Instance.PublishForm<Person>("UcBillManagement", _currentOwner, async (control) =>
+        private async void BtnBill_Click(object sender, EventArgs e)
+        {
+            await Mediator.Instance.PublishForm<Person>("UcBillManagement", _currentOwner, async (control) =>
             {
-                await ShowBillManagementView(control);
+                _billControl = (ucBillManagement)control;
+                await ShowView(control, _billControl);
             });
         }
-
         private async void BtnContract_Click(object sender, EventArgs e)
         {
-            Mediator.Instance.PublishForm<Person>("UcContractManagement", _currentOwner, async (control) =>
+            await Mediator.Instance.PublishForm<Person>("UcContractManagement", _currentOwner, async (control) =>
             {
                 _contractControl = (ucContractManagement)control;
                 await ShowView(control, _contractControl);
             });
         }
-
         private async void BtnReport_Click(object sender, EventArgs e)
         {
-            Mediator.Instance.PublishForm<Person>("UcReportManagement", _currentOwner, async (control) =>
+            await Mediator.Instance.PublishForm<Person>("UcReportManagement", _currentOwner, async (control) =>
             {
                 _reportControl = (ucReportManagement)control;
                 await ShowView(control, _reportControl);
             });
         }
-
         private async void BtnIncidents_Click(object sender, EventArgs e)
         {
-            Mediator.Instance.PublishForm<Person>("UcIncidentManagement", _currentOwner, async (control) =>
+            await Mediator.Instance.PublishForm<Person>("UcIncidentManagement", _currentOwner, async (control) =>
             {
                 _incidentControl = (ucIncidentManagement)control;
                 await ShowView(control, _incidentControl);
             });
-        }
-
-        private async Task ShowView<T>(Control control, T uc) where T : Control
-        {
-            // Ẩn các control khác
-            panelRoomManagement.Visible = false;
-            if (_billControl != null && uc != _billControl) _billControl.Visible = false;
-            if (_contractControl != null && uc != _contractControl) _contractControl.Visible = false;
-            if (_reportControl != null && uc != _reportControl) _reportControl.Visible = false;
-            if (_incidentControl != null && uc != _incidentControl) _incidentControl.Visible = false;
-
-            if (control == null) return;
-
-            // Thêm control vào Form nếu nó chưa có
-            if (!this.Controls.Contains(control))
-            {
-                control.Dock = DockStyle.Fill;
-                this.Controls.Add(control);
-            }
-
-            control.BringToFront();
-            control.Visible = true;
-            // Không cần 'await Task.CompletedTask;'
         }
 
         private void BtnLogout_Click(object sender, EventArgs e)
@@ -276,67 +147,182 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                Logout?.Invoke(this, EventArgs.Empty);
+                AuthForm loginForm = new AuthForm();
+                loginForm.Show();
                 this.Close();
             }
         }
 
+        /// <summary>
+        /// Hàm trợ giúp chung để hiển thị các UserControl
+        /// </summary>
+        private async Task ShowView<T>(Control control, T uc) where T : Control
+        {
+            panelRoomManagement.Visible = false;
+            if (_billControl != null && uc != _billControl) _billControl.Visible = false;
+            if (_contractControl != null && uc != _contractControl) _contractControl.Visible = false;
+            if (_reportControl != null && uc != _reportControl) _reportControl.Visible = false;
+            if (_incidentControl != null && uc != _incidentControl) _incidentControl.Visible = false;
+            if (control == null) return;
+            if (!this.Controls.Contains(control))
+            {
+                control.Dock = DockStyle.Fill;
+                this.Controls.Add(control);
+            }
+            control.BringToFront();
+            control.Visible = true;
+        }
+
         #endregion
 
-        #region Xử lý Phòng (Tải, Hiển thị, Click)
+        #region Xử lý Phòng (Tải, Vẽ và Lọc/Tìm kiếm)
 
         /// <summary>
         /// Tải danh sách phòng gốc từ CSDL
         /// </summary>
         private void LoadRooms()
         {
-            _roomList = _roomService.GetAllRoomsByOwner(_currentOwner.Id);
+            _allRooms = _roomService.GetAllRoomsByOwner(_currentOwner.Id);
             FilterAndDisplayRooms();
         }
 
-        /// <summary>
-        /// Tạo 1 Button cho phòng (VỚI KÍCH THƯỚC LỚN)
-        /// </summary>
-        private void AddRoomButtonUI(Room room)
+        private void BtnResetPrice_Click(object sender, EventArgs e)
         {
-            Button btn = new Button
-            {
-                Size = new Size(450, 494),
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                TextAlign = ContentAlignment.TopLeft,
-                Padding = new Padding(15),
-                Tag = room,
-                Text = $"Phòng: {room.Name}\n" +
-                       $"Giá: {room.Price:N0} VND\n" +
-                       $"Diện tích: {room.Area} m²\n" +
-                       $"Địa chỉ: {room.Address}\n\n" +
-                       $"Trạng thái: {room.Status}"
-            };
-
-            if (room.Status.Contains("Đã thuê"))
-            {
-                btn.BackColor = Color.FromArgb(255, 192, 192);
-                btn.ForeColor = Color.DarkRed;
-            }
-            else
-            {
-                btn.BackColor = Color.FromArgb(192, 255, 192);
-                btn.ForeColor = Color.DarkGreen;
-            }
-
-            btn.Click += BtnRoom_Click;
-            flowPanelRooms.Controls.Add(btn);
+            nudPriceFrom.Value = 0;
+            nudPriceTo.Value = 0;
+        }
+        private void BtnResetArea_Click(object sender, EventArgs e)
+        {
+            nudAreaFrom.Value = 0;
+            nudAreaTo.Value = 0;
+        }
+        private void BtnResetStatus_Click(object sender, EventArgs e)
+        {
+            cboFilterStatus.SelectedIndex = 0; // Set về "Tất cả"
         }
 
         /// <summary>
-        /// Mở FormInfoRoom khi click vào phòng
+        /// Hàm LỌC và TÌM KIẾM (Đã nâng cấp)
         /// </summary>
+        private void FilterAndDisplayRooms()
+        {
+            if (_allRooms == null) return;
+
+            IEnumerable<Room> filteredList = _allRooms;
+
+            // 1. Lấy giá trị bộ lọc
+            decimal priceFrom = nudPriceFrom.Value;
+            decimal priceTo = nudPriceTo.Value;
+            decimal areaFrom = nudAreaFrom.Value;
+            decimal areaTo = nudAreaTo.Value;
+            string status = cboFilterStatus.SelectedItem?.ToString() ?? "Tất cả";
+            string keyword = txtSearch.Text.ToLower().Trim();
+
+            // 2. Áp dụng BỘ LỌC
+            if (status != "Tất cả")
+            {
+                filteredList = filteredList.Where(r => r.Status == status);
+            }
+            if (priceTo > 0 && priceTo >= priceFrom)
+            {
+                filteredList = filteredList.Where(r => r.Price >= priceFrom && r.Price <= priceTo);
+            }
+            if (areaTo > 0 && areaTo >= areaFrom)
+            {
+                filteredList = filteredList.Where(r => r.Area.HasValue && r.Area >= (int)areaFrom && r.Area <= (int)areaTo);
+            }
+
+            // 3. Áp dụng TÌM KIẾM (trên danh sách đã lọc)
+            if (!string.IsNullOrEmpty(keyword) && keyword != PlaceholderText.ToLower())
+            {
+                filteredList = filteredList.Where(r =>
+                    (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
+                    (r.Address != null && r.Address.ToLower().Contains(keyword)) ||
+                    (r.Price.HasValue && r.Price.Value.ToString("N0").Contains(keyword))
+                );
+            }
+
+            // 4. Hiển thị kết quả
+            DisplayRooms(filteredList.ToList());
+        }
+
+
+
+        /// <summary>
+        /// Vẽ các Card phòng lên giao diện
+        /// </summary>
+        private void DisplayRooms(List<Room> rooms)
+        {
+            flowPanelRooms.Controls.Clear();
+
+            if (rooms.Count == 0)
+            {
+                lblNoResults.Visible = true;
+                return;
+            }
+            lblNoResults.Visible = false;
+
+            foreach (var room in rooms)
+            {
+                AddRoomButtonUI(room);
+            }
+        }
+
+        private void AddRoomButtonUI(Room room)
+        {
+            Panel card = new Panel
+            {
+                Size = new Size(450, 534),
+                BackColor = room.Status.Contains("Trống") ? Color.White : Color.FromArgb(192, 255, 192),
+                Margin = new Padding(10),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = $"{room.Name}\n",
+                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                ForeColor = room.Status.Contains("Trống") ? Color.Black : Color.DarkGreen,
+                AutoSize = false,
+                Size = new Size(430, 50),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(10, 10)
+            };
+            card.Controls.Add(lblTitle);
+
+            Button btn = new Button
+            {
+                Size = new Size(430, 460),
+                Location = new Point(10, 70),
+                Padding = new Padding(10),
+                Tag = room,
+                Font = new Font("Segoe UI", 12F),
+                TextAlign = ContentAlignment.TopLeft,
+                BackColor = card.BackColor,
+                ForeColor = room.Status.Contains("Trống") ? Color.Black : Color.DarkGreen,
+                UseCompatibleTextRendering = true,
+                Text =
+                    $"Giá: {room.Price:N0} VND\n" +
+                    $"Diện tích: {room.Area} m²\n" +
+                    $"Địa chỉ: {room.Address}\n\n" +
+                    $"Trạng thái: {room.Status}"
+            };
+
+            btn.Click += BtnRoom_Click;
+            card.Controls.Add(btn);
+
+            flowPanelRooms.Controls.Add(card);
+        }
+
+
         private void BtnRoom_Click(object sender, EventArgs e)
         {
-            Button btnClicked = (Button)sender;
-            Room roomClicked = (Room)btnClicked.Tag;
+            Control clickedControl = (Control)sender;
+            Room roomClicked = (Room)clickedControl.Tag;
 
-            using (FormInfoRoom frm = new FormInfoRoom(roomClicked, _currentOwner, isRenter: false))
+            if (roomClicked == null) return;
+
+            using (FormInfoRoom frm = new FormInfoRoom(roomClicked, _currentOwner, false))
             {
                 frm.ShowDialog();
                 if (frm.DataChanged)
@@ -346,22 +332,38 @@ namespace QuanLyPhongTro
             }
         }
 
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            Room room = (sender as Button).Tag as Room;
+            if (room == null) return;
+
+            using (FormEditRoom frm = new FormEditRoom(room))
+            {
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadRooms();
+                }
+            }
+        }
+        private void BtnView_Click(object sender, EventArgs e)
+        {
+            Room room = (sender as Button).Tag as Room;
+            if (room == null) return;
+
+            using (FormInfoRoom frm = new FormInfoRoom(room, _currentOwner, false))
+            {
+                frm.ShowDialog();
+            }
+        }
+
         #endregion
 
-        #region Xử lý Tìm kiếm (Placeholder + Instant Search)
-
-        /// <summary>
-        /// Đặt văn bản giữ chỗ và đổi màu
-        /// </summary>
+        #region Xử lý Tìm kiếm (Placeholder)
         private void SetPlaceholder()
         {
             txtSearch.Text = PlaceholderText;
             txtSearch.ForeColor = Color.Gray;
         }
-
-        /// <summary>
-        /// Khi click vào TextBox: Xóa placeholder
-        /// </summary>
         private void TxtSearch_Enter(object sender, EventArgs e)
         {
             if (txtSearch.Text == PlaceholderText)
@@ -370,79 +372,11 @@ namespace QuanLyPhongTro
                 txtSearch.ForeColor = Color.Black;
             }
         }
-
-        /// <summary>
-        /// Khi click ra ngoài TextBox: Đặt lại placeholder nếu rỗng
-        /// </summary>
         private void TxtSearch_Leave(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtSearch.Text))
             {
                 SetPlaceholder();
-            }
-        }
-
-        /// <summary>
-        /// Hàm này được gọi mỗi khi người dùng gõ chữ
-        /// </summary>
-        private void TxtSearch_TextChanged(object sender, EventArgs e)
-        {
-            FilterAndDisplayRooms();
-        }
-
-        /// <summary>
-        /// Hàm tìm kiếm và hiển thị kết quả (Đã sửa lỗi Giá & Diện tích)
-        /// </summary>
-        private void FilterAndDisplayRooms()
-        {
-            string keyword = txtSearch.Text.Trim();
-            if (keyword == PlaceholderText)
-            {
-                keyword = "";
-            }
-            keyword = keyword.ToLower();
-
-            List<Room> filteredList;
-
-            if (string.IsNullOrEmpty(keyword))
-            {
-                filteredList = _roomList; // Không tìm gì -> hiển thị tất cả
-            }
-            else
-            {
-                // Tìm theo Tên, Địa chỉ, Trạng thái, Giá, hoặc Diện tích
-                filteredList = _roomList.Where(r =>
-                    (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
-                    (r.Address != null && r.Address.ToLower().Contains(keyword)) ||
-                    (r.Status != null && r.Status.ToLower().Contains(keyword)) ||
-
-                    (r.Price.HasValue &&
-                        (r.Price.Value.ToString().Contains(keyword) ||
-                         r.Price.Value.ToString("n0").Contains(keyword))
-                    ) ||
-
-                    (r.Area.HasValue &&
-                         r.Area.Value.ToString().Contains(keyword))
-                ).ToList();
-            }
-
-            // Dọn dẹp và hiển thị
-            flowPanelRooms.Controls.Clear();
-            foreach (var room in filteredList)
-            {
-                AddRoomButtonUI(room);
-            }
-
-            // Xử lý Label "Không tìm thấy"
-            if (filteredList.Count == 0 && !string.IsNullOrEmpty(keyword))
-            {
-                lblNoResults.Visible = true;
-                flowPanelRooms.Visible = false;
-            }
-            else
-            {
-                lblNoResults.Visible = false;
-                flowPanelRooms.Visible = true;
             }
         }
 

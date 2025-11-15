@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
 using System.Drawing;
 using System.IO;

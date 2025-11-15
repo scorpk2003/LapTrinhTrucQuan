@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,7 +11,7 @@ namespace QuanLyPhongTro
 {
     public partial class FormInfoRoom : Form
     {
-        private Room _roomToView; 
+        private Room _roomToView;
         private readonly Person _user;
         private readonly bool _isRenterView;
 
@@ -26,7 +26,7 @@ namespace QuanLyPhongTro
         public FormInfoRoom(Room room, Person user, bool isRenter = false)
         {
             InitializeComponent();
-            _roomToView = room; 
+            _roomToView = room;
             _user = user;
             _isRenterView = isRenter;
 
@@ -39,11 +39,11 @@ namespace QuanLyPhongTro
             this.btnClose.Click += (s, e) => this.Close();
             this.btnPrevImage.Click += BtnPrevImage_Click;
             this.btnNextImage.Click += BtnNextImage_Click;
+            this.btnBook.Click += BtnBook_Click; 
         }
 
         private void FormInfoRoom_Load(object sender, EventArgs e)
         {
-            // Tải lại dữ liệu phòng MỚI NHẤT từ CSDL (bao gồm cả ảnh)
             _roomToView = _roomService.GetRoomWithDetails(_roomToView.Id);
             if (_roomToView == null)
             {
@@ -53,20 +53,40 @@ namespace QuanLyPhongTro
             }
 
 
-            // Ẩn nút nếu là Renter
             if (_isRenterView)
             {
+                // 1. LÀ RENTER
                 btnEdit.Visible = false;
                 btnDelete.Visible = false;
-                btnClose.Location = new Point(
-                    (this.ClientSize.Width - btnClose.Width) / 2,
-                    btnClose.Location.Y);
+
+                // Chỉ hiện nút Đặt phòng NẾU phòng còn trống
+                if (_roomToView.Status == "Còn trống" || _roomToView.Status == "Trống")
+                {
+                    btnBook.Visible = true;
+                    // Đặt nút Đóng cạnh nút Đặt
+                    btnClose.Location = new Point(btnBook.Location.X + btnBook.Width + 15, btnBook.Location.Y);
+                }
+                else // Phòng đã thuê
+                {
+                    btnBook.Visible = false;
+                    // Căn giữa nút Đóng
+                    btnClose.Location = new Point(
+                        (this.ClientSize.Width - btnClose.Width) / 2,
+                        btnClose.Location.Y);
+                }
+            }
+            else
+            {
+                // 2. LÀ OWNER
+                btnEdit.Visible = true;
+                btnDelete.Visible = true;
+                btnBook.Visible = false; 
             }
 
             // 1. Tải thông tin phòng 
             lblRoomName.Text = _roomToView.Name;
             lblPrice.Text = $"Giá: {_roomToView.Price:N0} VND";
-            lblArea.Text = $"Diện tích: {_roomToView.Area} m²";
+            lblArea.Text = $"Diện tích: {_roomToView.Area:N2} m²";
             lblAddress.Text = $"Địa chỉ: {_roomToView.Address}";
             lblStatus.Text = $"Trạng thái: {_roomToView.Status}";
 
@@ -89,7 +109,7 @@ namespace QuanLyPhongTro
                 grpContractInfo.Visible = false;
             }
 
-            // 3. Tải hình ảnh (từ đối tượng _roomToView đã được cập nhật)
+            // 3. Tải hình ảnh
             LoadRoomImages();
         }
 
@@ -107,7 +127,6 @@ namespace QuanLyPhongTro
             }
             else
             {
-                // Dọn dẹp ảnh cũ (nếu phòng bị xóa hết ảnh)
                 if (picRoomPreview.Image != null) picRoomPreview.Image.Dispose();
                 picRoomPreview.Image = null;
                 lblImageCounter.Text = "0 / 0";
@@ -120,7 +139,9 @@ namespace QuanLyPhongTro
         {
             if (_roomImages.Count == 0) return;
             RoomImage img = _roomImages[index];
-            string fullPath = Path.Combine(Application.StartupPath, img.ImageUrl);
+
+            string fullPath = img.ImageUrl;
+
             if (File.Exists(fullPath))
             {
                 try
@@ -156,7 +177,22 @@ namespace QuanLyPhongTro
         }
         #endregion
 
-        #region Xử lý Nút Sửa/Xóa
+        private void BtnBook_Click(object sender, EventArgs e)
+        {
+            if (btnBook.Text == "Đã gửi yêu cầu") return;
+
+            using (FormRequestContract frm = new FormRequestContract(_user, _roomToView))
+            {
+                if (frm.ShowDialog(this) == DialogResult.OK)
+                {
+                    btnBook.Enabled = false;
+                    btnBook.Text = "Đã gửi yêu cầu";
+                    btnBook.BackColor = Color.Gray;
+                }
+            }
+        }
+
+        #region Xử lý Nút Sửa/Xóa (Owner)
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
@@ -165,7 +201,6 @@ namespace QuanLyPhongTro
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
                     this.DataChanged = true;
-
                     FormInfoRoom_Load(null, null);
                 }
             }
@@ -173,7 +208,7 @@ namespace QuanLyPhongTro
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa (ẩn) phòng '{_roomToView.Name}' không?",
+            var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa phòng '{_roomToView.Name}' không?",
                                           "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {

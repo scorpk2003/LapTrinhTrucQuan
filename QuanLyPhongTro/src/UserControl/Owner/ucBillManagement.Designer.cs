@@ -18,6 +18,7 @@
         private void InitializeComponent()
         {
             this.panelTop = new System.Windows.Forms.Panel();
+            this.btnConfirmPayment = new System.Windows.Forms.Button();
             this.btnGenerateBills = new System.Windows.Forms.Button();
             this.btnShowUnpaid = new System.Windows.Forms.Button();
             this.cboYear = new System.Windows.Forms.ComboBox();
@@ -30,6 +31,7 @@
             // panelTop
             // 
             this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.Controls.Add(this.btnConfirmPayment);
             this.panelTop.Controls.Add(this.btnGenerateBills);
             this.panelTop.Controls.Add(this.btnShowUnpaid);
             this.panelTop.Controls.Add(this.cboYear);
@@ -40,6 +42,18 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1200, 70);
             this.panelTop.TabIndex = 0;
+            // 
+            // btnConfirmPayment
+            // 
+            this.btnConfirmPayment.BackColor = System.Drawing.Color.Green;
+            this.btnConfirmPayment.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnConfirmPayment.ForeColor = System.Drawing.Color.White;
+            this.btnConfirmPayment.Location = new System.Drawing.Point(770, 15);
+            this.btnConfirmPayment.Name = "btnConfirmPayment";
+            this.btnConfirmPayment.Size = new System.Drawing.Size(170, 40);
+            this.btnConfirmPayment.TabIndex = 5;
+            this.btnConfirmPayment.Text = "Xác nhận TT";
+            this.btnConfirmPayment.UseVisualStyleBackColor = false;
             // 
             // btnGenerateBills
             // 
@@ -124,5 +138,6 @@
         private System.Windows.Forms.ComboBox cboMonth;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnGenerateBills;
+        private System.Windows.Forms.Button btnConfirmPayment;
     }
 }

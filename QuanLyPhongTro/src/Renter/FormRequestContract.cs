@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
 using System.Windows.Forms;
 
@@ -9,23 +9,17 @@ namespace QuanLyPhongTro
     {
         private readonly Person _renter;
         private readonly Room _room;
-        //private readonly PersonService _personService;
         private readonly BookingRequestService _requestService;
 
         public FormRequestContract(Person renter, Room room)
         {
             InitializeComponent();
-
             _renter = renter;
             _room = room;
-            //_personService = new PersonService();
             _requestService = new BookingRequestService();
 
-            // Gán sự kiện
             this.btnSend.Click += BtnSend_Click;
             this.btnCancel.Click += (s, e) => this.Close();
-
-            // Tải dữ liệu
             LoadDefaultData();
         }
 
@@ -33,7 +27,6 @@ namespace QuanLyPhongTro
         {
             lblRoomName.Text = _room.Name;
             lblRenterName.Text = _renter.Username;
-
             dtpStartDate.Value = DateTime.Now.Date.AddDays(1);
             numDuration.Value = 12;
         }
@@ -57,6 +50,12 @@ namespace QuanLyPhongTro
                 Note = txtNote.Text,
                 Status = "Pending"
             };
+
+            System.Diagnostics.Debug.WriteLine($"=== DEBUG REQUEST ===");
+            System.Diagnostics.Debug.WriteLine($"IdRenter: {_renter.Id}");
+            System.Diagnostics.Debug.WriteLine($"IdRoom: {_room.Id}");
+            System.Diagnostics.Debug.WriteLine($"Renter Object: {_renter}");
+            System.Diagnostics.Debug.WriteLine($"Room Object: {_room}");
 
             bool success = _requestService.CreateRequest(request);
             if (success)

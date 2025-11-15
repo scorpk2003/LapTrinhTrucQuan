@@ -1,34 +1,50 @@
-﻿using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Mediator; // <-- Thêm
-using QuanLyPhongTro.src.Test.Services;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.src.Mediator;
+using QuanLyPhongTro.Services;
 using ScottPlot; // v5
 using System;
 using System.Linq;
-using System.Threading.Tasks; // <-- Thêm
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace QuanLyPhongTro
 {
     public partial class ucMyRoom : UserControl
     {
-        private Contract _contract; // <-- Xóa readonly
+        private Contract _contract;
         private readonly BillService _billService;
 
-        // --- SỬA: DÙNG CONSTRUCTOR RỖNG ---
+        // (Biến để lưu hóa đơn cần thanh toán)
+        private Bill _latestBill;
+
         public ucMyRoom()
         {
             InitializeComponent();
             _billService = new BillService();
 
-            // Đăng ký nhận Contract từ Mediator
             Mediator.Instance.Register<Contract>("UcMyRoom", (contract) =>
             {
                 _contract = contract;
-                LoadData(); // Tải dữ liệu khi nhận được Contract
+                // Kiểm tra xem control đã load xong chưa
+                if (this.IsHandleCreated)
+                {
+                    LoadData();
+                }
                 return Task.CompletedTask;
             });
 
+            // Gán sự kiện Load (để LoadData nếu Mediator chạy trước)
+            this.Load += UcMyRoom_Load;
             this.btnPay.Click += BtnPay_Click;
+        }
+
+        private void UcMyRoom_Load(object sender, EventArgs e)
+        {
+            if (_contract != null)
+            {
+                LoadData();
+            }
         }
 
         // Hàm LoadData chung
@@ -36,13 +52,18 @@ namespace QuanLyPhongTro
         {
             if (_contract == null) return;
 
+            // Kiểm tra an toàn (sửa lỗi Guid?)
+            if (!_contract.IdRenter.HasValue || !_contract.IdRoom.HasValue)
+            {
+                MessageBox.Show("Lỗi: Hợp đồng không hợp lệ.");
+                return;
+            }
+
             LoadRoomInfo();
             LoadContractInfo();
             LoadLatestBill();
             LoadSpendingChart();
         }
-
-        // (Không cần hàm Load, Mediator sẽ kích hoạt LoadData)
 
         private void LoadRoomInfo()
         {
@@ -62,37 +83,96 @@ namespace QuanLyPhongTro
 
         private void LoadLatestBill()
         {
-            // (Code Demo - Cần thay thế bằng logic BillService thật)
-            int month = DateTime.Now.Month;
-            int year = DateTime.Now.Year;
+            _latestBill = _billService.GetLatestUnpaidBill(_contract.IdRenter.Value);
 
-            lblBillTitle.Text = $"Hóa đơn tháng {month}/{year}";
-            lblBillTotal.Text = "Tổng: 1,850,000 VND";
-            lblBillStatus.Text = "Trạng thái: Chưa thanh toán";
-            btnPay.Enabled = true;
+            if (_latestBill == null)
+            {
+                // Không có hóa đơn nào
+                lblBillTitle.Text = "Không có hóa đơn";
+                lblBillTotal.Text = "Tổng: 0 VND";
+                lblBillStatus.Text = "Trạng thái: Đã thanh toán";
+                btnPay.Enabled = false;
+                btnPay.Tag = null; // Xóa tag
+            }
+            else
+            {
+                // Có hóa đơn
+                lblBillTitle.Text = $"Hóa đơn tháng {_latestBill.PaymentDate:MM/yyyy}";
+                lblBillTotal.Text = $"Tổng: {_latestBill.TotalMoney:N0} VND";
+                lblBillStatus.Text = $"Trạng thái: {_latestBill.Status}";
+                btnPay.Enabled = true;
+                btnPay.Tag = _latestBill.Id; // Lưu ID hóa đơn vào Tag
+            }
         }
 
         private void LoadSpendingChart()
         {
-            // (Code Demo)
             spendingChart.Plot.Clear();
-            double[] values = { 1.8, 1.9, 1.85, 2.0, 1.8, 1.9, 1.85, 2.0, 1.8, 1.9, 1.85, 2.0 };
+
+            var spendingData = _billService.GetMonthlySpending(_contract.IdRenter.Value);
+
+            double[] values = new double[12];
+            string[] labels = new string[12];
+            DateTime monthIterator = DateTime.Now.AddMonths(-11); 
+
+            for (int i = 0; i < 12; i++)
+            {
+                string key = $"{monthIterator.Month}/{monthIterator.Year}";
+
+                labels[i] = $"{monthIterator:MM/yy}";
+
+                if (spendingData.TryGetValue(key, out decimal total))
+                {
+                    values[i] = (double)(total / 1000000);
+                }
+                else
+                {
+                    values[i] = 0;
+                }
+
+                // Tăng lên tháng tiếp theo
+                monthIterator = monthIterator.AddMonths(1);
+            }
+
+            // 3. Vẽ biểu đồ
             double[] positions = Enumerable.Range(0, 12).Select(i => (double)i).ToArray();
             var bars = spendingChart.Plot.Add.Bars(positions, values);
+            bars.Color = ScottPlot.Color.FromHex("#3498db");
 
-            string[] labels = { "T11", "T12", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10" };
             spendingChart.Plot.Axes.Bottom.SetTicks(positions, labels);
-            spendingChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5); // Căn giữa
+            spendingChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5); 
             try { spendingChart.Plot.Axes.Left.Label.Text = "Chi tiêu (Triệu VND)"; } catch { }
-            try { spendingChart.Plot.Title("Thống kê chi tiêu (Demo)"); } catch { }
+            try { spendingChart.Plot.Title("Thống kê chi tiêu (12 tháng qua)"); } catch { }
             spendingChart.Refresh();
         }
 
         private void BtnPay_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Mở cổng thanh toán (Momo, ZaloPay...)\nĐây là tính năng Demo.", "Thanh toán");
-            lblBillStatus.Text = "Trạng thái: Đã thanh toán";
-            btnPay.Enabled = false;
+            // Kiểm tra xem có hóa đơn trong Tag không
+            if (btnPay.Tag == null || !(btnPay.Tag is Guid))
+            {
+                MessageBox.Show("Không tìm thấy hóa đơn để thanh toán.");
+                return;
+            }
+
+            Guid billId = (Guid)btnPay.Tag;
+
+            // TODO: Mở cổng thanh toán (Momo, ZaloPay...)
+
+            var confirm = MessageBox.Show("Bạn có muốn thanh toán hóa đơn này không? (Demo)", "Xác nhận thanh toán", MessageBoxButtons.YesNo);
+            if (confirm == DialogResult.No) return;
+
+            bool success = _billService.UpdateBillStatus(billId, "Paid");
+
+            if (success)
+            {
+                MessageBox.Show("Thanh toán thành công!");
+                LoadLatestBill();
+            }
+            else
+            {
+                MessageBox.Show("Thanh toán thất bại.");
+            }
         }
     }
 }

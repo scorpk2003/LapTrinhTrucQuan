@@ -1,5 +1,6 @@
 # VS local settings
 .vs/
+*.patch
 
 # Build outputs
 bin/
@@ -49,5 +50,5 @@ packages/
 # Publish output
 publish/
 
-
 QuanLyPhongTro/src/Test/
+

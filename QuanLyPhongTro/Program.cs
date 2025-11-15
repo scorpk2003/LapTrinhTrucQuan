@@ -1,10 +1,9 @@
 ﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Test;
+using QuanLyPhongTro.Model;
 using System;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Threading;
-using System.Globalization;
 
 namespace QuanLyPhongTro
 {

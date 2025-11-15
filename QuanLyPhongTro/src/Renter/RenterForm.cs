@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using QuanLyPhongTro.src.Test.Model;
+using QuanLyPhongTro.Model;
 
 namespace QuanLyPhongTro
 {

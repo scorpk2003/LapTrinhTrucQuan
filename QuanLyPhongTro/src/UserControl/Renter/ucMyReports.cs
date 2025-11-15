@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.src.Test.Model;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,7 +10,7 @@ namespace QuanLyPhongTro
     public partial class ucMyReports : UserControl
     {
         private readonly ReportService _reportService;
-        private Contract? _contract;
+        private Contract _contract;
 
         public ucMyReports()
         {
@@ -48,9 +48,12 @@ namespace QuanLyPhongTro
 
         public void LoadData()
         {
-            if (_contract == null) return;
+            // Sửa lỗi Guid?: Kiểm tra .HasValue
+            if (_contract == null || !_contract.IdRenter.HasValue) return;
 
+            // Dùng .Value để lấy Guid thật
             var reports = _reportService.GetReportsByRenter(_contract.IdRenter.Value);
+
             dgvReports.Rows.Clear();
 
             foreach (var report in reports)

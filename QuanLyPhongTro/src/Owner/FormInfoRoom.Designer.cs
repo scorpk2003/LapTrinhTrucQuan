@@ -36,6 +36,7 @@
             this.btnPrevImage = new System.Windows.Forms.Button();
             this.picRoomPreview = new System.Windows.Forms.PictureBox();
             this.panelHeader = new System.Windows.Forms.Panel();
+            this.btnBook = new System.Windows.Forms.Button();
             this.grpContractInfo.SuspendLayout();
             this.grpRoomInfo.SuspendLayout();
             this.grpImages.SuspendLayout();
@@ -160,6 +161,7 @@
             this.lblAddress.AutoSize = true;
             this.lblAddress.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.lblAddress.Location = new System.Drawing.Point(15, 125);
+            this.lblAddress.MaximumSize = new System.Drawing.Size(380, 0); 
             this.lblAddress.Name = "lblAddress";
             this.lblAddress.Size = new System.Drawing.Size(102, 30);
             this.lblAddress.TabIndex = 7;
@@ -261,6 +263,19 @@
             this.panelHeader.Size = new System.Drawing.Size(878, 100);
             this.panelHeader.TabIndex = 12;
             // 
+            // btnBook
+            // 
+            this.btnBook.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBook.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(128)))), ((int)(((byte)(185)))));
+            this.btnBook.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btnBook.ForeColor = System.Drawing.Color.White;
+            this.btnBook.Location = new System.Drawing.Point(440, 640);
+            this.btnBook.Name = "btnBook";
+            this.btnBook.Size = new System.Drawing.Size(260, 50);
+            this.btnBook.TabIndex = 13;
+            this.btnBook.Text = "Gửi yêu cầu thuê";
+            this.btnBook.UseVisualStyleBackColor = false;
+            // 
             // FormInfoRoom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -275,6 +290,7 @@
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.grpContractInfo);
             this.Controls.Add(this.panelHeader);
+            this.Controls.Add(this.btnBook);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -312,5 +328,6 @@
         private System.Windows.Forms.Label lblImageCounter;
         private System.Windows.Forms.Button btnNextImage;
         private System.Windows.Forms.Button btnPrevImage;
+        private System.Windows.Forms.Button btnBook;
     }
 }

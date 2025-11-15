@@ -1,6 +1,6 @@
 ﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services; 
+using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services; 
 using ScottPlot;
 using System;
 using System.Collections.Generic;
@@ -151,7 +151,7 @@ namespace QuanLyPhongTro
         {
             if (_ownerId == Guid.Empty) return; // Bảo vệ
 
-            var unpaidBills = _dashboardService.GetUnpaidBills(_ownerId) ?? new List<Bill>();
+            var unpaidBills = _dashboardService.GetUnpaidBill(_ownerId) ?? new List<Bill>();
             dgvUnpaidBills.Rows.Clear();
 
             foreach (var bill in unpaidBills)

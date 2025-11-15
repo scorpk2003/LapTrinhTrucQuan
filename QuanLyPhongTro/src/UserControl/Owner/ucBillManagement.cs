@@ -1,6 +1,6 @@
 ﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +28,8 @@ namespace QuanLyPhongTro
 
                 return Task.CompletedTask;
             });
-            //_ownerId = ownerId;
-            //_billService = new BillService();
+            this.btnConfirmPayment.Click += BtnConfirmPayment_Click;
+
 
             this.Load += UcBillManagement_Load;
 
@@ -80,7 +80,7 @@ namespace QuanLyPhongTro
             int month = (int)cboMonth.SelectedItem;
             int year = (int)cboYear.SelectedItem;
 
-            List<Bill> bills = _billService.GetBillsByMonth(month, year, _ownerId);
+            List<Bill> bills = _billService.GetBillByMonth(month, year, _ownerId);
             PopulateBills(bills);
 
             await Task.CompletedTask;
@@ -93,7 +93,7 @@ namespace QuanLyPhongTro
         {
             if (_ownerId == Guid.Empty) return;
 
-            List<Bill> bills = _billService.GetUnpaidBills(_ownerId);
+            List<Bill> bills = _billService.GetUnpaidBill(_ownerId);
             PopulateBills(bills);
         }
 
@@ -129,7 +129,7 @@ namespace QuanLyPhongTro
             if (confirm == DialogResult.Yes)
             {
                 // (Bạn cần 1 form để nhập chỉ số điện/nước. Đây là code demo)
-                bool success = _billService.GenerateMonthlyBills(_ownerId, DateTime.Now.Month, DateTime.Now.Year);
+                bool success = _billService.GenerateMonthlyBill(_ownerId, DateTime.Now.Month, DateTime.Now.Year);
                 if (success)
                 {
                     MessageBox.Show("Tạo HĐ nháp thành công!");
@@ -175,6 +175,15 @@ namespace QuanLyPhongTro
         private void Card_OnExportPDFClicked(object sender, Guid billId)
         {
             _billService.ExportBillToPDF(billId);
+        }
+
+        private void BtnConfirmPayment_Click(object sender, EventArgs e)
+        {
+            var formConfirm = new FormConfirmPayment(_ownerId);
+            formConfirm.ShowDialog();
+            
+            // Reload lại danh sách sau khi xác nhận
+            LoadBillsByMonth();
         }
     }
 }

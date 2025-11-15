@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.src.Test.Model;
-using QuanLyPhongTro.src.Test.Services;
+﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +13,6 @@ namespace QuanLyPhongTro
         private readonly RoomService _roomService;
         private Room _roomToEdit; // Phòng đang sửa
 
-        // Dùng Dictionary để lưu tên hiển thị (Key) và đối tượng RoomImage (Value)
         private readonly Dictionary<string, RoomImage> _imageMap = new Dictionary<string, RoomImage>();
 
         public FormEditRoom(Room roomToEdit)
