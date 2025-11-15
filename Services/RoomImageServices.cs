@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.Services
 {
-    internal class RoomImageServices
+    public class RoomImageServices
     {
+
     }
 }
