@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.Models; // Vẫn cần
+
 using System;
 using System.Windows.Forms;
 
@@ -13,9 +13,6 @@ namespace QuanLyPhongTro
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-
-            // Chạy Form Auth (Form này sẽ tự xử lý việc đăng nhập)
-            Application.Run(new MainForm());
         }
     }
 }
