@@ -33,6 +33,6 @@ namespace QuanLyPhongTro.Model
         // Thanh toán liên quan (nhiều lần thanh toán nếu muốn)
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-        public string Status { get; set; } = "Unpaid";
+        public string Status { get; set; } = "Chưa Thanh Toán";
     }
 }

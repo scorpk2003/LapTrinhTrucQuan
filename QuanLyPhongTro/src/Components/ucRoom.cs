@@ -8,21 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace QuanLyPhongTro.src
+namespace QuanLyPhongTro.src.Components
 {
-    public partial class ListRoom : UserControl
+    public partial class ucRoom : UserControl
     {
-        public ListRoom()
+        public ucRoom()
         {
             InitializeComponent();
         }
 
-        private void ListRoom_Load(object sender, EventArgs e)
+        private void Room_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void name_owr_Click(object sender, EventArgs e)
+        private void state_radio_CheckedChanged(object sender, EventArgs e)
         {
 
         }

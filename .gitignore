@@ -1,6 +1,6 @@
 # VS local settings
 .vs/
-LapTrinhTrucQuan/QuanLyPhongTro/src/Test/
+QuanLyPhongTro/src/Test/
 
 # Build outputs
 bin/

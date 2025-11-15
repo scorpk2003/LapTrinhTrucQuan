@@ -15,8 +15,8 @@ namespace QuanLyPhongTro
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Mediator.Instance.RegisterFactory("BillControl", () => new BillControl());
-            Mediator.Instance.RegisterFactory("BillDetailControl", () => new BillDetailControl());
+            Mediator.Instance.RegisterFactory("ucBill", () => new ucBill());
+            Mediator.Instance.RegisterFactory("ucBillDetail", () => new ucBillDetail());
             Application.Run(new MainForm());
         }
     }

@@ -13,13 +13,13 @@ using QuanLyPhongTro.src.UserSession;
 
 namespace QuanLyPhongTro.src.Components
 {
-    public partial class BillControl : UserControl
+    public partial class ucBill : UserControl
     {
-        private Bill bill_session;
-        public BillControl()
+        private Bill bill_session = new();
+        public ucBill()
         {
             InitializeComponent();
-            Name = "BillControl" + Guid.NewGuid().ToString().Substring(0, 4);
+            Name = "ucBill" + Guid.NewGuid().ToString().Substring(0, 4);
             System.Diagnostics.Debug.WriteLine($"[-- {Name} --] Mediator has code: {Mediator.Mediator.Instance.GetHashCode()}");
             Mediator.Mediator.Instance.Register<Bill>(Name, async (bill) =>
             {
@@ -40,18 +40,25 @@ namespace QuanLyPhongTro.src.Components
 
                 // Bind Bill data here
 
-                name_renter.Text = bill.Id.ToString().Substring(0, 4);
+                name_room.Text = bill_session?.Room?.Name;
+                name_opp.Text = bill_session?.Person?.Username;
+                date_create.Value = bill_session.PaymentDate;
+                date_create.Enabled = false;
+
+                /*
+                 * Get User -> Role -> Bind Role to label
+                 */
 
                 // End Bind
 
-                if (bill.Status == "Unpaid")
+                if (bill.Status == "Chưa Thanh Toán")
                 {
-                    stat.Text = "Unpaid";
+                    stat.Text = bill.Status;
                     stat.BackColor = Color.Red;
                 }
                 else
                 {
-                    stat.Text = "Paid";
+                    stat.Text = bill.Status;
                     stat.BackColor = Color.Green;
                 }
                 await Task.CompletedTask;
@@ -62,25 +69,19 @@ namespace QuanLyPhongTro.src.Components
             }
         }
 
-        private void stat_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private async void Bill_Click(object sender, EventArgs e)
         {
-            if (!Mediator.Mediator.Instance.TryLock("BillDetailControl")) return;
+            if (!Mediator.Mediator.Instance.TryLock("ucBillDetail")) return;
             Form Detail = new();
-            Detail.Width = 450;
-            Detail.Height = 600;
+            Detail.AutoSize = true;
             BillDetail detail = new();
             detail.Bill = bill_session;
-            await Mediator.Mediator.Instance.PublishForm<BillDetail>("BillDetailControl", detail, async (control) =>
+            await Mediator.Mediator.Instance.PublishForm<BillDetail>("ucBillDetail", detail, async (control) =>
             {
                 Detail.Controls.Add(control);
                 Detail.FormClosed += (_, _) =>
                 {
-                    Mediator.Mediator.Instance.ReleaseLock("BillDetailControl");
+                    Mediator.Mediator.Instance.ReleaseLock("ucBillDetail");
                 };
                 Detail.Show();
                 await Task.CompletedTask;

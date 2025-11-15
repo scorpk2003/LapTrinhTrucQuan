@@ -12,5 +12,6 @@ namespace QuanLyPhongTro.src.Components
         public static readonly Color Success = Color.FromArgb(121, 162, 81);
         public static readonly Color Background = Color.FromArgb(217, 245, 240);
         public static readonly Color SubBackground = Color.FromArgb(176, 210, 236);
+        public static readonly Color Read = Color.FromArgb(150, 178, 195);
     }
 }

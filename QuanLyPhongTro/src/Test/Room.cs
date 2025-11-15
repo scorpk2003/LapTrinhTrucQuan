@@ -12,18 +12,12 @@ namespace QuanLyPhongTro.Model
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-
         [Required]
         public string Name { get; set; }
-
         public Guid? IdOwner { get; set; }
-
         [ForeignKey("IdOwner")]
         public Person Owner { get; set; }
-
         public string Address { get; set; }
-        public decimal? Price { get; set; }
-        public decimal? Area { get; set; }
         public string Status { get; set; }
     }
 }

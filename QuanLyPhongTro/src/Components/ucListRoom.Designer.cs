@@ -1,6 +1,8 @@
-﻿namespace QuanLyPhongTro.src
+﻿using QuanLyPhongTro.src.Components;
+
+namespace QuanLyPhongTro.src
 {
-    partial class ListRoom
+    partial class ucListRoom
     {
         /// <summary> 
         /// Required designer variable.
@@ -38,28 +40,28 @@
             // 
             name_lr.AutoSize = true;
             name_lr.Font = new Font("Imprint MT Shadow", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            name_lr.Location = new Point(41, 34);
+            name_lr.Location = new Point(15, 33);
             name_lr.Name = "name_lr";
-            name_lr.Size = new Size(62, 23);
+            name_lr.Size = new Size(147, 23);
             name_lr.TabIndex = 0;
-            name_lr.Text = "label1";
+            name_lr.Text = "name list room";
             // 
             // name_owr
             // 
             name_owr.AutoSize = true;
             name_owr.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            name_owr.Location = new Point(41, 95);
+            name_owr.Location = new Point(26, 90);
             name_owr.Name = "name_owr";
             name_owr.Size = new Size(52, 20);
             name_owr.TabIndex = 1;
             name_owr.Text = "Owner";
-            name_owr.Click += name_owr_Click;
             // 
             // name_add
             // 
             name_add.AutoSize = true;
             name_add.Font = new Font("Segoe UI", 11.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            name_add.Location = new Point(41, 150);
+            name_add.Location = new Point(30, 150);
+            name_add.MaximumSize = new Size(150, 0);
             name_add.Name = "name_add";
             name_add.Size = new Size(48, 20);
             name_add.TabIndex = 2;
@@ -80,17 +82,17 @@
             stat.Text = "radioButton1";
             stat.UseVisualStyleBackColor = true;
             // 
-            // ListRoom
+            // ucListRoom
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(217, 245, 240);
             Controls.Add(stat);
             Controls.Add(name_add);
             Controls.Add(name_owr);
             Controls.Add(name_lr);
-            Name = "ListRoom";
+            Name = "ucListRoom";
             Size = new Size(200, 250);
-            Load += ListRoom_Load;
             ResumeLayout(false);
             PerformLayout();
         }

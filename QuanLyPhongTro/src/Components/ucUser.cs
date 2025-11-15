@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace QuanLyPhongTro.src.Components
 {
-    public partial class UserDetailControl : UserControl
+    public partial class ucUser : UserControl
     {
-        public UserDetailControl()
+        public ucUser()
         {
             InitializeComponent();
         }

@@ -43,15 +43,12 @@ namespace QuanLyPhongTro
             for (int i = 0; i < item; i++)
             {
                 Bill b = new Bill();
-                b.Id = Guid.NewGuid();
-                b.Status = "Unpaid";
                 b.TotalMoney = 100000 + i * 10000;
                 bills.Add(b);
-                System.Diagnostics.Debug.WriteLine($"Created Bill with Id: {b.Id}");
             }
             try
             {
-                await Mediator.Instance.PublishList<Bill>("BillControl", bills, (controls) =>
+                await Mediator.Instance.PublishList<Bill>("ucBill", bills, (controls) =>
                 {
                     foreach (var control in controls)
                     {

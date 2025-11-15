@@ -4,28 +4,28 @@
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Components\BillControl.cs">
+    <Compile Update="src\Components\ucBill.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\BillDetailControl.cs">
+    <Compile Update="src\Components\ucBillDetail.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\NoticeControl.cs">
+    <Compile Update="src\Components\ucNotice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\ReportControl.cs">
+    <Compile Update="src\Components\ucReport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Components\RoomControl.cs">
+    <Compile Update="src\Components\ucRoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\RoomDetailControl.cs">
+    <Compile Update="src\Components\ucRoomDetail.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\UserDetailControl.cs">
+    <Compile Update="src\Components\ucUser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\ListRoom.cs">
+    <Compile Update="src\Components\ucListRoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

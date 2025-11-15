@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class BillDetailControl
+    partial class ucBillDetail
     {
         /// <summary> 
         /// Required designer variable.
@@ -45,7 +45,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.BackColor = AppColors.SubBackground;
+            groupBox1.BackColor = Color.FromArgb(176, 210, 236);
             groupBox1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             groupBox1.Location = new Point(22, 119);
             groupBox1.Name = "groupBox1";
@@ -57,24 +57,24 @@
             // pay_btn
             // 
             pay_btn.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            pay_btn.Location = new Point(163, 486);
+            pay_btn.Location = new Point(103, 486);
             pay_btn.Name = "pay_btn";
-            pay_btn.Size = new Size(99, 46);
+            pay_btn.Size = new Size(223, 46);
             pay_btn.TabIndex = 2;
-            pay_btn.Text = "button1";
+            pay_btn.Text = "Chưa Thanh Toán";
             pay_btn.UseVisualStyleBackColor = true;
             pay_btn.Click += pay_btn_Click;
             // 
-            // BillDetailControl
+            // ucBillDetail
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = AppColors.Background;
+            BackColor = Color.FromArgb(217, 245, 240);
             Controls.Add(pay_btn);
             Controls.Add(groupBox1);
             Controls.Add(name_lb);
-            Name = "BillDetailControl";
-            Size = new Size(450, 550);
+            Name = "ucBillDetail";
+            Size = new Size(450, 542);
             ResumeLayout(false);
             PerformLayout();
         }

@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class RoomDetailControl
+    partial class ucRoomDetail
     {
         /// <summary> 
         /// Required designer variable.

@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class NoticeControl
+    partial class ucNotice
     {
         /// <summary> 
         /// Required designer variable.
@@ -44,22 +44,25 @@
             // 
             // stat_btn
             // 
-            stat_btn.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            stat_btn.Location = new Point(168, 7);
+            stat_btn.BackColor = Color.Firebrick;
+            stat_btn.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            stat_btn.ForeColor = Color.LightPink;
+            stat_btn.Location = new Point(244, 10);
             stat_btn.Name = "stat_btn";
-            stat_btn.Size = new Size(75, 35);
+            stat_btn.Size = new Size(84, 35);
             stat_btn.TabIndex = 1;
-            stat_btn.Text = "button1";
-            stat_btn.UseVisualStyleBackColor = true;
+            stat_btn.Text = "Xem";
+            stat_btn.UseVisualStyleBackColor = false;
+            stat_btn.Click += stat_btn_Click;
             // 
-            // Notice
+            // ucNotice
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(stat_btn);
             Controls.Add(title_lb);
-            Name = "Notice";
-            Size = new Size(250, 50);
+            Name = "ucNotice";
+            Size = new Size(336, 55);
             ResumeLayout(false);
             PerformLayout();
         }

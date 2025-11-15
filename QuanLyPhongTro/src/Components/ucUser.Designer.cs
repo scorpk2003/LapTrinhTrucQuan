@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Components
 {
-    partial class UserDetailControl
+    partial class ucUser
     {
         /// <summary> 
         /// Required designer variable.
