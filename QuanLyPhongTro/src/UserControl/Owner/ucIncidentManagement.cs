@@ -68,7 +68,7 @@ namespace QuanLyPhongTro
             FilterReports();
         }
 
-        private void FilterReports()
+        private async void FilterReports()
         {
             if (_allReports == null || !_isLoaded || cboFilterStatus.SelectedItem == null) return;
 
@@ -82,18 +82,26 @@ namespace QuanLyPhongTro
             else if (filter.Contains("Đã giải quyết"))
                 filteredList = _allReports.Where(r => r.Status == "Resolved").ToList();
 
-            dgvIncidents.Rows.Clear();
-            foreach (var report in filteredList)
+            await Mediator.Instance.PublishList<Report>("ucReport", filteredList, async (controls) =>
             {
-                dgvIncidents.Rows.Add(
-                    report.Status,
-                    report.IdRoomNavigation?.Name ?? "N/A",
-                    report.IdReporterNavigation?.Username ?? "N/A",
-                    report.Title,
-                    report.Description
-                );
-                dgvIncidents.Rows[dgvIncidents.Rows.Count - 1].Tag = report.Id;
-            }
+                foreach (var control in controls)
+                {
+                    this.Controls.Add(control);
+                }
+            });
+
+            //dgvIncidents.Rows.Clear();
+            //foreach (var report in filteredList)
+            //{
+            //    dgvIncidents.Rows.Add(
+            //        report.Status,
+            //        report.IdRoomNavigation?.Name ?? "N/A",
+            //        report.IdReporterNavigation?.Username ?? "N/A",
+            //        report.Title,
+            //        report.Description
+            //    );
+            //    dgvIncidents.Rows[dgvIncidents.Rows.Count - 1].Tag = report.Id;
+            //}
         }
 
         private void SetupDgv()

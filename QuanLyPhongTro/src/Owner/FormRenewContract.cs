@@ -1,23 +1,23 @@
-using System;
+Ôªøusing System;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
 {
     public partial class FormRenewContract : Form
     {
-        // Public property d? l?y gi· tr?
+        // Public property d? l?y gi√° tr?
         public int MonthsToAdd { get; private set; }
 
         /// <summary>
-        /// Form x·c nh?n s? th·ng
+        /// Form x√°c nh?n s? th√°ng
         /// </summary>
-        /// <param name="defaultMonths">S? th·ng hi?n th? m?c d?nh</param>
-        /// <param name="title">TiÍu d? c?a Form</param>
-        public FormRenewContract(int defaultMonths = 6, string title = "X·c nh?n Gia h?n")
+        /// <param name="defaultMonths">S? th√°ng hi?n th? m?c d?nh</param>
+        /// <param name="title">Ti√™u d? c?a Form</param>
+        public FormRenewContract(int defaultMonths = 6, string title = "X√°c nh·∫≠n gia h·∫°n")
         {
             InitializeComponent();
 
-            // G·n gi· tr? m?c d?nh
+            // G√°n gi√° tr? m?c d?nh
             this.Text = title;
             if (defaultMonths > 0)
             {
@@ -30,10 +30,10 @@ namespace QuanLyPhongTro
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            // L?y gi· tr? t? Ù s?
+            // L?y gi√° tr? t? √¥ s?
             this.MonthsToAdd = (int)numMonths.Value;
 
-            // –Ûng form v‡ b·o OK
+            // √ê√≥ng form v√† b√°o OK
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

@@ -86,43 +86,54 @@ namespace QuanLyPhongTro
             dgvContracts.Columns["Deposit"].DefaultCellStyle.Format = "N0";
         }
 
-        private void LoadPendingRequests()
+        private async void LoadPendingRequests()
         {
             _pendingRequests = _requestService.GetPendingRequestsByOwner(_ownerId);
 
-            dgvRequests.Rows.Clear();
-            foreach (var req in _pendingRequests)
+            await Mediator.Instance.PublishList<BookingRequest>("ucBooking", _pendingRequests, async (controls) =>
             {
-                dgvRequests.Rows.Add(
-                    req.Renter?.Username ?? "N/A",
-                    req.Room?.Name ?? "N/A",
-                    req.DesiredStartDate.ToString("dd/MM/yyyy"),
-                    req.DesiredDurationMonths,
-                    req.Note
-                );
-                dgvRequests.Rows[dgvRequests.Rows.Count - 1].Tag = req; 
-            }
-            tabPendingRequests.Text = $"Yêu cầu đang chờ ({_pendingRequests.Count})";
+                foreach (var control in controls)
+                    this.Controls.Add(control);
+            });
+            //dgvRequests.Rows.Clear();
+            //foreach (var req in _pendingRequests)
+            //{
+            //    dgvRequests.Rows.Add(
+            //        req.Renter?.Username ?? "N/A",
+            //        req.Room?.Name ?? "N/A",
+            //        req.DesiredStartDate.ToString("dd/MM/yyyy"),
+            //        req.DesiredDurationMonths,
+            //        req.Note
+            //    );
+            //    dgvRequests.Rows[dgvRequests.Rows.Count - 1].Tag = req; 
+            //}
+            //tabPendingRequests.Text = $"Yêu cầu đang chờ ({_pendingRequests.Count})";
         }
 
-        private void LoadActiveContracts()
+        private async Task LoadActiveContracts()
         {
             _activeContracts = _contractService.GetAllActiveContractsByOwner(_ownerId);
 
-            dgvContracts.Rows.Clear();
-            foreach (var contract in _activeContracts)
+            await Mediator.Instance.PublishList<Contract>("ucContract", _activeContracts, async (controls) =>
             {
-                dgvContracts.Rows.Add(
-                    contract.IdRoomNavigation?.Name ?? "N/A",
-                    contract.IdRenterNavigation?.Username ?? "N/A",
-                    contract.StartDate.HasValue ? contract.StartDate.Value.ToString("dd/MM/yyyy") : "N/A",
-                    contract.EndDate.HasValue ? contract.EndDate.Value.ToString("dd/MM/yyyy") : "N/A",
+                foreach (var control in controls)
+                    this.Controls.Add(control);
+            });
+
+            //dgvContracts.Rows.Clear();
+            //foreach (var contract in _activeContracts)
+            //{
+            //    dgvContracts.Rows.Add(
+            //        contract.IdRoomNavigation?.Name ?? "N/A",
+            //        contract.IdRenterNavigation?.Username ?? "N/A",
+            //        contract.StartDate.HasValue ? contract.StartDate.Value.ToString("dd/MM/yyyy") : "N/A",
+            //        contract.EndDate.HasValue ? contract.EndDate.Value.ToString("dd/MM/yyyy") : "N/A",
                     
-                    contract.Deposit
-                );
-                dgvContracts.Rows[dgvContracts.Rows.Count - 1].Tag = contract.Id;
-            }
-            tabActiveContracts.Text = $"Hợp đồng đang hoạt động ({_activeContracts.Count})";
+            //        contract.Deposit
+            //    );
+            //    dgvContracts.Rows[dgvContracts.Rows.Count - 1].Tag = contract.Id;
+            //}
+            //tabActiveContracts.Text = $"Hợp đồng đang hoạt động ({_activeContracts.Count})";
         }
 
         private void BtnApprove_Click(object sender, EventArgs e)

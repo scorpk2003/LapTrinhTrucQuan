@@ -59,7 +59,7 @@ namespace QuanLyPhongTro
             dgvBills.Columns["Total"].DefaultCellStyle.Format = "N0";
         }
 
-        public void LoadData()
+        public async void LoadData()
         {
             if (_renterId == Guid.Empty || !_renterId.HasValue) return;
 
@@ -70,25 +70,31 @@ namespace QuanLyPhongTro
             var bills = _billService.GetBillsByRenter(_renterId.Value);
             dgvBills.Rows.Clear();
 
-            foreach (var bill in bills)
+            await Mediator.Instance.PublishList<Bill>("ucBill", bills, async (controls) =>
             {
-                string statusText;
-                if (bill.Payment == null)
-                    statusText = "Chưa thanh toán";
-                else if (bill.Payment.Amount < bill.TotalMoney)
-                    statusText = $"Đã trả {bill.Payment.Amount:N0}";
-                else
-                    statusText = "Đã thanh toán";
-                
+                foreach (var control in controls)
+                    this.Controls.Add(control);
+            });
 
-                dgvBills.Rows.Add(
-                    bill.Id,
-                    $"Hóa đơn tháng {bill.PaymentDate.Value.ToString("MM/yyyy")}", 
-                    bill.IdRoomNavigation?.Name, 
-                    bill.TotalMoney,
-                    statusText 
-                );
-            }
+            //foreach (var bill in bills)
+            //{
+            //    string statusText;
+            //    if (bill.Payment == null)
+            //        statusText = "Chưa thanh toán";
+            //    else if (bill.Payment.Amount < bill.TotalMoney)
+            //        statusText = $"Đã trả {bill.Payment.Amount:N0}";
+            //    else
+            //        statusText = "Đã thanh toán";
+
+
+            //    dgvBills.Rows.Add(
+            //        bill.Id,
+            //        $"Hóa đơn tháng {bill.PaymentDate.Value.ToString("MM/yyyy")}", 
+            //        bill.IdRoomNavigation?.Name, 
+            //        bill.TotalMoney,
+            //        statusText 
+            //    );
+            //}
         }
 
         private void DgvBills_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
