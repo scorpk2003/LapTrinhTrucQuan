@@ -34,15 +34,6 @@
     <Compile Update="src\Renter\Renter_TrangChu.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Test\Login\AuthForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="src\Test\Login\Login.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="src\Test\Signup\Signup.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="src\UserControl\Renter\ucMyBills.cs">
       <SubType>UserControl</SubType>
     </Compile>
