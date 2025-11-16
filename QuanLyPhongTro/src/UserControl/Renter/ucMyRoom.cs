@@ -1,12 +1,13 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Test.Mediator; 
+using QuanLyPhongTro.src.Test.Models;
 using ScottPlot; // v5
 using System;
+using System.Collections.Generic;
+using System.Drawing; // <-- Thêm
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace QuanLyPhongTro
 {
@@ -14,8 +15,6 @@ namespace QuanLyPhongTro
     {
         private Contract _contract;
         private readonly BillService _billService;
-
-        // (Biến để lưu hóa đơn cần thanh toán)
         private Bill _latestBill;
 
         public ucMyRoom()
@@ -26,7 +25,6 @@ namespace QuanLyPhongTro
             Mediator.Instance.Register<Contract>("UcMyRoom", (contract) =>
             {
                 _contract = contract;
-                // Kiểm tra xem control đã load xong chưa
                 if (this.IsHandleCreated)
                 {
                     LoadData();
@@ -34,7 +32,6 @@ namespace QuanLyPhongTro
                 return Task.CompletedTask;
             });
 
-            // Gán sự kiện Load (để LoadData nếu Mediator chạy trước)
             this.Load += UcMyRoom_Load;
             this.btnPay.Click += BtnPay_Click;
         }
@@ -47,12 +44,9 @@ namespace QuanLyPhongTro
             }
         }
 
-        // Hàm LoadData chung
         private void LoadData()
         {
             if (_contract == null) return;
-
-            // Kiểm tra an toàn (sửa lỗi Guid?)
             if (!_contract.IdRenter.HasValue || !_contract.IdRoom.HasValue)
             {
                 MessageBox.Show("Lỗi: Hợp đồng không hợp lệ.");
@@ -67,18 +61,20 @@ namespace QuanLyPhongTro
 
         private void LoadRoomInfo()
         {
-            if (_contract.Room == null) return;
-            lblRoomName.Text = _contract.Room.Name;
-            lblRoomPrice.Text = $"Giá thuê: {_contract.Room.Price:N0} VND";
-            lblRoomArea.Text = $"Diện tích: {_contract.Room.Area} m²";
-            lblRoomAddress.Text = $"Địa chỉ: {_contract.Room.Address}";
+            if (_contract.IdRoomNavigation == null) return;
+            lblRoomName.Text = _contract.IdRoomNavigation.Name;
+            lblRoomPrice.Text = $"Giá thuê: {_contract.IdRoomNavigation.Price:N0} VND";
+            lblRoomArea.Text = $"Diện tích: {_contract.IdRoomNavigation.Area:N2} m²"; 
+            lblRoomAddress.Text = $"Địa chỉ: {_contract.IdRoomNavigation.Address}"; 
+             
         }
 
         private void LoadContractInfo()
-        {
-            lblStartDate.Text = $"Ngày bắt đầu: {_contract.StartDate:dd/MM/yyyy}";
-            lblEndDate.Text = $"Ngày kết thúc: {_contract.EndDate:dd/MM/yyyy}";
+        { 
+            lblStartDate.Text = $"Ngày bắt đầu: {_contract.StartDate.Value.ToString("dd/MM/yyyy") ?? "N/A"}";
+            lblEndDate.Text = $"Ngày kết thúc: {_contract.EndDate.Value.ToString("dd/MM/yyyy") ?? "N/A"}";
             lblDeposit.Text = $"Tiền cọc: {_contract.Deposit:N0} VND";
+             
         }
 
         private void LoadLatestBill()
@@ -87,38 +83,55 @@ namespace QuanLyPhongTro
 
             if (_latestBill == null)
             {
-                // Không có hóa đơn nào
                 lblBillTitle.Text = "Không có hóa đơn";
                 lblBillTotal.Text = "Tổng: 0 VND";
                 lblBillStatus.Text = "Trạng thái: Đã thanh toán";
+                lblBillStatus.ForeColor = System.Drawing.Color.DarkGreen;
                 btnPay.Enabled = false;
-                btnPay.Tag = null; // Xóa tag
+                btnPay.Tag = null;
             }
             else
             {
-                // Có hóa đơn
-                lblBillTitle.Text = $"Hóa đơn tháng {_latestBill.PaymentDate:MM/yyyy}";
+                lblBillTitle.Text = $"Hóa đơn tháng {_latestBill.PaymentDate.Value.ToString("MM/yyyy")}";
                 lblBillTotal.Text = $"Tổng: {_latestBill.TotalMoney:N0} VND";
-                lblBillStatus.Text = $"Trạng thái: {_latestBill.Status}";
-                btnPay.Enabled = true;
-                btnPay.Tag = _latestBill.Id; // Lưu ID hóa đơn vào Tag
+
+                if (_latestBill.Payment == null)
+                {
+                    lblBillStatus.Text = "Trạng thái: Chưa thanh toán";
+                    lblBillStatus.ForeColor = System.Drawing.Color.OrangeRed;
+                    btnPay.Text = "Thanh toán ngay";
+                    btnPay.Enabled = true;
+                }
+                else if (_latestBill.Payment.Amount < _latestBill.TotalMoney)
+                {
+                    lblBillStatus.Text = $"Trạng thái: Đã trả {_latestBill.Payment.Amount:N0} VND";
+                    lblBillStatus.ForeColor = System.Drawing.Color.Blue;
+                    btnPay.Text = "Thanh toán phần còn lại";
+                    btnPay.Enabled = true;
+                }
+                else
+                {
+                    lblBillStatus.Text = "Trạng thái: Đã thanh toán";
+                    lblBillStatus.ForeColor = System.Drawing.Color.DarkGreen;
+                    btnPay.Enabled = false;
+                }
+
+                btnPay.Tag = _latestBill.Id;
             }
         }
 
         private void LoadSpendingChart()
         {
             spendingChart.Plot.Clear();
-
             var spendingData = _billService.GetMonthlySpending(_contract.IdRenter.Value);
 
             double[] values = new double[12];
             string[] labels = new string[12];
-            DateTime monthIterator = DateTime.Now.AddMonths(-11); 
+            DateTime monthIterator = DateTime.Now.AddMonths(-11);
 
             for (int i = 0; i < 12; i++)
             {
                 string key = $"{monthIterator.Month}/{monthIterator.Year}";
-
                 labels[i] = $"{monthIterator:MM/yy}";
 
                 if (spendingData.TryGetValue(key, out decimal total))
@@ -129,18 +142,15 @@ namespace QuanLyPhongTro
                 {
                     values[i] = 0;
                 }
-
-                // Tăng lên tháng tiếp theo
                 monthIterator = monthIterator.AddMonths(1);
             }
 
-            // 3. Vẽ biểu đồ
             double[] positions = Enumerable.Range(0, 12).Select(i => (double)i).ToArray();
             var bars = spendingChart.Plot.Add.Bars(positions, values);
             bars.Color = ScottPlot.Color.FromHex("#3498db");
 
             spendingChart.Plot.Axes.Bottom.SetTicks(positions, labels);
-            spendingChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5); 
+            spendingChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5);
             try { spendingChart.Plot.Axes.Left.Label.Text = "Chi tiêu (Triệu VND)"; } catch { }
             try { spendingChart.Plot.Title("Thống kê chi tiêu (12 tháng qua)"); } catch { }
             spendingChart.Refresh();
@@ -148,26 +158,29 @@ namespace QuanLyPhongTro
 
         private void BtnPay_Click(object sender, EventArgs e)
         {
-            // Kiểm tra xem có hóa đơn trong Tag không
             if (btnPay.Tag == null || !(btnPay.Tag is Guid))
             {
                 MessageBox.Show("Không tìm thấy hóa đơn để thanh toán.");
                 return;
             }
+            if (_latestBill == null) return; 
 
             Guid billId = (Guid)btnPay.Tag;
 
-            // TODO: Mở cổng thanh toán (Momo, ZaloPay...)
+            decimal amountPaid = _latestBill.Payment?.Amount ?? 0;
+            decimal totalDue = _latestBill.TotalMoney ?? 0;
+            decimal amountToPay = totalDue - amountPaid;
 
-            var confirm = MessageBox.Show("Bạn có muốn thanh toán hóa đơn này không? (Demo)", "Xác nhận thanh toán", MessageBoxButtons.YesNo);
+            var confirm = MessageBox.Show($"Bạn có muốn thanh toán số tiền {amountToPay:N0} VND không?", "Xác nhận thanh toán", MessageBoxButtons.YesNo); // Sửa Encoding
             if (confirm == DialogResult.No) return;
 
-            bool success = _billService.UpdateBillStatus(billId, "Paid");
+            bool success = _billService.PayBill(billId, amountToPay, "Chuyển khoản");
 
             if (success)
             {
                 MessageBox.Show("Thanh toán thành công!");
-                LoadLatestBill();
+                LoadLatestBill(); 
+                LoadSpendingChart(); 
             }
             else
             {

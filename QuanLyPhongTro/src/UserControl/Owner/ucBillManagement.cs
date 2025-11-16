@@ -1,9 +1,10 @@
-﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Test.Mediator;
+using QuanLyPhongTro.src.Test.Mediator;
+using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
@@ -23,17 +24,18 @@ namespace QuanLyPhongTro
             {
                 _ownerId = owner.Id;
 
+                // Set giá trị mặc định khi nhận được OwnerId
                 cboMonth.SelectedItem = DateTime.Now.Month;
                 cboYear.SelectedItem = DateTime.Now.Year;
 
                 return Task.CompletedTask;
             });
-            this.btnConfirmPayment.Click += BtnConfirmPayment_Click;
 
+            // (Bạn chưa gán sự kiện cho btnConfirmPayment trong Designer?)
+            this.btnConfirmPayment.Click += BtnConfirmPayment_Click;
 
             this.Load += UcBillManagement_Load;
 
-            // Gán sự kiện cho các nút filter
             this.cboMonth.SelectedIndexChanged += async (s, e) => await LoadBillsByMonth();
             this.cboYear.SelectedIndexChanged += async (s, e) => await LoadBillsByMonth();
             this.btnShowUnpaid.Click += (s, e) => LoadUnpaidBills();
@@ -42,98 +44,81 @@ namespace QuanLyPhongTro
 
         private void UcBillManagement_Load(object sender, EventArgs e)
         {
-            // 1. Nạp dữ liệu cho ComboBox tháng (1-12)
             for (int i = 1; i <= 12; i++)
             {
                 cboMonth.Items.Add(i);
             }
-
-            // 2. Nạp dữ liệu cho ComboBox năm (ví dụ: 3 năm gần nhất)
             int currentYear = DateTime.Now.Year;
             cboYear.Items.Add(currentYear - 1);
             cboYear.Items.Add(currentYear);
             cboYear.Items.Add(currentYear + 1);
-
-            
-
         }
 
-        /// <summary>
-        /// (Public) Hàm này được Owner_TrangChu gọi
-        /// </summary>
-        //public void LoadData()
-        //{
-        //    LoadBillsByMonth();
-        //}
+        // (Hàm LoadData() không được gọi, đã xóa)
 
-        /// <summary>
-        /// Tải HĐ theo tháng (chức năng chính)
-        /// </summary>
         private async Task LoadBillsByMonth()
         {
             if (cboMonth.SelectedItem == null || cboYear.SelectedItem == null)
                 return;
-
             if (_ownerId == Guid.Empty)
                 return;
 
             int month = (int)cboMonth.SelectedItem;
             int year = (int)cboYear.SelectedItem;
 
-            List<Bill> bills = _billService.GetBillByMonth(month, year, _ownerId);
+            // --- SỬA LỖI 3 (Logic Model) ---
+            List<Bill> bills = _billService.GetBillsByMonth(month, year, _ownerId); // Sửa tên hàm
             PopulateBills(bills);
+            // --- HẾT SỬA ---
 
             await Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Tải HĐ Nợ (chức năng nhắc nợ)
-        /// </summary>
         private void LoadUnpaidBills()
         {
             if (_ownerId == Guid.Empty) return;
 
-            List<Bill> bills = _billService.GetUnpaidBill(_ownerId);
+            // --- SỬA LỖI 3 (Logic Model) ---
+            List<Bill> bills = _billService.GetUnpaidBills(_ownerId); // Sửa tên hàm
             PopulateBills(bills);
+            // --- HẾT SỬA ---
         }
 
-        /// <summary>
-        /// Hiển thị danh sách Bill (dùng chung)
-        /// </summary>
         private void PopulateBills(List<Bill> bills)
         {
             flowPanelBills.Controls.Clear();
             if (bills == null || bills.Count == 0)
             {
-                // (Có thể thêm 1 Label "Không có hóa đơn")
                 return;
             }
 
             foreach (var bill in bills)
             {
+                // (Giả sử ucBillCard tồn tại và đã được cập nhật Model mới)
                 var card = new ucBillCard(bill);
-                card.SendBillClicked += Card_OnSendBillClicked;
+                // card.SendBillClicked += Card_OnSendBillClicked; // (Logic Status đã bị xóa)
                 card.ExportPDFClicked += Card_OnExportPDFClicked;
+
+                // (Sự kiện mới để mở Form Edit)
+                //card.EditDetailsClicked += Card_OnEditDetailsClicked;
 
                 flowPanelBills.Controls.Add(card);
             }
         }
 
-        /// <summary>
-        /// Sự kiện khi nhấn nút "Tạo HĐ tháng này"
-        /// </summary>
         private void BtnGenerateBills_Click(object sender, EventArgs e)
         {
+            // --- SỬA LỖI 2 (Encoding) ---
             var confirm = MessageBox.Show($"Bạn có chắc muốn tạo HĐ nháp cho tháng {DateTime.Now:MM/yyyy}?",
                                           "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                // (Bạn cần 1 form để nhập chỉ số điện/nước. Đây là code demo)
-                bool success = _billService.GenerateMonthlyBill(_ownerId, DateTime.Now.Month, DateTime.Now.Year);
+                // Sửa tên hàm
+                bool success = _billService.GenerateMonthlyBills(_ownerId, DateTime.Now.Month, DateTime.Now.Year);
                 if (success)
                 {
                     MessageBox.Show("Tạo HĐ nháp thành công!");
-                    LoadBillsByMonth(); // Tải lại
+                    LoadBillsByMonth();
                 }
                 else
                 {
@@ -142,36 +127,19 @@ namespace QuanLyPhongTro
             }
         }
 
-        // --- CÁC HÀM BẮT SỰ KIỆN TỪ CARD ---
+        //private void Card_OnEditDetailsClicked(object sender, Guid billId)
+        //{
+        //    // Mở Form chúng ta đã tạo ở lượt trước
+        //    using (FormEditBillDetails frm = new FormEditBillDetails(billId))
+        //    {
+        //        if (frm.ShowDialog() == DialogResult.OK)
+        //        {
+        //            // Tải lại danh sách
+        //            LoadBillsByMonth();
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Khi user nhấn "Gửi HĐ" hoặc "Nhắc nợ" trên 1 card
-        /// </summary>
-        private void Card_OnSendBillClicked(object sender, Guid billId)
-        {
-            var card = (ucBillCard)sender;
-            string currentStatus = card.Tag?.ToString() ?? "Pending"; // Lấy trạng thái từ Card (nếu cần)
-            string newStatus = "Sent";
-            string message = "Gửi hóa đơn thành công!";
-
-            if (currentStatus == "Sent" || currentStatus == "Overdue")
-            {
-                newStatus = "Overdue"; // Trạng thái mới là "Quá hạn" (nhắc nợ)
-                message = "Gửi nhắc nợ thành công!";
-            }
-
-            // Gọi Service
-            bool success = _billService.UpdateBillStatus(billId, newStatus);
-            if (success)
-            {
-                MessageBox.Show(message);
-                card.UpdateStatusUI(newStatus); // Cập nhật UI của card đó
-            }
-        }
-
-        /// <summary>
-        /// Khi user nhấn "Xuất PDF" trên 1 card
-        /// </summary>
         private void Card_OnExportPDFClicked(object sender, Guid billId)
         {
             _billService.ExportBillToPDF(billId);
@@ -179,10 +147,13 @@ namespace QuanLyPhongTro
 
         private void BtnConfirmPayment_Click(object sender, EventArgs e)
         {
-            var formConfirm = new FormConfirmPayment(_ownerId);
-            formConfirm.ShowDialog();
-            
-            // Reload lại danh sách sau khi xác nhận
+            // (FormConfirmPayment này đã bị xóa vì logic không còn phù hợp Model)
+            // var formConfirm = new FormConfirmPayment(_ownerId);
+            // formConfirm.ShowDialog();
+
+            // Thay vào đó, bạn có thể muốn mở Form "Nhập Excel" ở đây
+            MessageBox.Show("Chức năng này đã bị vô hiệu hóa do thay đổi Model.\n(Logic Payment 1-1 thay thế Status).");
+
             LoadBillsByMonth();
         }
     }

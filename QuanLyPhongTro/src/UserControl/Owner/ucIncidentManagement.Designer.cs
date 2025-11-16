@@ -60,9 +60,9 @@
             this.cboFilterStatus.FormattingEnabled = true;
             this.cboFilterStatus.Items.AddRange(new object[] {
             "Tất cả",
-            "Đang chờ (Pending)",
-            "Đang xử lý (In Progress)",
-            "Đã giải quyết (Resolved)"});
+            "Ðang chờ (Pending)",
+            "Ðang xử lý (In Progress)",
+            "Ðã giải quyết (Resolved)"});
             this.cboFilterStatus.Location = new System.Drawing.Point(140, 18);
             this.cboFilterStatus.Name = "cboFilterStatus";
             this.cboFilterStatus.Size = new System.Drawing.Size(190, 36);
@@ -99,7 +99,7 @@
             this.btnRenew.Name = "btnRenew";
             this.btnRenew.Size = new System.Drawing.Size(210, 50);
             this.btnRenew.TabIndex = 2;
-            this.btnRenew.Text = "Duyệt Gia Hạn";
+            this.btnRenew.Text = "Duyệt gia hạn";
             this.btnRenew.UseVisualStyleBackColor = false;
             // 
             // btnResolve
@@ -111,7 +111,7 @@
             this.btnResolve.Name = "btnResolve";
             this.btnResolve.Size = new System.Drawing.Size(220, 50);
             this.btnResolve.TabIndex = 1;
-            this.btnResolve.Text = "Đánh dấu 'Đã Xong'";
+            this.btnResolve.Text = "Ðánh dấu 'Ðã Xong'";
             this.btnResolve.UseVisualStyleBackColor = false;
             // 
             // btnInProgress
@@ -123,7 +123,7 @@
             this.btnInProgress.Name = "btnInProgress";
             this.btnInProgress.Size = new System.Drawing.Size(250, 50);
             this.btnInProgress.TabIndex = 0;
-            this.btnInProgress.Text = "Đánh dấu 'Đang Xử Lý'";
+            this.btnInProgress.Text = "Ðánh dấu 'Ðang Xử Lý'";
             this.btnInProgress.UseVisualStyleBackColor = false;
             // 
             // dgvIncidents

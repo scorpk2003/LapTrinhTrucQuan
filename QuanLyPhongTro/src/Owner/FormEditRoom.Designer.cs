@@ -75,7 +75,7 @@
             this.lblAddress.Name = "lblAddress";
             this.lblAddress.Size = new System.Drawing.Size(78, 28);
             this.lblAddress.TabIndex = 2;
-            this.lblAddress.Text = "Địa chỉ:";
+            this.lblAddress.Text = "Ðịa chỉ:";
             // 
             // lblPrice
             // 
@@ -121,7 +121,7 @@
             // 
             this.lblImages.AutoSize = true;
             this.lblImages.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblImages.Location = new System.Drawing.Point(30, 320); // Dời xuống
+            this.lblImages.Location = new System.Drawing.Point(30, 320); // D?i xu?ng
             this.lblImages.Name = "lblImages";
             this.lblImages.Size = new System.Drawing.Size(95, 28);
             this.lblImages.TabIndex = 9;
@@ -130,7 +130,7 @@
             // btnAddImage
             // 
             this.btnAddImage.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnAddImage.Location = new System.Drawing.Point(170, 314); // Dời xuống
+            this.btnAddImage.Location = new System.Drawing.Point(170, 314); // D?i xu?ng
             this.btnAddImage.Name = "btnAddImage";
             this.btnAddImage.Size = new System.Drawing.Size(150, 40);
             this.btnAddImage.TabIndex = 4;
@@ -142,7 +142,7 @@
             this.lstImages.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lstImages.FormattingEnabled = true;
             this.lstImages.ItemHeight = 25;
-            this.lstImages.Location = new System.Drawing.Point(35, 370); // Dời xuống
+            this.lstImages.Location = new System.Drawing.Point(35, 370); // D?i xu?ng
             this.lstImages.Name = "lstImages";
             this.lstImages.Size = new System.Drawing.Size(285, 104);
             this.lstImages.TabIndex = 5;
@@ -150,7 +150,7 @@
             // btnUpdate
             // 
             this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnUpdate.Location = new System.Drawing.Point(300, 500); // Dời xuống
+            this.btnUpdate.Location = new System.Drawing.Point(300, 500); // D?i xu?ng
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(130, 50);
             this.btnUpdate.TabIndex = 6;
@@ -161,7 +161,7 @@
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnCancel.Location = new System.Drawing.Point(440, 500); // Dời xuống
+            this.btnCancel.Location = new System.Drawing.Point(440, 500); // D?i xu?ng
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(130, 50);
             this.btnCancel.TabIndex = 7;
@@ -171,13 +171,13 @@
             // openFileDialog
             // 
             this.openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif";
-            this.openFileDialog.Multiselect = false; // Chỉ cho chọn 1 ảnh 1 lần
+            this.openFileDialog.Multiselect = false; // Ch? cho ch?n 1 ?nh 1 l?n
             this.openFileDialog.Title = "Chọn hình ảnh";
             // 
             // picPreview
             // 
             this.picPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picPreview.Location = new System.Drawing.Point(340, 314); // Dời xuống
+            this.picPreview.Location = new System.Drawing.Point(340, 314); // D?i xu?ng
             this.picPreview.Name = "picPreview";
             this.picPreview.Size = new System.Drawing.Size(230, 160);
             this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -187,7 +187,7 @@
             // btnDeleteImage
             // 
             this.btnDeleteImage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDeleteImage.Location = new System.Drawing.Point(245, 314); // Dời xuống
+            this.btnDeleteImage.Location = new System.Drawing.Point(245, 314); // D?i xu?ng
             this.btnDeleteImage.Name = "btnDeleteImage";
             this.btnDeleteImage.Size = new System.Drawing.Size(75, 40);
             this.btnDeleteImage.TabIndex = 15;
@@ -210,9 +210,9 @@
             this.cboStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cboStatus.FormattingEnabled = true;
             this.cboStatus.Items.AddRange(new object[] {
-            "Còn trống",
-            "Đã thuê",
-            "Đang sửa chữa"});
+            "Trống",
+            "Ðã thuê",
+            "Ðang sữa chữa"});
             this.cboStatus.Location = new System.Drawing.Point(170, 265);
             this.cboStatus.Name = "cboStatus";
             this.cboStatus.Size = new System.Drawing.Size(400, 36);
@@ -224,7 +224,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(603, 574); // Tăng chiều cao
+            this.ClientSize = new System.Drawing.Size(603, 574); // Tang chi?u cao
             this.Controls.Add(this.cboStatus);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnDeleteImage);

@@ -73,7 +73,7 @@
             this.lblAddress.Name = "lblAddress";
             this.lblAddress.Size = new System.Drawing.Size(78, 28);
             this.lblAddress.TabIndex = 2;
-            this.lblAddress.Text = "Địa chỉ:";
+            this.lblAddress.Text = "Ðịa chỉ:";
             // 
             // lblPrice
             // 
@@ -132,7 +132,7 @@
             this.btnAddImage.Name = "btnAddImage";
             this.btnAddImage.Size = new System.Drawing.Size(150, 40);
             this.btnAddImage.TabIndex = 4;
-            this.btnAddImage.Text = "Thêm ảnh...";
+            this.btnAddImage.Text = "Thêm ?nh...";
             this.btnAddImage.UseVisualStyleBackColor = true;
             // 
             // lstImages
@@ -219,7 +219,7 @@
             this.MinimizeBox = false;
             this.Name = "FormCreateRoom";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Tạo phòng trọ mới";
+            this.Text = "Tạo phòng mới";
             ((System.ComponentModel.ISupportInitialize)(this.numPrice)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numArea)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();

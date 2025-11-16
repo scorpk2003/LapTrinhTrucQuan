@@ -89,8 +89,8 @@
             this.label5.Location = new System.Drawing.Point(30, 230);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(147, 28);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Thời hạn (tháng):";
+            this.label5.TabIndex = 6;   
+            this.label5.Text = "Thời hạn (tháng):"; 
             // 
             // nudDeposit
             // 

@@ -52,7 +52,7 @@
             this.btnConfirmPayment.Name = "btnConfirmPayment";
             this.btnConfirmPayment.Size = new System.Drawing.Size(170, 40);
             this.btnConfirmPayment.TabIndex = 5;
-            this.btnConfirmPayment.Text = "Xác nhận TT";
+            this.btnConfirmPayment.Text = "Xác nhận thanh toán";
             this.btnConfirmPayment.UseVisualStyleBackColor = false;
             // 
             // btnGenerateBills
@@ -62,7 +62,7 @@
             this.btnGenerateBills.Name = "btnGenerateBills";
             this.btnGenerateBills.Size = new System.Drawing.Size(220, 40);
             this.btnGenerateBills.TabIndex = 4;
-            this.btnGenerateBills.Text = "Tạo HĐ tháng này";
+            this.btnGenerateBills.Text = "Tạo HÐ tháng này";
             this.btnGenerateBills.UseVisualStyleBackColor = true;
             // 
             // btnShowUnpaid
@@ -72,7 +72,7 @@
             this.btnShowUnpaid.Name = "btnShowUnpaid";
             this.btnShowUnpaid.Size = new System.Drawing.Size(250, 40);
             this.btnShowUnpaid.TabIndex = 3;
-            this.btnShowUnpaid.Text = "Hiển thị tất cả hóa đơn nợ";
+            this.btnShowUnpaid.Text = "Hiển thị tất cả hóa đơn";
             this.btnShowUnpaid.UseVisualStyleBackColor = true;
             // 
             // cboYear

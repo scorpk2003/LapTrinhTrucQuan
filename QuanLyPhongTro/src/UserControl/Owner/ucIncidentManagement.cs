@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Test.Mediator;
+using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,24 +25,20 @@ namespace QuanLyPhongTro
             _contractService = new ContractService();
             _ownerId = Guid.Empty;
 
-            // Đăng ký nhận Person (Owner)
             Mediator.Instance.Register<Person>("UcIncidentManagement", (owner) =>
             {
                 _ownerId = owner.Id;
-
                 if (_isLoaded)
                 {
-                    LoadData(); 
+                    LoadData();
                     if (cboFilterStatus.Items.Count > 0)
                         cboFilterStatus.SelectedIndex = 1;
                 }
-
                 return Task.CompletedTask;
             });
 
             this.Load += UcIncidentManagement_Load;
             this.btnRefresh.Click += (s, e) => LoadData();
-
             this.cboFilterStatus.SelectedIndexChanged += (s, e) => FilterReports();
             this.btnInProgress.Click += BtnInProgress_Click;
             this.btnResolve.Click += BtnResolve_Click;
@@ -52,16 +48,13 @@ namespace QuanLyPhongTro
         private void UcIncidentManagement_Load(object sender, EventArgs e)
         {
             SetupDgv();
-
             _isLoaded = true;
-
             if (_ownerId != Guid.Empty)
             {
                 LoadData();
                 if (cboFilterStatus.Items.Count > 0)
                     cboFilterStatus.SelectedIndex = 1;
             }
-
             if (cboFilterStatus.Items.Count > 0 && cboFilterStatus.SelectedIndex == -1)
             {
                 cboFilterStatus.SelectedIndex = 0;
@@ -70,18 +63,14 @@ namespace QuanLyPhongTro
 
         public void LoadData()
         {
-            if (_ownerId == Guid.Empty) return;
-            if (!_isLoaded) return; 
-
+            if (_ownerId == Guid.Empty || !_isLoaded) return;
             _allReports = _reportService.GetReportsByOwner(_ownerId);
             FilterReports();
         }
 
         private void FilterReports()
         {
-            if (_allReports == null) return;
-            if (!_isLoaded) return; 
-            if (cboFilterStatus.SelectedItem == null) return;
+            if (_allReports == null || !_isLoaded || cboFilterStatus.SelectedItem == null) return;
 
             string filter = cboFilterStatus.SelectedItem.ToString();
             List<Report> filteredList = _allReports;
@@ -98,8 +87,8 @@ namespace QuanLyPhongTro
             {
                 dgvIncidents.Rows.Add(
                     report.Status,
-                    report.Room?.Name ?? "N/A",
-                    report.Reporter?.Username ?? "N/A",
+                    report.IdRoomNavigation?.Name ?? "N/A",
+                    report.IdReporterNavigation?.Username ?? "N/A",
                     report.Title,
                     report.Description
                 );
@@ -165,7 +154,8 @@ namespace QuanLyPhongTro
                     if (success)
                     {
                         _reportService.UpdateReportStatus(reportId, "Resolved");
-                        MessageBox.Show($"Gia hạn hợp đồng cho phòng {selectedReport.Room.Name} thêm {months} tháng thành công!");
+                        
+                        MessageBox.Show($"Gia hạn hợp đồng cho phòng {selectedReport.IdRoomNavigation.Name} thêm {months} tháng thành công!");
                         LoadData();
                     }
                     else
@@ -192,10 +182,7 @@ namespace QuanLyPhongTro
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ParseMonthsFromDescription Error: {ex.Message}");
-            }
+            catch (Exception ex) { Console.WriteLine($"ParseMonths Error: {ex.Message}"); }
             return 0;
         }
 
@@ -213,7 +200,7 @@ namespace QuanLyPhongTro
         {
             if (dgvIncidents.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn một báo cáo để cập nhật.");
+                MessageBox.Show("Vui lòng chọn một báo cáo để cập nhật."); 
                 return;
             }
 

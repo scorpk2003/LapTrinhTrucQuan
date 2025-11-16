@@ -1,7 +1,8 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Test.Mediator;
+using QuanLyPhongTro.src.Test.Models;
 using System;
+using System.Drawing; // <-- Thêm
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,21 +18,28 @@ namespace QuanLyPhongTro
             InitializeComponent();
             _billService = new BillService();
 
+            // Ensure columns are ready even if mediator publishes before Load event
+            if (dgvBills.Columns.Count == 0)
+                SetupDgv();
+
             Mediator.Instance.Register<Contract>("UcMyBills", (contract) =>
             {
                 _renterId = contract.IdRenter;
+                // Guard: make sure columns exist
+                if (dgvBills.Columns.Count == 0)
+                    SetupDgv();
                 LoadData();
                 return Task.CompletedTask;
             });
 
             this.Load += UcMyBills_Load;
-            
             this.dgvBills.CellDoubleClick += DgvBills_CellDoubleClick;
         }
 
         private void UcMyBills_Load(object sender, EventArgs e)
         {
-            SetupDgv();
+            if (dgvBills.Columns.Count == 0)
+                SetupDgv();
         }
 
         private void SetupDgv()
@@ -40,11 +48,7 @@ namespace QuanLyPhongTro
             dgvBills.Columns.Clear();
             dgvBills.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            var colId = new DataGridViewTextBoxColumn
-            {
-                Name = "BillId",
-                Visible = false
-            };
+            var colId = new DataGridViewTextBoxColumn { Name = "BillId", Visible = false };
             dgvBills.Columns.Add(colId);
 
             dgvBills.Columns.Add("Title", "Hóa đơn");
@@ -57,19 +61,32 @@ namespace QuanLyPhongTro
 
         public void LoadData()
         {
-            if (_renterId == Guid.Empty) return;
+            if (_renterId == Guid.Empty || !_renterId.HasValue) return;
 
-            var bills = _billService.GetBillByRenter(_renterId.Value);
+            // Guard: ensure columns exist
+            if (dgvBills.Columns.Count == 0)
+                SetupDgv();
+
+            var bills = _billService.GetBillsByRenter(_renterId.Value);
             dgvBills.Rows.Clear();
 
             foreach (var bill in bills)
             {
+                string statusText;
+                if (bill.Payment == null)
+                    statusText = "Chưa thanh toán";
+                else if (bill.Payment.Amount < bill.TotalMoney)
+                    statusText = $"Đã trả {bill.Payment.Amount:N0}";
+                else
+                    statusText = "Đã thanh toán";
+                
+
                 dgvBills.Rows.Add(
                     bill.Id,
-                    $"Hóa đơn tháng {bill.PaymentDate:MM/yyyy}",
-                    bill.Room?.Name,
+                    $"Hóa đơn tháng {bill.PaymentDate.Value.ToString("MM/yyyy")}", 
+                    bill.IdRoomNavigation?.Name, 
                     bill.TotalMoney,
-                    bill.Status
+                    statusText 
                 );
             }
         }
@@ -79,7 +96,7 @@ namespace QuanLyPhongTro
             if (e.RowIndex < 0) return;
 
             Guid billId = (Guid)dgvBills.Rows[e.RowIndex].Cells["BillId"].Value;
-            
+
             var formDetail = new FormBillDetail(billId);
             if (formDetail.ShowDialog() == DialogResult.OK)
             {

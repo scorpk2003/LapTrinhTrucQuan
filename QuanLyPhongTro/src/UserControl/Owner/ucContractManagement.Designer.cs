@@ -81,7 +81,7 @@
             this.btnApprove.Name = "btnApprove";
             this.btnApprove.Size = new System.Drawing.Size(180, 50);
             this.btnApprove.TabIndex = 1;
-            this.btnApprove.Text = "Tạo Hợp đồng";
+            this.btnApprove.Text = "Tạo hợp đồng";
             this.btnApprove.UseVisualStyleBackColor = false;
             // 
             // dgvRequests
@@ -136,7 +136,7 @@
             this.btnRenewContract.Name = "btnRenewContract";
             this.btnRenewContract.Size = new System.Drawing.Size(180, 50);
             this.btnRenewContract.TabIndex = 3;
-            this.btnRenewContract.Text = "Gia hạn HĐ";
+            this.btnRenewContract.Text = "Gia hạn hợp đồng";
             this.btnRenewContract.UseVisualStyleBackColor = false;
             // 
             // dgvContracts

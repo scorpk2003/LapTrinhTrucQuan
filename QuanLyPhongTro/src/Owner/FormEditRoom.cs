@@ -1,9 +1,10 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Models;
 using QuanLyPhongTro.Services;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
@@ -11,7 +12,7 @@ namespace QuanLyPhongTro
     public partial class FormEditRoom : Form
     {
         private readonly RoomService _roomService;
-        private Room _roomToEdit; // Phòng đang sửa
+        private Room _roomToEdit;
 
         private readonly Dictionary<string, RoomImage> _imageMap = new Dictionary<string, RoomImage>();
 
@@ -19,9 +20,8 @@ namespace QuanLyPhongTro
         {
             InitializeComponent();
             _roomService = new RoomService();
-            _roomToEdit = roomToEdit; // Nhận phòng từ Owner_TrangChu
+            _roomToEdit = roomToEdit;
 
-            // Gán sự kiện
             this.Load += FormEditRoom_Load;
             this.btnUpdate.Click += BtnUpdate_Click;
             this.btnAddImage.Click += BtnAddImage_Click;
@@ -30,9 +30,6 @@ namespace QuanLyPhongTro
             this.btnCancel.Click += (s, e) => this.Close();
         }
 
-        /// <summary>
-        /// Tải thông tin phòng (gồm cả ảnh) lên Form
-        /// </summary>
         private void FormEditRoom_Load(object sender, EventArgs e)
         {
             // 1. Tải chi tiết phòng (bao gồm ảnh) từ CSDL
@@ -50,33 +47,31 @@ namespace QuanLyPhongTro
             txtAddress.Text = _roomToEdit.Address;
             numPrice.Value = _roomToEdit.Price ?? 0;
             numArea.Value = _roomToEdit.Area ?? 0;
-            cboStatus.SelectedItem = _roomToEdit.Status;
-            if (cboStatus.SelectedIndex == -1) cboStatus.SelectedItem = "Còn trống";
 
-            // 3. Đổ dữ liệu Ảnh
+            if (cboStatus.Items.Count == 0)
+            {
+                cboStatus.Items.Add("Trống");
+                cboStatus.Items.Add("Đã thuê");
+            }
+            cboStatus.SelectedItem = _roomToEdit.Status;
+            if (cboStatus.SelectedIndex == -1) cboStatus.SelectedItem = "Trống";
+
+            // 3. Đổ dữ liệu ảnh
             LoadImageList();
         }
 
-        /// <summary>
-        /// Hàm riêng để tải/tải lại danh sách ảnh vào ListBox
-        /// </summary>
         private void LoadImageList()
         {
-            // Xóa danh sách cũ
             lstImages.Items.Clear();
             _imageMap.Clear();
             if (picPreview.Image != null) picPreview.Image.Dispose();
             picPreview.Image = null;
 
-            // Tải ảnh từ CSDL (đã được load trong _roomToEdit)
             if (_roomToEdit.RoomImages != null)
             {
                 foreach (var img in _roomToEdit.RoomImages)
                 {
-                    // Chỉ hiển thị tên file
                     string displayName = Path.GetFileName(img.ImageUrl);
-
-                    // Tránh lỗi trùng tên (nếu có)
                     string uniqueDisplayName = displayName;
                     int count = 1;
                     while (_imageMap.ContainsKey(uniqueDisplayName))
@@ -88,33 +83,26 @@ namespace QuanLyPhongTro
                     lstImages.Items.Add(uniqueDisplayName);
                 }
             }
-
-            // Tự động chọn ảnh đầu tiên
             if (lstImages.Items.Count > 0)
             {
                 lstImages.SelectedIndex = 0;
             }
         }
 
-        /// <summary>
-        /// (Nút Cập nhật) Lưu thông tin TEXT
-        /// </summary>
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
-            // Cập nhật đối tượng _roomToEdit từ Form
             _roomToEdit.Name = txtRoomName.Text;
             _roomToEdit.Address = txtAddress.Text;
             _roomToEdit.Price = numPrice.Value;
             _roomToEdit.Area = numArea.Value;
             _roomToEdit.Status = cboStatus.SelectedItem.ToString();
 
-            // Gọi Service (hàm này chỉ cập nhật text)
             bool success = _roomService.UpdateRoom(_roomToEdit);
 
             if (success)
             {
                 MessageBox.Show("Cập nhật thông tin phòng thành công!");
-                this.DialogResult = DialogResult.OK; // Báo cho form cha tải lại
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
@@ -123,22 +111,20 @@ namespace QuanLyPhongTro
             }
         }
 
-        /// <summary>
-        /// (Nút Thêm ảnh) Thêm ảnh MỚI
-        /// </summary>
         private void BtnAddImage_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string sourcePath = openFileDialog.FileName;
+                string destinationPath = ""; 
 
                 try
                 {
-                    // 1. Sao chép ảnh vào thư mục (giống FormCreateRoom)
+                    // 1. Sao chép ảnh
                     string imageFolder = Path.Combine(Application.StartupPath, "RoomImages");
                     Directory.CreateDirectory(imageFolder);
                     string newFileName = $"{Guid.NewGuid()}{Path.GetExtension(sourcePath)}";
-                    string destinationPath = Path.Combine(imageFolder, newFileName);
+                    destinationPath = Path.Combine(imageFolder, newFileName);
                     File.Copy(sourcePath, destinationPath);
 
                     string relativePath = Path.Combine("RoomImages", newFileName);
@@ -152,24 +138,24 @@ namespace QuanLyPhongTro
                         string displayName = Path.GetFileName(newImage.ImageUrl);
                         _imageMap.Add(displayName, newImage);
                         int newIndex = lstImages.Items.Add(displayName);
-                        lstImages.SelectedIndex = newIndex; // Tự chọn ảnh mới
+                        lstImages.SelectedIndex = newIndex;
                     }
                     else
                     {
                         MessageBox.Show("Thêm ảnh thất bại.");
-                        // (Nên xóa file đã copy ở đây)
+                        if (File.Exists(destinationPath))
+                            File.Delete(destinationPath);
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Lỗi khi thêm ảnh: {ex.Message}");
+                    if (File.Exists(destinationPath))
+                        File.Delete(destinationPath);
                 }
             }
         }
 
-        /// <summary>
-        /// (Nút Xóa ảnh) Xóa ảnh ĐÃ CÓ
-        /// </summary>
         private void BtnDeleteImage_Click(object sender, EventArgs e)
         {
             if (lstImages.SelectedItem == null)
@@ -185,7 +171,7 @@ namespace QuanLyPhongTro
                 var confirm = MessageBox.Show($"Bạn có chắc muốn xóa ảnh '{displayName}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirm == DialogResult.No) return;
 
-                // 1. GỌI SERVICE: Xóa ảnh khỏi CSDL (và xóa file)
+                // 1. GỌI SERVICE: Xóa ảnh
                 bool success = _roomService.DeleteRoomImage(imageToDelete.Id);
 
                 if (success)
@@ -200,9 +186,6 @@ namespace QuanLyPhongTro
             }
         }
 
-        /// <summary>
-        /// Hiển thị ảnh xem trước
-        /// </summary>
         private void LstImages_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstImages.SelectedItem == null)
@@ -217,8 +200,7 @@ namespace QuanLyPhongTro
             {
                 try
                 {
-                    // Đường dẫn ảnh là tương đối (ví dụ: "RoomImages\abc.jpg")
-                    string fullPath = Path.Combine(Application.StartupPath, imageToShow.ImageUrl);
+                    string fullPath = imageToShow.ImageUrl;
 
                     if (File.Exists(fullPath))
                     {
@@ -229,7 +211,6 @@ namespace QuanLyPhongTro
                     {
                         if (picPreview.Image != null) picPreview.Image.Dispose();
                         picPreview.Image = null;
-                        // (Có thể hiển thị ảnh "Không tìm thấy")
                     }
                 }
                 catch (Exception)
@@ -240,7 +221,6 @@ namespace QuanLyPhongTro
             }
         }
 
-        // Giải phóng ảnh khi đóng Form
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (picPreview.Image != null)

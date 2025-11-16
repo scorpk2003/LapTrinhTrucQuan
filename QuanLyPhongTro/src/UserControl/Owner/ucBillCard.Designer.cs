@@ -121,7 +121,7 @@
             this.lblRenterName.Name = "lblRenterName";
             this.lblRenterName.Size = new System.Drawing.Size(133, 28);
             this.lblRenterName.TabIndex = 3;
-            this.lblRenterName.Text = "(Người thuê...)";
+            this.lblRenterName.Text = "(Nguời thuê...)";
             // 
             // lblRoomName
             // 
@@ -150,7 +150,7 @@
             this.btnSendBill.Name = "btnSendBill";
             this.btnSendBill.Size = new System.Drawing.Size(150, 40);
             this.btnSendBill.TabIndex = 0;
-            this.btnSendBill.Text = "Gửi Hóa đơn";
+            this.btnSendBill.Text = "Gửi hóa đơn";
             this.btnSendBill.UseVisualStyleBackColor = true;
             // 
             // ucBillCard

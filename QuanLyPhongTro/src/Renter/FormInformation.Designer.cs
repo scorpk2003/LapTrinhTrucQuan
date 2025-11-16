@@ -50,7 +50,7 @@
             this.btnChonAnh.Name = "btnChonAnh";
             this.btnChonAnh.Size = new System.Drawing.Size(130, 35);
             this.btnChonAnh.TabIndex = 4;
-            this.btnChonAnh.Text = "Đổi ảnh";
+            this.btnChonAnh.Text = "Ðổi ảnh";
             this.btnChonAnh.UseVisualStyleBackColor = true;
             // 
             // lblUsername
@@ -68,7 +68,7 @@
             this.txtUsername.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtUsername.Location = new System.Drawing.Point(170, 232);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.ReadOnly = true; // Tên đăng nhập không cho sửa
+            this.txtUsername.ReadOnly = true; // Tên dang nh?p không cho s?a
             this.txtUsername.Size = new System.Drawing.Size(250, 30);
             this.txtUsername.TabIndex = 5;
             // 
@@ -124,7 +124,7 @@
             this.lblPhone.Name = "lblPhone";
             this.lblPhone.Size = new System.Drawing.Size(115, 23);
             this.lblPhone.TabIndex = 8;
-            this.lblPhone.Text = "Số điện thoại:";
+            this.lblPhone.Text = "Số điện thọai:";
             // 
             // btnEditSave
             // 
@@ -144,7 +144,7 @@
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(120, 45);
             this.btnClose.TabIndex = 6;
-            this.btnClose.Text = "Đóng";
+            this.btnClose.Text = "Ðóng";
             this.btnClose.UseVisualStyleBackColor = true;
             // 
             // openFileDialog

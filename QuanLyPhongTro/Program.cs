@@ -1,9 +1,9 @@
-﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.Model;
+using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Threading;
+using QuanLyPhongTro.src.Test.Mediator;
 
 namespace QuanLyPhongTro
 {
@@ -21,7 +21,7 @@ namespace QuanLyPhongTro
 
             Mediator.Instance.RegisterFactory("UcBillManagement", () => new ucBillManagement());
             Mediator.Instance.RegisterFactory("UcContractManagement", () => new ucContractManagement());
-            Mediator.Instance.RegisterFactory("UcReportManagement", () => new ucReportManagement());
+            //Mediator.Instance.RegisterFactory("UcReportManagement", () => new ucReportManagement());
             Mediator.Instance.RegisterFactory("UcIncidentManagement", () => new ucIncidentManagement());
 
             Mediator.Instance.RegisterFactory("UcMyRoom", () => new ucMyRoom());

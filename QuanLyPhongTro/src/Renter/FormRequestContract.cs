@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Test.Models;
+using QuanLyPhongTro.src.Test.Services;
 using System;
 using System.Windows.Forms;
 
@@ -35,7 +35,7 @@ namespace QuanLyPhongTro
         {
             if (dtpStartDate.Value.Date < DateTime.Now.Date)
             {
-                MessageBox.Show("Ngày muốn thuê không thể là một ngày trong quá khứ.");
+                MessageBox.Show("Ngày muốn thuê không được là một ngày trong quá khứ.");
                 return;
             }
 
@@ -60,13 +60,13 @@ namespace QuanLyPhongTro
             bool success = _requestService.CreateRequest(request);
             if (success)
             {
-                MessageBox.Show("Gửi yêu cầu thành công! Vui lòng chờ chủ trọ xác nhận.");
+                MessageBox.Show("Gửi yêu cầu thành công vui lòng chờ xác nhận!.");
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Gửi yêu cầu thất bại. (Có thể bạn đã gửi 1 yêu cầu cho phòng này rồi).");
+                MessageBox.Show("Gửi yêu cầu thất bại (Có thể bạn đã gửi yêu cầu cho phòng này rồi).");
             }
         }
     }

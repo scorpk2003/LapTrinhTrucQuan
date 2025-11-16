@@ -88,7 +88,7 @@
             this.btnRequestTermination.Name = "btnRequestTermination";
             this.btnRequestTermination.Size = new System.Drawing.Size(500, 50);
             this.btnRequestTermination.TabIndex = 4;
-            this.btnRequestTermination.Text = "Gửi yêu cầu Chấm dứt Hợp đồng";
+            this.btnRequestTermination.Text = "Gửi yêu cầu chấm dứt hợp đồng";
             this.btnRequestTermination.UseVisualStyleBackColor = false;
             // 
             // btnRequestRenewal
@@ -99,7 +99,7 @@
             this.btnRequestRenewal.Name = "btnRequestRenewal";
             this.btnRequestRenewal.Size = new System.Drawing.Size(500, 50);
             this.btnRequestRenewal.TabIndex = 5;
-            this.btnRequestRenewal.Text = "Gửi yêu cầu Gia hạn Hợp đồng";
+            this.btnRequestRenewal.Text = "Gửi yêu cầu gia hạn hợp đồng";
             this.btnRequestRenewal.UseVisualStyleBackColor = false;
             // 
             // ucMyContract

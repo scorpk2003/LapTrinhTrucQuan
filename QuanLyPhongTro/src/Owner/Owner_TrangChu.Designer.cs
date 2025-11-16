@@ -120,7 +120,7 @@
             btnLogout.Name = "btnLogout";
             btnLogout.Size = new Size(463, 92);
             btnLogout.TabIndex = 5;
-            btnLogout.Text = "Đăng xuất";
+            btnLogout.Text = "Ðăng xuất";
             btnLogout.UseVisualStyleBackColor = true;
             // 
             // btnIncidents
@@ -132,7 +132,7 @@
             btnIncidents.Name = "btnIncidents";
             btnIncidents.Size = new Size(463, 124);
             btnIncidents.TabIndex = 7;
-            btnIncidents.Text = "Sự cố / Thông báo";
+            btnIncidents.Text = "Thông báo";
             btnIncidents.UseVisualStyleBackColor = true;
             // 
             // btnReport
@@ -156,7 +156,7 @@
             btnContract.Name = "btnContract";
             btnContract.Size = new Size(463, 126);
             btnContract.TabIndex = 3;
-            btnContract.Text = "Quản lí Hợp đồng";
+            btnContract.Text = "Quản lý hợp đồng";
             btnContract.UseVisualStyleBackColor = true;
             // 
             // btnBill
@@ -168,7 +168,7 @@
             btnBill.Name = "btnBill";
             btnBill.Size = new Size(463, 125);
             btnBill.TabIndex = 2;
-            btnBill.Text = "Quản lí Hóa đơn";
+            btnBill.Text = "Quản lí hóa đơn";
             btnBill.UseVisualStyleBackColor = true;
             // 
             // btnCreate
@@ -301,7 +301,7 @@
             lblFilterArea.Name = "lblFilterArea";
             lblFilterArea.Size = new Size(160, 46);
             lblFilterArea.TabIndex = 10;
-            lblFilterArea.Text = "Diện tích:";
+            lblFilterArea.Text = "Di?n tích:";
             // 
             // btnResetPrice
             // 

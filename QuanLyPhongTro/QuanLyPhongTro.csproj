@@ -15,15 +15,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+
     <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="QuestPDF" Version="2025.7.4" />
     <PackageReference Include="ScottPlot.WinForms" Version="5.1.57" />
+
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="src\Owner\FormCreateRoom.cs">
-      <SubType>Form</SubType>
-    </Compile>
-  </ItemGroup>
 
 </Project>

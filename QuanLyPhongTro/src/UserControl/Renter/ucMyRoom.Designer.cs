@@ -72,7 +72,7 @@
             this.lblRoomAddress.Name = "lblRoomAddress";
             this.lblRoomAddress.Size = new System.Drawing.Size(91, 28);
             this.lblRoomAddress.TabIndex = 3;
-            this.lblRoomAddress.Text = "Địa chỉ: ...";
+            this.lblRoomAddress.Text = "Ðịa chỉ: ...";
             // 
             // lblRoomArea
             // 
@@ -170,7 +170,7 @@
             this.btnPay.Name = "btnPay";
             this.btnPay.Size = new System.Drawing.Size(300, 50);
             this.btnPay.TabIndex = 3;
-            this.btnPay.Text = "Thanh toán (Demo)";
+            this.btnPay.Text = "Thanh toán";
             this.btnPay.UseVisualStyleBackColor = false;
             // 
             // lblBillStatus

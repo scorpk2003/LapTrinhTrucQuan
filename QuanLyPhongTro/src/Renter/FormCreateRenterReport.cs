@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Models;
 using QuanLyPhongTro.Services;
 using System;
 using System.Windows.Forms;
@@ -31,7 +31,7 @@ namespace QuanLyPhongTro
 
             if (!_contract.IdRoom.HasValue)
             {
-                MessageBox.Show("Lỗi: Hợp đồng không liên kết với phòng nào.");
+                MessageBox.Show("Lỗi: Hợp đồng không liên kết với phòng hoặc người thuê."); // Sửa Encoding
                 return;
             }
 
@@ -40,7 +40,7 @@ namespace QuanLyPhongTro
                 Title = txtTitle.Text,
                 Description = txtDescription.Text,
                 IdRoom = _contract.IdRoom.Value,
-                IdReporter = _contract.IdRenter,
+                IdReporter = _contract.IdRenter.Value,
                 Status = "Pending"
             };
 

@@ -46,7 +46,7 @@
             this.btnCreateReport.Name = "btnCreateReport";
             this.btnCreateReport.Size = new System.Drawing.Size(230, 50);
             this.btnCreateReport.TabIndex = 1;
-            this.btnCreateReport.Text = "Tạo Báo cáo mới";
+            this.btnCreateReport.Text = "Tạo báo cáo mới";
             this.btnCreateReport.UseVisualStyleBackColor = false;
             // 
             // label1
@@ -57,7 +57,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(342, 38);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Lịch sử Báo cáo / Sự cố";
+            this.label1.Text = "Lịch sử báo cáo / sự cố";
             // 
             // dgvReports
             // 

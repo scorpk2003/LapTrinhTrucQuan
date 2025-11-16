@@ -1,7 +1,6 @@
-﻿using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Login;
-using QuanLyPhongTro.src.Mediator;
+﻿using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Test.Mediator;
+using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,15 +15,16 @@ namespace QuanLyPhongTro
     {
         private readonly Person _currentOwner;
         private readonly RoomService _roomService;
-        private List<Room> _allRooms; 
+        private List<Room> _allRooms;
 
         private ucBillManagement _billControl;
         private ucContractManagement _contractControl;
-        private ucReportManagement _reportControl;
+        //private ucReportManagement _reportControl;
         private ucIncidentManagement _incidentControl;
 
         public event EventHandler Logout;
 
+        // --- SỬA LỖI 2 (Encoding) ---
         private const string PlaceholderText = "Nhập tên, địa chỉ...";
 
         public Owner_TrangChu(Person loggedInOwner)
@@ -62,27 +62,25 @@ namespace QuanLyPhongTro
 
         private void Owner_TrangChu_Load(object sender, EventArgs e)
         {
-            lblOwnerName.Text = $"Chào mừng, {_currentOwner.Username}";
+            lblOwnerName.Text = $"Chào mừng, {_currentOwner.Username}"; // <-- SỬA LỖI 2
 
             nudPriceFrom.Maximum = 999999999;
             nudPriceTo.Maximum = 999999999;
             nudAreaFrom.Maximum = 9999;
             nudAreaTo.Maximum = 9999;
 
-            // Nạp ComboBox Trạng thái
+            // --- SỬA LỖI 2 (Encoding) ---
             cboFilterStatus.Items.Add("Tất cả");
             cboFilterStatus.Items.Add("Trống");
             cboFilterStatus.Items.Add("Đã thuê");
-            cboFilterStatus.SelectedIndex = 0; // Mặc định là "Tất cả"
+            cboFilterStatus.SelectedIndex = 0;
+            // --- HẾT SỬA ---
 
-
-            // Tải trang chủ (danh sách phòng) khi khởi động
             BtnHome_Click(sender, e);
         }
 
         #region Xử lý Menu Click và Mediator
 
-        // Quay về Trang chủ (Quản lý phòng)
         private void BtnHome_Click(object sender, EventArgs e)
         {
             panelRoomManagement.Visible = true;
@@ -90,13 +88,12 @@ namespace QuanLyPhongTro
 
             if (_billControl != null) _billControl.Visible = false;
             if (_contractControl != null) _contractControl.Visible = false;
-            if (_reportControl != null) _reportControl.Visible = false;
+            //if (_reportControl != null) _reportControl.Visible = false;
             if (_incidentControl != null) _incidentControl.Visible = false;
 
             LoadRooms();
         }
 
-        // Mở Form Thêm phòng
         private void BtnCreate_Click(object sender, EventArgs e)
         {
             using (FormCreateRoom frm = new FormCreateRoom(_currentOwner.Id))
@@ -126,11 +123,7 @@ namespace QuanLyPhongTro
         }
         private async void BtnReport_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Person>("UcReportManagement", _currentOwner, async (control) =>
-            {
-                _reportControl = (ucReportManagement)control;
-                await ShowView(control, _reportControl);
-            });
+            
         }
         private async void BtnIncidents_Click(object sender, EventArgs e)
         {
@@ -147,21 +140,18 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                AuthForm loginForm = new AuthForm();
-                loginForm.Show();
+                AuthForm authForm = new AuthForm();
+                authForm.ShowDialog(this);
                 this.Close();
             }
         }
 
-        /// <summary>
-        /// Hàm trợ giúp chung để hiển thị các UserControl
-        /// </summary>
         private async Task ShowView<T>(Control control, T uc) where T : Control
         {
             panelRoomManagement.Visible = false;
             if (_billControl != null && uc != _billControl) _billControl.Visible = false;
             if (_contractControl != null && uc != _contractControl) _contractControl.Visible = false;
-            if (_reportControl != null && uc != _reportControl) _reportControl.Visible = false;
+            //if (_reportControl != null && uc != _reportControl) _reportControl.Visible = false;
             if (_incidentControl != null && uc != _incidentControl) _incidentControl.Visible = false;
             if (control == null) return;
             if (!this.Controls.Contains(control))
@@ -177,62 +167,78 @@ namespace QuanLyPhongTro
 
         #region Xử lý Phòng (Tải, Vẽ và Lọc/Tìm kiếm)
 
-        /// <summary>
-        /// Tải danh sách phòng gốc từ CSDL
-        /// </summary>
         private void LoadRooms()
         {
             _allRooms = _roomService.GetAllRoomsByOwner(_currentOwner.Id);
+            // (Nạp lại bộ lọc Max/Min dựa trên dữ liệu mới)
+            InitializeFilters();
             FilterAndDisplayRooms();
+        }
+
+        /// <summary>
+        /// (Hàm mới) Khởi tạo giá trị Max cho bộ lọc
+        /// </summary>
+        private void InitializeFilters()
+        {
+            if (_allRooms == null || !_allRooms.Any()) return;
+
+            decimal maxPrice = (_allRooms.Max(r => r.Price) > 0) ? _allRooms.Max(r => r.Price ?? 0) : 10000000;
+            decimal maxArea = (_allRooms.Max(r => r.Area) > 0) ? (_allRooms.Max(r => r.Area ?? 0)) : 100;
+
+            nudPriceFrom.Maximum = maxPrice;
+            nudPriceTo.Maximum = maxPrice;
+            nudAreaFrom.Maximum = maxArea;
+            nudAreaTo.Maximum = maxArea;
+
+            // Đặt lại giá trị (nếu đang là 0)
+            if (nudPriceTo.Value == 0) nudPriceTo.Value = maxPrice;
+            if (nudAreaTo.Value == 0) nudAreaTo.Value = maxArea;
         }
 
         private void BtnResetPrice_Click(object sender, EventArgs e)
         {
             nudPriceFrom.Value = 0;
-            nudPriceTo.Value = 0;
+            nudPriceTo.Value = nudPriceTo.Maximum;
         }
         private void BtnResetArea_Click(object sender, EventArgs e)
         {
             nudAreaFrom.Value = 0;
-            nudAreaTo.Value = 0;
+            nudAreaTo.Value = nudAreaTo.Maximum;
         }
         private void BtnResetStatus_Click(object sender, EventArgs e)
         {
             cboFilterStatus.SelectedIndex = 0; // Set về "Tất cả"
         }
 
-        /// <summary>
-        /// Hàm LỌC và TÌM KIẾM (Đã nâng cấp)
-        /// </summary>
         private void FilterAndDisplayRooms()
         {
             if (_allRooms == null) return;
 
             IEnumerable<Room> filteredList = _allRooms;
 
-            // 1. Lấy giá trị bộ lọc
             decimal priceFrom = nudPriceFrom.Value;
             decimal priceTo = nudPriceTo.Value;
             decimal areaFrom = nudAreaFrom.Value;
             decimal areaTo = nudAreaTo.Value;
-            string status = cboFilterStatus.SelectedItem?.ToString() ?? "Tất cả";
+            string status = cboFilterStatus.SelectedItem?.ToString() ?? "Tất cả"; // Sửa (Lấy "Trống")
             string keyword = txtSearch.Text.ToLower().Trim();
 
             // 2. Áp dụng BỘ LỌC
-            if (status != "Tất cả")
+            if (status != "Tất cả") 
             {
                 filteredList = filteredList.Where(r => r.Status == status);
             }
             if (priceTo > 0 && priceTo >= priceFrom)
             {
-                filteredList = filteredList.Where(r => r.Price >= priceFrom && r.Price <= priceTo);
+                filteredList = filteredList.Where(r => r.Price.HasValue && r.Price.Value >= priceFrom && r.Price.Value <= priceTo);
             }
             if (areaTo > 0 && areaTo >= areaFrom)
             {
-                filteredList = filteredList.Where(r => r.Area.HasValue && r.Area >= (int)areaFrom && r.Area <= (int)areaTo);
+                filteredList = filteredList.Where(r => r.Area.HasValue && r.Area.Value >= areaFrom && r.Area.Value <= areaTo);
+                
             }
 
-            // 3. Áp dụng TÌM KIẾM (trên danh sách đã lọc)
+            // 3. Áp dụng TÌM KIẾM
             if (!string.IsNullOrEmpty(keyword) && keyword != PlaceholderText.ToLower())
             {
                 filteredList = filteredList.Where(r =>
@@ -246,15 +252,9 @@ namespace QuanLyPhongTro
             DisplayRooms(filteredList.ToList());
         }
 
-
-
-        /// <summary>
-        /// Vẽ các Card phòng lên giao diện
-        /// </summary>
         private void DisplayRooms(List<Room> rooms)
         {
             flowPanelRooms.Controls.Clear();
-
             if (rooms.Count == 0)
             {
                 lblNoResults.Visible = true;
@@ -272,7 +272,7 @@ namespace QuanLyPhongTro
         {
             Panel card = new Panel
             {
-                Size = new Size(450, 534),
+                Size = new Size(450, 600),
                 BackColor = room.Status.Contains("Trống") ? Color.White : Color.FromArgb(192, 255, 192),
                 Margin = new Padding(10),
                 BorderStyle = BorderStyle.FixedSingle
@@ -280,8 +280,8 @@ namespace QuanLyPhongTro
 
             Label lblTitle = new Label
             {
-                Text = $"{room.Name}\n",
-                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                Text = $"P{room.Name}",
+                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
                 ForeColor = room.Status.Contains("Trống") ? Color.Black : Color.DarkGreen,
                 AutoSize = false,
                 Size = new Size(430, 50),
@@ -290,13 +290,14 @@ namespace QuanLyPhongTro
             };
             card.Controls.Add(lblTitle);
 
+            // Button phần nội dung, tự xuống dòng như code cũ
             Button btn = new Button
             {
                 Size = new Size(430, 460),
                 Location = new Point(10, 70),
                 Padding = new Padding(10),
                 Tag = room,
-                Font = new Font("Segoe UI", 12F),
+                Font = new Font("Segoe UI", 11F),
                 TextAlign = ContentAlignment.TopLeft,
                 BackColor = card.BackColor,
                 ForeColor = room.Status.Contains("Trống") ? Color.Black : Color.DarkGreen,
@@ -315,10 +316,12 @@ namespace QuanLyPhongTro
         }
 
 
+
         private void BtnRoom_Click(object sender, EventArgs e)
         {
             Control clickedControl = (Control)sender;
-            Room roomClicked = (Room)clickedControl.Tag;
+            Panel card = (clickedControl is Panel) ? (Panel)clickedControl : (Panel)clickedControl.Parent;
+            Room roomClicked = (Room)card.Tag;
 
             if (roomClicked == null) return;
 
@@ -345,16 +348,8 @@ namespace QuanLyPhongTro
                 }
             }
         }
-        private void BtnView_Click(object sender, EventArgs e)
-        {
-            Room room = (sender as Button).Tag as Room;
-            if (room == null) return;
 
-            using (FormInfoRoom frm = new FormInfoRoom(room, _currentOwner, false))
-            {
-                frm.ShowDialog();
-            }
-        }
+        // (BtnView_Click không còn được dùng, vì logic đã gộp vào BtnRoom_Click)
 
         #endregion
 

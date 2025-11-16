@@ -62,7 +62,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(107, 28);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Người gửi:";
+            this.label3.Text = "Nguời gủi:";
             // 
             // lblRenterName
             // 
@@ -72,7 +72,7 @@
             this.lblRenterName.Name = "lblRenterName";
             this.lblRenterName.Size = new System.Drawing.Size(155, 28);
             this.lblRenterName.TabIndex = 3;
-            this.lblRenterName.Text = "(Tên người thuê)";
+            this.lblRenterName.Text = "(Tên nguời thuê)";
             // 
             // label5
             // 
@@ -177,7 +177,7 @@
             this.MinimizeBox = false;
             this.Name = "FormRequestContract";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Gửi Yêu cầu Thuê phòng";
+            this.Text = "Gửi yêu cầu thuê phòng";
             ((System.ComponentModel.ISupportInitialize)(this.numDuration)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

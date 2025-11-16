@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -10,9 +10,9 @@ namespace QuanLyPhongTro
     {
         private readonly Bill _bill;
 
-        // Tạo Event để "báo" cho UserControl cha
-        public event EventHandler<Guid> SendBillClicked;
+
         public event EventHandler<Guid> ExportPDFClicked;
+        public event EventHandler<Guid> EditDetailsClicked; 
 
         public ucBillCard(Bill bill)
         {
@@ -20,8 +20,10 @@ namespace QuanLyPhongTro
             _bill = bill;
 
             this.Load += UcBillCard_Load;
-            this.btnSendBill.Click += (s, e) => SendBillClicked?.Invoke(this, _bill.Id);
+
+            this.btnSendBill.Click += (s, e) => EditDetailsClicked?.Invoke(this, _bill.Id);
             this.btnExportPDF.Click += (s, e) => ExportPDFClicked?.Invoke(this, _bill.Id);
+            
         }
 
         private void UcBillCard_Load(object sender, EventArgs e)
@@ -29,14 +31,17 @@ namespace QuanLyPhongTro
             if (_bill == null) return;
 
             // 1. Tải thông tin cơ bản
-            lblRoomName.Text = _bill.Room?.Name ?? "N/A";
-            lblRenterName.Text = _bill.Person?.Username ?? "N/A";
-            lblTotal.Text = $"TỔNG: {_bill.TotalMoney:N0} VND";
+            lblRoomName.Text = _bill.IdRoomNavigation?.Name ?? "N/A";
+            lblRenterName.Text = _bill.IdPersonNavigation?.Username ?? "N/A";
+            lblTotal.Text = $"TỔNG: {(_bill.TotalMoney ?? 0):N0} VND";
 
             // 2. Tải chi tiết (Điện, Nước, Khác)
-            var electric = _bill.BillDetails.FirstOrDefault(d => d.Service?.Name == "Dien");
-            var water = _bill.BillDetails.FirstOrDefault(d => d.Service?.Name == "Nuoc");
-            var others = _bill.BillDetails.Where(d => d.Service?.Name != "Dien" && d.Service?.Name != "Nuoc");
+            var electric = _bill.BillDetails.FirstOrDefault(d => d.IdServiceNavigation?.Name == "Dien");
+            var water = _bill.BillDetails.FirstOrDefault(d => d.IdServiceNavigation?.Name == "Nuoc");
+            var others = _bill.BillDetails.Where(d => 
+                d.IdServiceNavigation != null && 
+                d.IdServiceNavigation.Name != "Dien" && 
+                d.IdServiceNavigation.Name != "Nuoc");
 
             lblElectricity.Text = $"Tiền điện: {electric?.Total ?? 0:N0} VND";
             lblWater.Text = $"Tiền nước: {water?.Total ?? 0:N0} VND";
@@ -44,49 +49,40 @@ namespace QuanLyPhongTro
             lstOtherCosts.Items.Clear();
             foreach (var item in others)
             {
-                string note = string.IsNullOrEmpty(item.Note) ? "" : $" ({item.Note})";
-                lstOtherCosts.Items.Add($"{item.Service?.Name ?? "Phí khác"}: {item.Total:N0}{note}");
+                lstOtherCosts.Items.Add($"{item.IdServiceNavigation?.Name ?? "Phí khác"}: {item.Total:N0} VND");
             }
 
-            // 3. Cập nhật nút và màu sắc dựa trên Trạng thái
-            UpdateStatusUI(_bill.Status);
+            // 3. Cập nhật nút và màu sắc
+            UpdateStatusUI();
         }
 
         /// <summary>
         /// Cập nhật UI (public để control cha có thể gọi)
         /// </summary>
-        public void UpdateStatusUI(string status)
+        public void UpdateStatusUI() 
         {
-            lblStatus.Text = $"Trạng thái: {status}";
-            _bill.Status = status; // Cập nhật trạng thái local
+            panelMain.BackColor = Color.FromArgb(255, 255, 230);
+            lblStatus.ForeColor = Color.OrangeRed;
+            lblStatus.Text = "Trạng thái: Chưa thanh toán";
+            btnSendBill.Text = "Sửa Chi tiết";
+            btnSendBill.Enabled = true;
 
-            switch (status)
+            if (_bill.Payment != null)
             {
-                case "Paid": // Đã thanh toán
-                    panelMain.BackColor = Color.FromArgb(236, 255, 236); // Xanh lá nhạt
+                if (_bill.Payment.Amount >= _bill.TotalMoney)
+                {
+                    panelMain.BackColor = Color.FromArgb(236, 255, 236);
                     lblStatus.ForeColor = Color.DarkGreen;
-                    btnSendBill.Text = "Đã thanh toán";
-                    btnSendBill.Enabled = false;
-                    break;
-                case "Sent": // Đã gửi (chưa trả)
-                    panelMain.BackColor = Color.FromArgb(255, 255, 230); // Vàng nhạt
-                    lblStatus.ForeColor = Color.OrangeRed;
-                    btnSendBill.Text = "Nhắc nợ";
-                    btnSendBill.Enabled = true;
-                    break;
-                case "Overdue": // Quá hạn
-                    panelMain.BackColor = Color.FromArgb(255, 230, 230); // Đỏ nhạt
-                    lblStatus.ForeColor = Color.Red;
-                    btnSendBill.Text = "Nhắc nợ (Gấp)";
-                    btnSendBill.Enabled = true;
-                    break;
-                case "Pending": // Chờ gửi
-                default:
-                    panelMain.BackColor = Color.White;
-                    lblStatus.ForeColor = Color.Gray;
-                    btnSendBill.Text = "Gửi Hóa đơn";
-                    btnSendBill.Enabled = true;
-                    break;
+                    lblStatus.Text = "Trạng thái: Đã thanh toán";
+                    btnSendBill.Enabled = false; 
+                }
+                else
+                {
+                    panelMain.BackColor = Color.FromArgb(230, 245, 255);
+                    lblStatus.ForeColor = Color.Blue;
+                    lblStatus.Text = $"Trạng thái: Đã trả {(_bill.Payment.Amount ?? 0):N0}";
+                    btnSendBill.Enabled = true; 
+                }
             }
         }
     }

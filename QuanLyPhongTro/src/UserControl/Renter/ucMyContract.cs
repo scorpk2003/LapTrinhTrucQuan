@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.Model;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.Services;
+using QuanLyPhongTro.src.Test.Mediator;
+using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,6 +24,7 @@ namespace QuanLyPhongTro
                 return Task.CompletedTask;
             });
 
+            this.Load += (s, e) => { /* placeholder to ensure InitializeComponent ran */ };
             this.btnRequestRenewal.Click += BtnRequestRenewal_Click;
             this.btnRequestTermination.Click += BtnRequestTermination_Click;
         }
@@ -31,30 +32,25 @@ namespace QuanLyPhongTro
         public void LoadData()
         {
             if (_contract == null) return;
-            lblStartDate.Text = $"Ngày bắt đầu: {_contract.StartDate:dd/MM/yyyy}";
-            lblEndDate.Text = $"Ngày kết thúc: {_contract.EndDate:dd/MM/yyyy}";
+            lblStartDate.Text = $"Ngày bắt đầu: {_contract.StartDate.Value.ToString("dd/MM/yyyy")}";
+            lblEndDate.Text = $"Ngày kết thúc: {_contract.EndDate.Value.ToString("dd/MM/yyyy")}";
             lblDeposit.Text = $"Tiền cọc: {_contract.Deposit:N0} VND";
+            
         }
 
-        // Gửi yêu cầu Gia hạn (Đã sửa)
         private void BtnRequestRenewal_Click(object sender, EventArgs e)
         {
-            // Mở Form hỏi số tháng
             using (FormRenewContract frm = new FormRenewContract(12, "Gửi Yêu cầu Gia hạn"))
             {
-                // Nếu người thuê nhấn "Xác nhận"
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
                     int months = frm.MonthsToAdd;
-
-                    // Gửi yêu cầu với số tháng cụ thể
                     SendRequest("Yêu cầu Gia hạn Hợp đồng",
                         $"Tôi muốn gia hạn hợp đồng thêm {months} tháng.");
                 }
             }
         }
 
-        // Gửi yêu cầu Chấm dứt
         private void BtnRequestTermination_Click(object sender, EventArgs e)
         {
             SendRequest("Yêu cầu Chấm dứt Hợp đồng",
@@ -64,7 +60,7 @@ namespace QuanLyPhongTro
         private void SendRequest(string title, string description)
         {
             var confirm = MessageBox.Show($"Bạn có chắc muốn gửi '{title}' đến chủ trọ?",
-                "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                                          "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (confirm == DialogResult.No) return;
 

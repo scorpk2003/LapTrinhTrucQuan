@@ -103,7 +103,7 @@
             this.MinimizeBox = false;
             this.Name = "FormCreateRenterReport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Gửi Báo cáo Sự cố";
+            this.Text = "Gửi báo cáo sự cố";
             this.ResumeLayout(false);
             this.PerformLayout();
         }

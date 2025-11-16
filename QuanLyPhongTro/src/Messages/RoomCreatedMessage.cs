@@ -1,8 +1,7 @@
-﻿using QuanLyPhongTro.Model;
+using QuanLyPhongTro.src.Test.Models;
 
 namespace QuanLyPhongTro.src.Messages
 {
-    // Đây là nội dung tin nhắn
     public class RoomCreatedMessage
     {
         public Room NewRoom { get; }

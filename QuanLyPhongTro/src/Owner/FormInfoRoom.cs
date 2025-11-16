@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Models;
 using QuanLyPhongTro.Services;
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace QuanLyPhongTro
             this.btnClose.Click += (s, e) => this.Close();
             this.btnPrevImage.Click += BtnPrevImage_Click;
             this.btnNextImage.Click += BtnNextImage_Click;
-            this.btnBook.Click += BtnBook_Click; 
+            this.btnBook.Click += BtnBook_Click;
         }
 
         private void FormInfoRoom_Load(object sender, EventArgs e)
@@ -47,6 +47,7 @@ namespace QuanLyPhongTro
             _roomToView = _roomService.GetRoomWithDetails(_roomToView.Id);
             if (_roomToView == null)
             {
+                // --- SỬA LỖI 2 (Encoding) ---
                 MessageBox.Show("Phòng này có thể đã bị xóa.");
                 this.Close();
                 return;
@@ -59,8 +60,8 @@ namespace QuanLyPhongTro
                 btnEdit.Visible = false;
                 btnDelete.Visible = false;
 
-                // Chỉ hiện nút Đặt phòng NẾU phòng còn trống
-                if (_roomToView.Status == "Còn trống" || _roomToView.Status == "Trống")
+                // Chỉ hiện nút Đặt phòng NẾU phòng còn "Trống"
+                if (_roomToView.Status == "Trống")
                 {
                     btnBook.Visible = true;
                     // Đặt nút Đóng cạnh nút Đặt
@@ -80,10 +81,10 @@ namespace QuanLyPhongTro
                 // 2. LÀ OWNER
                 btnEdit.Visible = true;
                 btnDelete.Visible = true;
-                btnBook.Visible = false; 
+                btnBook.Visible = false;
             }
 
-            // 1. Tải thông tin phòng 
+            // 1. Tải thông tin phòng (SỬA LỖI 2 - Encoding)
             lblRoomName.Text = _roomToView.Name;
             lblPrice.Text = $"Giá: {_roomToView.Price:N0} VND";
             lblArea.Text = $"Diện tích: {_roomToView.Area:N2} m²";
@@ -91,16 +92,17 @@ namespace QuanLyPhongTro
             lblStatus.Text = $"Trạng thái: {_roomToView.Status}";
 
             // 2. Tải thông tin hợp đồng
-            if (_roomToView.Status == "Đã thuê")
+            if (_roomToView.Status == "Đã thuê") 
             {
                 lblStatus.ForeColor = Color.DarkRed;
                 grpContractInfo.Visible = true;
                 Contract activeContract = _contractService.GetActiveContractByRoom(_roomToView.Id);
                 if (activeContract != null)
                 {
-                    lblRenterName.Text = $"Người thuê: {activeContract.Renter?.Username ?? "N/A"}";
-                    lblStartDate.Text = $"Ngày bắt đầu: {activeContract.StartDate?.ToString("dd/MM/yyyy") ?? "N/A"}";
-                    lblEndDate.Text = $"Ngày kết thúc: {activeContract.EndDate?.ToString("dd/MM/yyyy") ?? "N/A"}";
+                    lblRenterName.Text = $"Người thuê: {activeContract.IdRenterNavigation?.Username ?? "N/A"}";
+                    lblStartDate.Text = $"Ngày bắt đầu: {activeContract.StartDate.Value.ToString("dd/MM/yyyy") ?? "N/A"}";
+                    lblEndDate.Text = $"Ngày kết thúc: {activeContract.EndDate.Value.ToString("dd/MM/yyyy") ?? "N/A"}";
+                    
                 }
             }
             else
@@ -140,7 +142,7 @@ namespace QuanLyPhongTro
             if (_roomImages.Count == 0) return;
             RoomImage img = _roomImages[index];
 
-            string fullPath = img.ImageUrl;
+            string fullPath = Path.Combine(Application.StartupPath, img.ImageUrl);
 
             if (File.Exists(fullPath))
             {
@@ -177,8 +179,10 @@ namespace QuanLyPhongTro
         }
         #endregion
 
+        // (Sự kiện cho Renter)
         private void BtnBook_Click(object sender, EventArgs e)
         {
+            // SỬA LỖI 2 (Encoding)
             if (btnBook.Text == "Đã gửi yêu cầu") return;
 
             using (FormRequestContract frm = new FormRequestContract(_user, _roomToView))
@@ -201,13 +205,14 @@ namespace QuanLyPhongTro
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
                     this.DataChanged = true;
-                    FormInfoRoom_Load(null, null);
+                    FormInfoRoom_Load(null, null); // Tải lại
                 }
             }
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
         {
+            // SỬA LỖI 2 (Encoding)
             var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa phòng '{_roomToView.Name}' không?",
                                           "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)

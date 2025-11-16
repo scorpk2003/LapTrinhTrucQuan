@@ -8,8 +8,8 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.DataGridView dgvBillDetails;
         private System.Windows.Forms.Label lblTotalMoney;
-        private System.Windows.Forms.Button btnPayCash; // ĐỔI TÊN
-        private System.Windows.Forms.Button btnPayQR;   // THÊM MỚI
+        private System.Windows.Forms.Button btnPayCash; // Ð?I TÊN
+        private System.Windows.Forms.Button btnPayQR;   // THÊM M?I
         private System.Windows.Forms.Button btnClose;
 
         protected override void Dispose(bool disposing)
@@ -112,7 +112,7 @@
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(110, 35);
             this.btnClose.TabIndex = 7;
-            this.btnClose.Text = "Đóng";
+            this.btnClose.Text = "Ðóng";
             this.btnClose.UseVisualStyleBackColor = true;
             // 
             // FormBillDetail
@@ -130,7 +130,7 @@
             this.Controls.Add(this.lblRoomName);
             this.Name = "FormBillDetail";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Chi tiết hóa đơn";
+            this.Text = "Chi tiết hóa don";
             ((System.ComponentModel.ISupportInitialize)(this.dgvBillDetails)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

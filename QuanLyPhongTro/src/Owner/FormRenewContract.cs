@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
 {
     public partial class FormRenewContract : Form
     {
-        // Public property để lấy giá trị
+        // Public property d? l?y gi� tr?
         public int MonthsToAdd { get; private set; }
 
         /// <summary>
-        /// Form xác nhận số tháng
+        /// Form x�c nh?n s? th�ng
         /// </summary>
-        /// <param name="defaultMonths">Số tháng hiển thị mặc định</param>
-        /// <param name="title">Tiêu đề của Form</param>
-        public FormRenewContract(int defaultMonths = 6, string title = "Xác nhận Gia hạn")
+        /// <param name="defaultMonths">S? th�ng hi?n th? m?c d?nh</param>
+        /// <param name="title">Ti�u d? c?a Form</param>
+        public FormRenewContract(int defaultMonths = 6, string title = "X�c nh?n Gia h?n")
         {
             InitializeComponent();
 
-            // Gán giá trị mặc định
+            // G�n gi� tr? m?c d?nh
             this.Text = title;
             if (defaultMonths > 0)
             {
@@ -30,10 +30,10 @@ namespace QuanLyPhongTro
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            // Lấy giá trị từ ô số
+            // L?y gi� tr? t? � s?
             this.MonthsToAdd = (int)numMonths.Value;
 
-            // Đóng form và báo OK
+            // ��ng form v� b�o OK
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

@@ -32,7 +32,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(262, 28);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Gia hạn hợp đồng thêm (số):";
+            this.label1.Text = "Gia hạn hợp đồng thêm (tháng):";
             // 
             // numMonths
             // 
@@ -84,7 +84,7 @@
             this.MinimizeBox = false;
             this.Name = "FormRenewContract";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Gia hạn Hợp đồng";
+            this.Text = "Gia hạn hợp đồng";
             ((System.ComponentModel.ISupportInitialize)(this.numMonths)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

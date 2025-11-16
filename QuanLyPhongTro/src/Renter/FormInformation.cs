@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Models;
 using QuanLyPhongTro.Services;
 using System;
 using System.Drawing;
@@ -12,7 +12,7 @@ namespace QuanLyPhongTro
     {
         private readonly PersonService _personService;
         private readonly Person _currentPerson;
-        private PersonDetailcs _personDetail; // Biến lưu trữ thông tin chi tiết
+        private PersonDetail _personDetail;
 
         public FormInformation(Person loggedInPerson)
         {
@@ -20,7 +20,6 @@ namespace QuanLyPhongTro
             _personService = new PersonService();
             _currentPerson = loggedInPerson;
 
-            // Gán sự kiện
             this.Load += FormInformation_Load;
             this.btnChonAnh.Click += BtnChonAnh_Click;
             this.btnEditSave.Click += BtnEditSave_Click;
@@ -29,33 +28,34 @@ namespace QuanLyPhongTro
 
         private void FormInformation_Load(object sender, EventArgs e)
         {
-            // 1. Tải thông tin
             LoadPersonInfo();
-            // 2. Đặt chế độ chỉ đọc (Read-only) ban đầu
             SetEditMode(false);
         }
 
         /// <summary>
-        /// Tải thông tin Person và PersonDetail lên Form
+        /// T?i thông tin Person và PersonDetail lên Form
         /// </summary>
         private void LoadPersonInfo()
         {
             if (_currentPerson == null) return;
 
-            // Hiển thị tên đăng nhập
             txtUsername.Text = _currentPerson.Username;
 
-            // Lấy thông tin chi tiết từ Service
-            _personDetail = _personService.GetPersonDetail(_currentPerson.Id);
+            if (!_currentPerson.IdDetail.HasValue)
+            {
+                MessageBox.Show("Lỗi: Tài khoản này thiếu thông tin chi tiết.");
+                this.Close();
+                return;
+            }
+
+            _personDetail = _personService.GetPersonDetail(_currentPerson.IdDetail.Value);
 
             if (_personDetail != null)
             {
-                // Hiển thị thông tin
                 txtName.Text = _personDetail.Name;
-                txtCCCD.Text = _personDetail.CCCD;
+                txtCCCD.Text = _personDetail.Cccd;
                 txtPhone.Text = _personDetail.Phone;
 
-                // Hiển thị avatar (chuyển byte[] -> Image)
                 if (_personDetail.Avatar != null && _personDetail.Avatar.Length > 0)
                 {
                     picAvatar.Image = ConvertByteArrayToImage(_personDetail.Avatar);
@@ -69,7 +69,7 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// Bật/Tắt chế độ chỉnh sửa
+        /// B?t/T?t ch? d? ch?nh s?a
         /// </summary>
         private void SetEditMode(bool isEditing)
         {
@@ -85,12 +85,10 @@ namespace QuanLyPhongTro
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // Giải phóng ảnh cũ (nếu có)
                 if (picAvatar.Image != null)
                 {
                     picAvatar.Image.Dispose();
                 }
-                // Hiển thị ảnh mới
                 picAvatar.Image = Image.FromFile(openFileDialog.FileName);
             }
         }
@@ -99,27 +97,22 @@ namespace QuanLyPhongTro
         {
             if (btnEditSave.Text == "Sửa")
             {
-                // Chuyển sang chế độ Sửa
                 SetEditMode(true);
             }
             else
             {
-                // Đang ở chế độ Lưu -> Thực hiện lưu
                 try
                 {
-                    // 1. Cập nhật đối tượng _personDetail từ Form
                     _personDetail.Name = txtName.Text;
-                    _personDetail.CCCD = txtCCCD.Text;
+                    _personDetail.Cccd = txtCCCD.Text;
                     _personDetail.Phone = txtPhone.Text;
                     _personDetail.Avatar = ConvertImageToByteArray(picAvatar.Image);
 
-                    // 2. Gọi Service
                     bool success = _personService.UpdatePersonDetail(_personDetail);
 
                     if (success)
                     {
                         MessageBox.Show("Cập nhật thông tin thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        // 3. Chuyển về chế độ chỉ đọc
                         SetEditMode(false);
                     }
                     else
@@ -134,7 +127,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        #region Hàm hỗ trợ chuyển đổi Ảnh
+        #region Hàm h? tr? chuy?n d?i ?nh
 
         private byte[] ConvertImageToByteArray(Image image)
         {
@@ -163,7 +156,6 @@ namespace QuanLyPhongTro
 
         #endregion
 
-        // Giải phóng ảnh khi đóng Form
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (picAvatar.Image != null)

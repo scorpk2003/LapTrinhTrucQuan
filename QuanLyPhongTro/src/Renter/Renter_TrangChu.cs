@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.Model;
+﻿using QuanLyPhongTro.src.Test.Models;
 using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Mediator;
+using QuanLyPhongTro.src.Test.Mediator;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -62,10 +62,8 @@ namespace QuanLyPhongTro
                 panelFindRoom.Visible = true;
                 panelFindRoom.Dock = DockStyle.Fill;
 
-                InitializeFilterLogic(); 
-
+                InitializeFilterLogic();
                 this.ActiveControl = panelFindRoom;
-                
             }
             else
             {
@@ -78,7 +76,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        #region Xử lý Chuyển View (Cho người đã thuê)
+        #region X? lý Chuy?n View (Cho ngu?i dã thuê)
 
         private async Task ShowView<T>(Control control, T uc) where T : Control
         {
@@ -143,52 +141,47 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                Logout?.Invoke(this, EventArgs.Empty);
+                AuthForm authForm = new AuthForm();
+                authForm.ShowDialog(this);
                 this.Close();
             }
         }
         #endregion
 
-        #region Giao diện TÌM PHÒNG (Cho người chưa thuê)
+        #region Giao di?n TÌM PHÒNG (Cho ngu?i chua thuê)
 
         /// <summary>
-        /// Khởi tạo sự kiện, giá trị cho bộ lọc và tải phòng lần đầu
+        /// Kh?i t?o s? ki?n, giá tr? cho b? l?c và t?i phòng l?n d?u
         /// </summary>
         private void InitializeFilterLogic()
         {
-            // Tải cache phòng lần đầu
             _allAvailableRooms = _roomService.GetAllAvailableRooms();
 
-            // Tìm giá trị max (hoặc mặc định nếu không có phòng)
             decimal maxPrice = (_allAvailableRooms.Any() && _allAvailableRooms.Max(r => r.Price) > 0) ? _allAvailableRooms.Max(r => r.Price ?? 0) : 10000000;
-            decimal maxArea = (_allAvailableRooms.Any() && _allAvailableRooms.Max(r => r.Area) > 0) ? (decimal)(_allAvailableRooms.Max(r => r.Area ?? 0)) : 100;
+            decimal maxArea = (_allAvailableRooms.Any() && _allAvailableRooms.Max(r => r.Area) > 0) ? (_allAvailableRooms.Max(r => r.Area ?? 0)) : 100;
 
-            // Cài đặt giá trị cho bộ lọc
             nudPriceFrom.Maximum = maxPrice;
             nudPriceTo.Maximum = maxPrice;
             nudAreaFrom.Maximum = maxArea;
             nudAreaTo.Maximum = maxArea;
 
-            nudPriceTo.Value = maxPrice; 
-            nudAreaTo.Value = maxArea; 
+            nudPriceTo.Value = maxPrice;
+            nudAreaTo.Value = maxArea;
 
-            // Gán sự kiện (để làm mới ngay lập tức)
             txtSearch.TextChanged += (s, e) => FilterAndDisplayRooms();
             nudPriceFrom.ValueChanged += (s, e) => FilterAndDisplayRooms();
             nudPriceTo.ValueChanged += (s, e) => FilterAndDisplayRooms();
             nudAreaFrom.ValueChanged += (s, e) => FilterAndDisplayRooms();
             nudAreaTo.ValueChanged += (s, e) => FilterAndDisplayRooms();
 
-            // Gán sự kiện Reset
             btnResetPrice.Click += BtnResetPrice_Click;
             btnResetArea.Click += BtnResetArea_Click;
 
-            // Gán Placeholder cho TextBox
             txtSearch.Enter += TxtSearch_Enter;
             txtSearch.Leave += TxtSearch_Leave;
             SetPlaceholder();
 
-            FilterAndDisplayRooms(); // Hiển thị tất cả
+            FilterAndDisplayRooms();
         }
 
         private void BtnResetPrice_Click(object sender, EventArgs e)
@@ -204,7 +197,7 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// Hàm lọc và tìm kiếm chính
+        /// Hàm l?c và tìm ki?m chính
         /// </summary>
         private void FilterAndDisplayRooms()
         {
@@ -212,14 +205,12 @@ namespace QuanLyPhongTro
 
             IEnumerable<Room> filteredList = _allAvailableRooms;
 
-            // 1. Lấy giá trị bộ lọc
             decimal priceFrom = nudPriceFrom.Value;
             decimal priceTo = nudPriceTo.Value;
             decimal areaFrom = nudAreaFrom.Value;
             decimal areaTo = nudAreaTo.Value;
             string keyword = txtSearch.Text.ToLower().Trim();
 
-            // 2. Áp dụng BỘ LỌC
             if (priceTo > 0 && priceTo >= priceFrom)
             {
                 filteredList = filteredList.Where(r =>
@@ -231,11 +222,10 @@ namespace QuanLyPhongTro
             {
                 filteredList = filteredList.Where(r =>
                     r.Area.HasValue &&
-                    r.Area.Value >= (int)areaFrom &&
-                    r.Area.Value <= (int)areaTo);
+                    r.Area.Value >= areaFrom && 
+                    r.Area.Value <= areaTo);    
             }
 
-            // 3. Áp dụng TÌM KIẾM
             if (!string.IsNullOrEmpty(keyword) && keyword != PlaceholderText.ToLower())
             {
                 filteredList = filteredList.Where(r =>
@@ -244,13 +234,12 @@ namespace QuanLyPhongTro
                 );
             }
 
-            // 4. Hiển thị kết quả
-            _selectedRoomCard = null; // Xóa lựa chọn cũ khi lọc
+            _selectedRoomCard = null;
             DisplayRoomsUI(filteredList.ToList());
         }
 
         /// <summary>
-        /// Hàm vẽ giao diện các Card phòng (ĐÃ SỬA)
+        /// Hàm v? giao di?n các Card phòng
         /// </summary>
         private void DisplayRoomsUI(List<Room> rooms)
         {
@@ -269,9 +258,9 @@ namespace QuanLyPhongTro
             {
                 Panel roomPanel = new Panel
                 {
-                    Width = 525,
-                    Height = 700,
-                    Margin = new Padding(15),
+                    Width = 530,
+                    Height = 750,
+                    Margin = new Padding(20),
                     BorderStyle = BorderStyle.FixedSingle,
                     BackColor = Color.White,
                     Tag = room
@@ -286,9 +275,12 @@ namespace QuanLyPhongTro
                 };
 
                 string imgPath = room.RoomImages?.FirstOrDefault()?.ImageUrl;
-                if (!string.IsNullOrEmpty(imgPath) && File.Exists(imgPath))
+                if (!string.IsNullOrEmpty(imgPath))
                 {
-                    try { pic.Image = Image.FromFile(imgPath); } catch { }
+                    if (File.Exists(imgPath))
+                    {
+                        try { pic.Image = Image.FromFile(imgPath); } catch { }
+                    }
                 }
 
                 Label lblName = new Label
@@ -325,7 +317,7 @@ namespace QuanLyPhongTro
 
                 Label lblAddress = new Label
                 {
-                    Text = $"Địa chỉ: {room.Address}",
+                    Text = $"Ðịa chỉ: {room.Address}",
                     Font = new Font("Segoe UI", 12F),
                     Dock = DockStyle.Top,
                     Padding = new Padding(15, 0, 15, 8),
@@ -367,32 +359,25 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// (ĐÃ SỬA) Xử lý click vào Card (Panel, Pic, Label) để XEM CHI TIẾT
+        /// X? lý click vào Card (Panel, Pic, Label) d? XEM CHI TI?T
         /// </summary>
         private void BtnView_Click(object sender, EventArgs e)
         {
             Control clickedControl = sender as Control;
             Panel currentCard = null;
-
-            // Tìm Panel Card
             if (clickedControl is Panel)
                 currentCard = (Panel)clickedControl;
             else if (clickedControl != null)
                 currentCard = clickedControl.Parent as Panel;
-
             if (currentCard == null) return;
-
             Room room = (Room)currentCard.Tag;
             if (room == null) return;
-
             if (_selectedRoomCard != null && _selectedRoomCard != currentCard)
             {
                 _selectedRoomCard.BackColor = Color.White;
             }
             currentCard.BackColor = Color.AliceBlue;
             _selectedRoomCard = currentCard;
-
-            // 4. Mở Form Info
             using (FormInfoRoom frm = new FormInfoRoom(room, _currentRenter, true))
             {
                 frm.ShowDialog(this);
@@ -400,21 +385,21 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// Xử lý click vào nút "Gửi Yêu Cầu"
+        /// X? lý click vào nút "G?i Yêu C?u"
         /// </summary>
         private void BtnBook_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
             Room room = (Room)btn.Tag;
 
-            if (btn.Text == "Đã gửi yêu cầu") return;
+            if (btn.Text == "Ðã gửi yêu cầu") return;
 
             using (FormRequestContract frm = new FormRequestContract(_currentRenter, room))
             {
                 if (frm.ShowDialog(this) == DialogResult.OK)
                 {
                     btn.Enabled = false;
-                    btn.Text = "Đã gửi yêu cầu";
+                    btn.Text = "Ðã gửi yêu cầu";
                     btn.BackColor = Color.Gray;
                 }
             }

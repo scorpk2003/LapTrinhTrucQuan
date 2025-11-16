@@ -65,7 +65,7 @@
             this.grpContractInfo.Size = new System.Drawing.Size(400, 200);
             this.grpContractInfo.TabIndex = 5;
             this.grpContractInfo.TabStop = false;
-            this.grpContractInfo.Text = "Thông tin hợp đồng";
+            this.grpContractInfo.Text = "Thông tin hợp d?ng";
             // 
             // lblRenterName
             // 
@@ -75,7 +75,7 @@
             this.lblRenterName.Name = "lblRenterName";
             this.lblRenterName.Size = new System.Drawing.Size(133, 28);
             this.lblRenterName.TabIndex = 2;
-            this.lblRenterName.Text = "Người thuê: ...";
+            this.lblRenterName.Text = "Nguời thuê: ...";
             // 
             // lblEndDate
             // 
@@ -140,7 +140,7 @@
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(120, 50);
             this.btnClose.TabIndex = 9;
-            this.btnClose.Text = "Đóng";
+            this.btnClose.Text = "Ðóng";
             this.btnClose.UseVisualStyleBackColor = true;
             // 
             // grpRoomInfo
@@ -165,7 +165,7 @@
             this.lblAddress.Name = "lblAddress";
             this.lblAddress.Size = new System.Drawing.Size(102, 30);
             this.lblAddress.TabIndex = 7;
-            this.lblAddress.Text = "Địa chỉ: ...";
+            this.lblAddress.Text = "Ðịa chỉ: ...";
             // 
             // lblArea
             // 
