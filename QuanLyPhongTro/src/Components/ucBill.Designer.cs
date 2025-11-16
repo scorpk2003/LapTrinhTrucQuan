@@ -42,9 +42,9 @@ namespace QuanLyPhongTro.src.Components
             // 
             name_room.AutoSize = true;
             name_room.Font = new Font("Imprint MT Shadow", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            name_room.Location = new Point(40, 42);
+            name_room.Location = new Point(46, 56);
             name_room.Name = "name_room";
-            name_room.Size = new Size(58, 23);
+            name_room.Size = new Size(70, 28);
             name_room.TabIndex = 0;
             name_room.Text = "room";
             // 
@@ -52,18 +52,19 @@ namespace QuanLyPhongTro.src.Components
             // 
             name_opp.AutoSize = true;
             name_opp.Font = new Font("Nirmala UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            name_opp.Location = new Point(62, 102);
+            name_opp.Location = new Point(71, 136);
             name_opp.Name = "name_opp";
-            name_opp.Size = new Size(138, 17);
+            name_opp.Size = new Size(180, 23);
             name_opp.TabIndex = 1;
             name_opp.Text = "Cao Hoang Gia Khang";
             // 
             // date_create
             // 
             date_create.Enabled = false;
-            date_create.Location = new Point(19, 160);
+            date_create.Location = new Point(22, 213);
+            date_create.Margin = new Padding(3, 4, 3, 4);
             date_create.Name = "date_create";
-            date_create.Size = new Size(181, 23);
+            date_create.Size = new Size(206, 27);
             date_create.TabIndex = 2;
             // 
             // stat
@@ -74,10 +75,11 @@ namespace QuanLyPhongTro.src.Components
             stat.Enabled = false;
             stat.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             stat.ForeColor = SystemColors.ControlLightLight;
-            stat.Location = new Point(19, 207);
+            stat.Location = new Point(22, 276);
+            stat.Margin = new Padding(3, 4, 3, 4);
             stat.Name = "stat";
-            stat.Padding = new Padding(5);
-            stat.Size = new Size(165, 35);
+            stat.Padding = new Padding(6, 7, 6, 7);
+            stat.Size = new Size(206, 46);
             stat.TabIndex = 3;
             stat.TabStop = true;
             stat.Text = "Chưa Thanh Toán";
@@ -87,15 +89,15 @@ namespace QuanLyPhongTro.src.Components
             // 
             role_lb.AutoSize = true;
             role_lb.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            role_lb.Location = new Point(3, 99);
+            role_lb.Location = new Point(3, 132);
             role_lb.Name = "role_lb";
-            role_lb.Size = new Size(36, 20);
+            role_lb.Size = new Size(45, 25);
             role_lb.TabIndex = 4;
             role_lb.Text = "role";
             // 
             // ucBill
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(217, 245, 240);
             BorderStyle = BorderStyle.FixedSingle;
@@ -104,8 +106,9 @@ namespace QuanLyPhongTro.src.Components
             Controls.Add(date_create);
             Controls.Add(name_opp);
             Controls.Add(name_room);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "ucBill";
-            Size = new Size(224, 261);
+            Size = new Size(260, 348);
             Load += Bill_Load;
             Click += Bill_Click;
             ResumeLayout(false);

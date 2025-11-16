@@ -33,15 +33,16 @@
             name_usr = new Label();
             des_rtxt = new RichTextBox();
             send_btn = new Button();
+            lbReport = new Label();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 101);
+            label1.Location = new Point(14, 135);
             label1.Name = "label1";
-            label1.Size = new Size(61, 20);
+            label1.Size = new Size(78, 25);
             label1.TabIndex = 0;
             label1.Text = "Gửi đến";
             // 
@@ -50,9 +51,9 @@
             name_room.AutoSize = true;
             name_room.Font = new Font("Rockwell", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             name_room.ForeColor = SystemColors.ActiveCaption;
-            name_room.Location = new Point(89, 42);
+            name_room.Location = new Point(129, 64);
             name_room.Name = "name_room";
-            name_room.Size = new Size(65, 21);
+            name_room.Size = new Size(82, 27);
             name_room.TabIndex = 1;
             name_room.Text = "label2";
             // 
@@ -60,42 +61,55 @@
             // 
             name_usr.AutoSize = true;
             name_usr.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            name_usr.Location = new Point(89, 101);
+            name_usr.Location = new Point(102, 135);
             name_usr.Name = "name_usr";
-            name_usr.Size = new Size(50, 20);
+            name_usr.Size = new Size(63, 25);
             name_usr.TabIndex = 2;
             name_usr.Text = "label2";
             // 
             // des_rtxt
             // 
-            des_rtxt.Location = new Point(12, 124);
+            des_rtxt.Location = new Point(14, 165);
+            des_rtxt.Margin = new Padding(3, 4, 3, 4);
             des_rtxt.Name = "des_rtxt";
-            des_rtxt.Size = new Size(260, 138);
+            des_rtxt.Size = new Size(297, 183);
             des_rtxt.TabIndex = 3;
             des_rtxt.Text = "";
             // 
             // send_btn
             // 
             send_btn.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            send_btn.Location = new Point(105, 268);
+            send_btn.Location = new Point(120, 357);
+            send_btn.Margin = new Padding(3, 4, 3, 4);
             send_btn.Name = "send_btn";
-            send_btn.Size = new Size(80, 35);
+            send_btn.Size = new Size(91, 47);
             send_btn.TabIndex = 4;
             send_btn.Text = "Send";
             send_btn.UseVisualStyleBackColor = true;
             // 
-            // Report
+            // lbReport
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            lbReport.AutoSize = true;
+            lbReport.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbReport.Location = new Point(120, 9);
+            lbReport.Name = "lbReport";
+            lbReport.Size = new Size(113, 41);
+            lbReport.TabIndex = 5;
+            lbReport.Text = "RePort";
+            // 
+            // ucReport
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(284, 311);
+            Controls.Add(lbReport);
             Controls.Add(send_btn);
             Controls.Add(des_rtxt);
             Controls.Add(name_usr);
             Controls.Add(name_room);
             Controls.Add(label1);
-            Name = "Report";
-            Text = "Report";
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "ucReport";
+            Size = new Size(325, 415);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -107,5 +121,6 @@
         private Label name_usr;
         private RichTextBox des_rtxt;
         private Button send_btn;
+        private Label lbReport;
     }
 }

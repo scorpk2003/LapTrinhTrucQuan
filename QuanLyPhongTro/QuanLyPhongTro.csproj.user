@@ -14,7 +14,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="src\Components\ucReport.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="src\Components\ucRoom.cs">
       <SubType>UserControl</SubType>
@@ -22,10 +22,10 @@
     <Compile Update="src\Components\ucRoomDetail.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\ucUser.cs">
+    <Compile Update="src\Components\ucListRoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="src\Components\ucListRoom.cs">
+    <Compile Update="src\Components\ucUser.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
