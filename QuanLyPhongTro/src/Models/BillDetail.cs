@@ -22,6 +22,10 @@ public partial class BillDetail
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? Total { get; set; }
 
+    public decimal? Water { get; set; }
+
+    public decimal? Electricity { get; set; }
+
     [ForeignKey("IdBill")]
     [InverseProperty("BillDetails")]
     public virtual Bill? IdBillNavigation { get; set; }

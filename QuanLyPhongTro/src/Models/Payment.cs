@@ -26,5 +26,5 @@ public partial class Payment
 
     [ForeignKey("IdBill")]
     [InverseProperty("Payment")]
-    public virtual Bill IdBillNavigation { get; set; } = null!;
+    public virtual Bill IdPaymentNavigation { get; set; } = null!;
 }

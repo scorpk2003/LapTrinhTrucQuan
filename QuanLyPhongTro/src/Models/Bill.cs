@@ -19,6 +19,8 @@ public partial class Bill
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? TotalMoney { get; set; }
 
+    public string Status { get; set; } = "";
+
     [Column(TypeName = "datetime")]
     public DateTime? PaymentDate { get; set; }
 
@@ -33,6 +35,6 @@ public partial class Bill
     [InverseProperty("Bills")]
     public virtual Room? IdRoomNavigation { get; set; }
 
-    [InverseProperty("IdBillNavigation")]
+    [InverseProperty("IdPaymentNavigation")]
     public virtual Payment? Payment { get; set; } 
 }
