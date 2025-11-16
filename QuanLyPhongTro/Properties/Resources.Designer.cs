@@ -63,6 +63,26 @@ namespace QuanLyPhongTro.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _1 {
+            get {
+                object obj = ResourceManager.GetObject("1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _70e732608aac06f25fbd {
+            get {
+                object obj = ResourceManager.GetObject("70e732608aac06f25fbd", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icon_user {
             get {
                 object obj = ResourceManager.GetObject("icon-user", resourceCulture);
@@ -76,6 +96,26 @@ namespace QuanLyPhongTro.Properties {
         internal static System.Drawing.Bitmap icons8_user_96 {
             get {
                 object obj = ResourceManager.GetObject("icons8-user-96", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap left_arrow {
+            get {
+                object obj = ResourceManager.GetObject("left-arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap phòng_trọ_đẹp {
+            get {
+                object obj = ResourceManager.GetObject("phòng trọ đẹp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -4,13 +4,22 @@
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Login\AdminLogin.cs">
+    <Compile Update="src\Login\ChooseLogin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Login\UserLogin.cs">
+    <Compile Update="src\Login\Updatepassword.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Signup\UserSignup.cs">
+    <Compile Update="src\Login\OTP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Login\passwordrecovery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Login\Loginmain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Login\UserSignup.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

@@ -10,17 +10,16 @@ using System.Windows.Forms;
 
 namespace QuanLyPhongTro.src.Login
 {
-    public partial class UserLogin : Form
+    public partial class Form1 : Form
     {
-        public UserLogin()
+        public Form1()
         {
             InitializeComponent();
         }
 
-        private void btCreateaccount_Click(object sender, EventArgs e)
+        private void label2_Click(object sender, EventArgs e)
         {
-            
-        }
+
         }
     }
-
+}

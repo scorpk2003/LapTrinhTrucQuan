@@ -1,6 +1,6 @@
 ﻿namespace QuanLyPhongTro.src.Login
 {
-    partial class UserLogin
+    partial class Loginmain
     {
         /// <summary>
         /// Required designer variable.
@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserLogin));
-            imagelogin = new PictureBox();
             TbUsernameuser = new TextBox();
             lbluserlogin = new Label();
             lblUsername = new Label();
@@ -38,60 +36,52 @@
             btLoginuser = new Button();
             LbForgetpass = new LinkLabel();
             btCreateaccount = new Button();
-            ((System.ComponentModel.ISupportInitialize)imagelogin).BeginInit();
+            cbRememberpass = new CheckBox();
+            pictureBox1 = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
-            // 
-            // imagelogin
-            // 
-            imagelogin.BackColor = Color.FromArgb(255, 224, 192);
-            imagelogin.BorderStyle = BorderStyle.FixedSingle;
-            imagelogin.Image = (Image)resources.GetObject("imagelogin.Image");
-            imagelogin.Location = new Point(-5, 0);
-            imagelogin.Name = "imagelogin";
-            imagelogin.Size = new Size(359, 450);
-            imagelogin.SizeMode = PictureBoxSizeMode.Zoom;
-            imagelogin.TabIndex = 0;
-            imagelogin.TabStop = false;
             // 
             // TbUsernameuser
             // 
-            TbUsernameuser.Location = new Point(502, 133);
+            TbUsernameuser.Location = new Point(592, 133);
             TbUsernameuser.Name = "TbUsernameuser";
             TbUsernameuser.Size = new Size(251, 27);
-            TbUsernameuser.TabIndex = 1;
+            TbUsernameuser.TabIndex = 2;
+            TbUsernameuser.TextChanged += TbUsernameuser_TextChanged;
             // 
             // lbluserlogin
             // 
             lbluserlogin.AutoSize = true;
-            lbluserlogin.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbluserlogin.Location = new Point(534, 48);
+            lbluserlogin.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
+            lbluserlogin.Location = new Point(654, 49);
             lbluserlogin.Name = "lbluserlogin";
             lbluserlogin.Size = new Size(129, 31);
-            lbluserlogin.TabIndex = 2;
+            lbluserlogin.TabIndex = 0;
             lbluserlogin.Text = "User Login";
             // 
             // lblUsername
             // 
             lblUsername.AutoSize = true;
-            lblUsername.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUsername.Location = new Point(384, 133);
+            lblUsername.Font = new Font("Segoe UI", 12F);
+            lblUsername.Location = new Point(475, 132);
             lblUsername.Name = "lblUsername";
-            lblUsername.Size = new Size(103, 28);
-            lblUsername.TabIndex = 3;
-            lblUsername.Text = "Username:";
+            lblUsername.Size = new Size(63, 28);
+            lblUsername.TabIndex = 1;
+            lblUsername.Text = "Email:";
             // 
             // tbPassworduser
             // 
-            tbPassworduser.Location = new Point(502, 189);
+            tbPassworduser.Location = new Point(592, 190);
             tbPassworduser.Name = "tbPassworduser";
             tbPassworduser.Size = new Size(251, 27);
-            tbPassworduser.TabIndex = 1;
+            tbPassworduser.TabIndex = 4;
+            tbPassworduser.TextChanged += tbPassworduser_TextChanged;
             // 
             // lblPassworduser
             // 
             lblPassworduser.AutoSize = true;
-            lblPassworduser.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblPassworduser.Location = new Point(390, 189);
+            lblPassworduser.Font = new Font("Segoe UI", 12F);
+            lblPassworduser.Location = new Point(475, 186);
             lblPassworduser.Name = "lblPassworduser";
             lblPassworduser.Size = new Size(97, 28);
             lblPassworduser.TabIndex = 3;
@@ -100,43 +90,68 @@
             // btLoginuser
             // 
             btLoginuser.BackColor = Color.FromArgb(0, 192, 192);
-            btLoginuser.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btLoginuser.Location = new Point(502, 249);
+            btLoginuser.Font = new Font("Segoe UI", 12F);
+            btLoginuser.Location = new Point(592, 284);
             btLoginuser.Name = "btLoginuser";
             btLoginuser.Size = new Size(114, 52);
-            btLoginuser.TabIndex = 4;
+            btLoginuser.TabIndex = 5;
             btLoginuser.Text = "Login";
             btLoginuser.UseVisualStyleBackColor = false;
+            btLoginuser.Click += btLoginuser_Click;
             // 
             // LbForgetpass
             // 
             LbForgetpass.AutoSize = true;
-            LbForgetpass.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LbForgetpass.Font = new Font("Segoe UI", 10.2F);
             LbForgetpass.LinkColor = Color.Gray;
-            LbForgetpass.Location = new Point(635, 266);
+            LbForgetpass.Location = new Point(736, 301);
             LbForgetpass.Name = "LbForgetpass";
             LbForgetpass.Size = new Size(143, 23);
-            LbForgetpass.TabIndex = 5;
+            LbForgetpass.TabIndex = 7;
             LbForgetpass.TabStop = true;
             LbForgetpass.Text = "Forgot Password?";
+            LbForgetpass.LinkClicked += LbForgetpass_LinkClicked;
             // 
             // btCreateaccount
             // 
             btCreateaccount.BackColor = Color.Lime;
-            btCreateaccount.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btCreateaccount.Location = new Point(462, 329);
+            btCreateaccount.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btCreateaccount.Location = new Point(592, 371);
             btCreateaccount.Name = "btCreateaccount";
             btCreateaccount.Size = new Size(278, 66);
-            btCreateaccount.TabIndex = 9;
+            btCreateaccount.TabIndex = 6;
             btCreateaccount.Text = "Tạo tài khoản mới";
             btCreateaccount.UseVisualStyleBackColor = false;
             btCreateaccount.Click += btCreateaccount_Click;
             // 
-            // UserLogin
+            // cbRememberpass
+            // 
+            cbRememberpass.AutoSize = true;
+            cbRememberpass.Location = new Point(592, 239);
+            cbRememberpass.Name = "cbRememberpass";
+            cbRememberpass.Size = new Size(124, 24);
+            cbRememberpass.TabIndex = 11;
+            cbRememberpass.Text = "Nhớ mật khẩu";
+            cbRememberpass.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackgroundImage = Properties.Resources._70e732608aac06f25fbd;
+            pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
+            pictureBox1.Location = new Point(6, 6);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(463, 509);
+            pictureBox1.TabIndex = 12;
+            pictureBox1.TabStop = false;
+            // 
+            // Loginmain
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            BackgroundImageLayout = ImageLayout.Stretch;
+            ClientSize = new Size(912, 515);
+            Controls.Add(pictureBox1);
+            Controls.Add(cbRememberpass);
             Controls.Add(btCreateaccount);
             Controls.Add(LbForgetpass);
             Controls.Add(btLoginuser);
@@ -145,17 +160,14 @@
             Controls.Add(lbluserlogin);
             Controls.Add(tbPassworduser);
             Controls.Add(TbUsernameuser);
-            Controls.Add(imagelogin);
-            Name = "UserLogin";
-            Text = "UserLogin";
-            ((System.ComponentModel.ISupportInitialize)imagelogin).EndInit();
+            Name = "Loginmain";
+            Text = "Login";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private PictureBox imagelogin;
         private TextBox TbUsernameuser;
         private Label lbluserlogin;
         private Label lblUsername;
@@ -164,5 +176,7 @@
         private Button btLoginuser;
         private LinkLabel LbForgetpass;
         private Button btCreateaccount;
+        private CheckBox cbRememberpass;
+        private PictureBox pictureBox1;
     }
 }
