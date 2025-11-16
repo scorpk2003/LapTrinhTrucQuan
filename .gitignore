@@ -1,5 +1,6 @@
 # VS local settings
 .vs/
+*.patch
 
 # Build outputs
 bin/
