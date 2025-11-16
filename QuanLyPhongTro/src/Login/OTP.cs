@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace QuanLyPhongTro.src.Login
 {
-    public partial class Login : UserControl
+    public partial class OTP : Form
     {
-        public Login()
+        public OTP()
         {
             InitializeComponent();
+        }
+
+        private void linklbguilaima_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
         }
     }
 }

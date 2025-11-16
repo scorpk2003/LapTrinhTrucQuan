@@ -8,13 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace QuanLyPhongTro.src.Signup
+namespace QuanLyPhongTro.src.Login
 {
-    public partial class Signup : UserControl
+    public partial class Form1 : Form
     {
-        public Signup()
+        public Form1()
         {
             InitializeComponent();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

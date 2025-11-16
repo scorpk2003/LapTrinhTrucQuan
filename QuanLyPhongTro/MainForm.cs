@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuanLyPhongTro.src.Login;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,5 +17,13 @@ namespace QuanLyPhongTro
         {
             InitializeComponent();
         }
+
+   
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            
+
+        }
+
     }
 }
