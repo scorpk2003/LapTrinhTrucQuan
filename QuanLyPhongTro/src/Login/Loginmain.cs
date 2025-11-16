@@ -7,12 +7,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Net.NetworkInformation;
 namespace QuanLyPhongTro.src.Login
 {
     public partial class Loginmain : Form
@@ -34,6 +35,7 @@ namespace QuanLyPhongTro.src.Login
             // Ẩn ký tự password
             tbPassworduser.UseSystemPasswordChar = true;
         }
+        
         private void CreateErrorLabels()
         {
             if (lblErrEmail != null) return;
@@ -106,9 +108,25 @@ namespace QuanLyPhongTro.src.Login
         {
             return !string.IsNullOrWhiteSpace(password) && password.Length >= 6;
         }
-
+        private bool IsNetworkAvailable()
+        {
+            try
+            {
+                // Kiểm tra có kết nối mạng
+                return NetworkInterface.GetIsNetworkAvailable();
+            }
+            catch
+            {
+                return false;
+            }
+        }
         private void btLoginuser_Click(object sender, EventArgs e)
         {
+            if (!IsNetworkAvailable())
+            {
+                MessageBox.Show("Không có kết nối mạng. Vui lòng kiểm tra kết nối Internet.", "Lỗi mạng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             bool ok = true;
             string username = TbUsernameuser.Text.Trim();
@@ -149,7 +167,7 @@ namespace QuanLyPhongTro.src.Login
             if (!ok) return;
 
             // Kiểm tra đăng nhập (ví dụ admin)
-            if (username == "admin@gmail.com" && password == "123456")
+            if (username == "hoc@gmail.com" && password == "123456")
             {
                 lblErrEmail.Text = "";
                 lblErrPass.Text = "";

@@ -34,11 +34,7 @@ namespace QuanLyPhongTro.src.Login
 
         private void btnUser_Click(object sender, EventArgs e)
         {
-            if (!IsConnectedToInternet())
-            {
-                MessageBox.Show("Không có kết nối mạng. Vui lòng kiểm tra mạng trước khi đăng nhập.", "Lỗi kết nối", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            
 
             Loginmain userlogin = new Loginmain();
             this.Hide();

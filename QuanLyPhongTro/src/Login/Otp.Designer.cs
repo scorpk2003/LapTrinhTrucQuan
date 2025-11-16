@@ -63,7 +63,7 @@
             mtOTP.Location = new Point(313, 177);
             mtOTP.Mask = "0 0 0 0 0 0";
             mtOTP.Name = "mtOTP";
-            mtOTP.Size = new Size(192, 63);
+            mtOTP.Size = new Size(221, 63);
             mtOTP.TabIndex = 2;
             // 
             // lbnote
