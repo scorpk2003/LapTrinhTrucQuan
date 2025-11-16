@@ -1,6 +1,5 @@
 
-using System;
-using System.Windows.Forms;
+using QuanLyPhongTro.src.Login;
 
 namespace QuanLyPhongTro
 {
@@ -13,6 +12,7 @@ namespace QuanLyPhongTro
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+            Application.Run(new Loginmain());
         }
     }
 }
