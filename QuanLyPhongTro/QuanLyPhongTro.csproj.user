@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Compile Update="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="src\Login\ChooseLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -21,6 +18,63 @@
     </Compile>
     <Compile Update="src\Login\UserSignup.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Owner\FormCreateContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Owner\FormCreateRoom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Owner\FormEditRoom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Owner\FormInfoRoom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Owner\FormRenewContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Owner\Owner_TrangChu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Renter\FormBillDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Renter\FormCreateRenterReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Renter\FormInformation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Renter\FormRequestContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Renter\Renter_TrangChu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Owner\ucBillCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Owner\ucBillManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Owner\ucContractManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Owner\ucIncidentManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Renter\ucMyBills.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Renter\ucMyContract.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Renter\ucMyReports.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UserControl\Renter\ucMyRoom.cs">
+      <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
 </Project>

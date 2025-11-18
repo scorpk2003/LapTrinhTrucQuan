@@ -4,19 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace QuanLyPhongTro.src.Services
+namespace QuanLyPhongTro.src.Services1
 {
     public class ServiceServices
     {
         /// <summary>
-        /// Lấy tất cả dịch vụ
+        /// L?y t?t c? d?ch v?
         /// </summary>
         public List<Service> GetAllServices()
         {
             try
             {
                 using var context = new AppContextDB();
-                return context.Services.AsNoTracking().ToList();
+                return context.Services.AsNoTracking().OrderBy(s => s.Name).ToList();
             }
             catch (Exception ex)
             {
@@ -26,7 +26,7 @@ namespace QuanLyPhongTro.src.Services
         }
 
         /// <summary>
-        /// Lấy dịch vụ theo Id
+        /// L?y d?ch v? theo Id
         /// </summary>
         public Service? GetServiceById(Guid id)
         {
@@ -43,7 +43,7 @@ namespace QuanLyPhongTro.src.Services
         }
 
         /// <summary>
-        /// Thêm dịch vụ
+        /// Thêm d?ch v?
         /// </summary>
         public bool AddService(Service service)
         {
@@ -63,7 +63,7 @@ namespace QuanLyPhongTro.src.Services
         }
 
         /// <summary>
-        /// Cập nhật dịch vụ
+        /// C?p nh?t d?ch v?
         /// </summary>
         public bool UpdateService(Service service)
         {
@@ -88,7 +88,7 @@ namespace QuanLyPhongTro.src.Services
         }
 
         /// <summary>
-        /// Xóa dịch vụ theo Id
+        /// Xóa d?ch v? theo Id
         /// </summary>
         public bool DeleteService(Guid serviceId)
         {

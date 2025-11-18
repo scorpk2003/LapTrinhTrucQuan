@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuanLyPhongTro.src.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,26 +11,29 @@ namespace QuanLyPhongTro.src.UserSession
     {
         private static readonly Lazy<UserSession> _instance = new Lazy<UserSession>(() => new UserSession());
         public static UserSession Instance => _instance.Value;
-        public string UserId { get; set; }
-        public string Role { get; set; }
+        public Person? _user { get; set; }
         public bool IsAuthenticated { get; set; }
         private UserSession() {
-            UserId = "";
-            Role = "";
+            _user = new();
             IsAuthenticated = false;
         }
 
-        public void Login(string userID, string role)
+        public void Login(string Gmail, string pass)
         {
-            UserId = userID;
-            Role = role;
-            IsAuthenticated = true;
+            AppContextDB appContextDB = new AppContextDB();
+            Person? user = appContextDB.People
+                .FirstOrDefault(u => u.IdDetailNavigation!.Gmail == Gmail && u.Password == pass);
+            if (user != null)
+            {
+                System.Diagnostics.Debug.WriteLine("\n\n\tLogin successful for user: " + user + "\n\n");
+                _user = user;
+                IsAuthenticated = true;
+            }
         }
 
         public void Logout()
         {
-            UserId = "";
-            Role = "";
+            _user = null;
             IsAuthenticated = false;
         }
     }

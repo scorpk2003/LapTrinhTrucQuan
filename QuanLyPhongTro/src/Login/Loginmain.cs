@@ -1,25 +1,12 @@
-﻿using QuanLyPhongTro.src.Login;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Net.NetworkInformation;
 namespace QuanLyPhongTro.src.Login
 {
     public partial class Loginmain : Form
     {
-        private Label lblErrEmail;
-        private Label lblErrPass;
+        private Label? lblErrEmail;
+        private Label? lblErrPass;
 
         public Loginmain()
         {
@@ -59,10 +46,10 @@ namespace QuanLyPhongTro.src.Login
         }
         private void btCreateaccount_Click(object sender, EventArgs e)
         {
-            UserSignup signupForm = new UserSignup(this); // truyền form login hiện tại
-            this.Hide();
-            signupForm.ShowDialog();
-            this.Show();
+            UserSignup signupForm = new UserSignup();
+            this.Close();
+            signupForm.Show();
+            //this.Show();
         }
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
@@ -135,45 +122,74 @@ namespace QuanLyPhongTro.src.Login
             // Kiểm tra email
             if (string.IsNullOrWhiteSpace(username))
             {
-                lblErrEmail.Text = "Không được để trống.";
+                lblErrEmail!.Text = "Không được để trống.";
                 ok = false;
             }
             else if (!IsValidEmail(username))
             {
-                lblErrEmail.Text = "Sai định dạng email.";
+                lblErrEmail!.Text = "Sai định dạng email.";
                 ok = false;
             }
             else
             {
-                lblErrEmail.Text = "";
+                lblErrEmail!.Text = "";
             }
 
             // Kiểm tra mật khẩu
             if (string.IsNullOrWhiteSpace(password))
             {
-                lblErrPass.Text = "Không được để trống.";
+                lblErrPass!.Text = "Không được để trống.";
                 ok = false;
             }
             else if (!IsValidPassword(password))
             {
-                lblErrPass.Text = "Mật khẩu phải ≥ 6 ký tự.";
+                lblErrPass!.Text = "Mật khẩu phải ≥ 6 ký tự.";
                 ok = false;
             }
             else
             {
-                lblErrPass.Text = "";
+                lblErrPass!.Text = "";
             }
 
             if (!ok) return;
+            UserSession.UserSession.Instance.Login(username, password);
 
             // Kiểm tra đăng nhập (ví dụ admin)
-            if (username == "hoc@gmail.com" && password == "123456")
+            if (UserSession.UserSession.Instance.IsAuthenticated)
             {
-                lblErrEmail.Text = "";
-                lblErrPass.Text = "";
-                ChooseLogin chooseLogin = new ChooseLogin();
-                chooseLogin.Show();
-                this.Hide();
+                if (UserSession.UserSession.Instance?._user?.Role == "Both")
+                {
+                    lblErrEmail.Text = "";
+                    lblErrPass.Text = "";
+                    ChooseLogin chooseLogin = new ChooseLogin();
+                    chooseLogin.Show();
+                    this.Hide();
+                    return;
+                }
+                switch (UserSession.UserSession.Instance?._user?.Role)
+                {
+                    case "Owner":
+                        lblErrEmail.Text = "";
+                        lblErrPass.Text = "";
+                        Owner_TrangChu ownform = new();
+                        ownform.Show();
+                        this.Close();
+                        break;
+                    case "Renter":
+                        lblErrEmail.Text = "";
+                        lblErrPass.Text = "";
+                        Renter_TrangChu rentform = new();
+                        rentform.Show();
+                        this.Close();
+                        break;
+                    default:
+                        lblErrEmail.Text = "";
+                        lblErrPass.Text = "";
+                        ChooseLogin chooseLogin = new ChooseLogin();
+                        chooseLogin.Show();
+                        this.Close();
+                        return;
+                }
             }
             else
             {
@@ -184,22 +200,22 @@ namespace QuanLyPhongTro.src.Login
         {
             string email = TbUsernameuser.Text.Trim();
             if (string.IsNullOrWhiteSpace(email))
-                lblErrEmail.Text = "Không được để trống.";
+                lblErrEmail!.Text = "Không được để trống.";
             else if (!IsValidEmail(email))
-                lblErrEmail.Text = "Sai định dạng email.";
+                lblErrEmail!.Text = "Sai định dạng email.";
             else
-                lblErrEmail.Text = "";
+                lblErrEmail!.Text = "";
         }
 
         private void tbPassworduser_TextChanged(object sender, EventArgs e)
         {
             string pass = tbPassworduser.Text;
             if (string.IsNullOrWhiteSpace(pass))
-                lblErrPass.Text = "Không được để trống.";
+                lblErrPass!.Text = "Không được để trống.";
             else if (pass.Length < 6)
-                lblErrPass.Text = "Mật khẩu phải ≥ 6 ký tự.";
+                lblErrPass!.Text = "Mật khẩu phải ≥ 6 ký tự.";
             else
-                lblErrPass.Text = "";
+                lblErrPass!.Text = "";
         }
     }
 }

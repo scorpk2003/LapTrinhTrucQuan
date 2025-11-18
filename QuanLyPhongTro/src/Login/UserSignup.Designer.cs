@@ -238,7 +238,7 @@
             // cbbRole
             // 
             cbbRole.FormattingEnabled = true;
-            cbbRole.Items.AddRange(new object[] { "User", "Admin" });
+            cbbRole.Items.AddRange(new object[] { "Renter", "Owner" });
             cbbRole.Location = new Point(1023, 470);
             cbbRole.Name = "cbbRole";
             cbbRole.Size = new Size(115, 28);

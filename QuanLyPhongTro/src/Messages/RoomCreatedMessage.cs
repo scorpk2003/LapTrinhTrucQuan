@@ -1,4 +1,4 @@
-using QuanLyPhongTro.src.Test.Models;
+using QuanLyPhongTro.src.Models;
 
 namespace QuanLyPhongTro.src.Messages
 {

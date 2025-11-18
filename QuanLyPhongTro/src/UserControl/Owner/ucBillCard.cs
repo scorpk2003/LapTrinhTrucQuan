@@ -1,4 +1,4 @@
-﻿using QuanLyPhongTro.src.Test.Models;
+﻿using QuanLyPhongTro.src.Models;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -36,21 +36,21 @@ namespace QuanLyPhongTro
             lblTotal.Text = $"TỔNG: {(_bill.TotalMoney ?? 0):N0} VND";
 
             // 2. Tải chi tiết (Điện, Nước, Khác)
-            var electric = _bill.BillDetails.FirstOrDefault(d => d.IdServiceNavigation?.Name == "Dien");
-            var water = _bill.BillDetails.FirstOrDefault(d => d.IdServiceNavigation?.Name == "Nuoc");
-            var others = _bill.BillDetails.Where(d => 
-                d.IdServiceNavigation != null && 
-                d.IdServiceNavigation.Name != "Dien" && 
-                d.IdServiceNavigation.Name != "Nuoc");
+            var electric = _bill.BillDetails.Electricity;
+            var water = _bill.BillDetails.Water;
+            //var others = _bill.BillDetails.Where(d => 
+            //    d.IdServiceNavigation != null && 
+            //    d.IdServiceNavigation.Name != "Dien" && 
+            //    d.IdServiceNavigation.Name != "Nuoc");
 
-            lblElectricity.Text = $"Tiền điện: {electric?.Total ?? 0:N0} VND";
-            lblWater.Text = $"Tiền nước: {water?.Total ?? 0:N0} VND";
+            lblElectricity.Text = $"Tiền điện: {electric ?? 0:N0} VND";
+            lblWater.Text = $"Tiền nước: {water ?? 0:N0} VND";
 
             lstOtherCosts.Items.Clear();
-            foreach (var item in others)
-            {
-                lstOtherCosts.Items.Add($"{item.IdServiceNavigation?.Name ?? "Phí khác"}: {item.Total:N0} VND");
-            }
+            //foreach (var item in others)
+            //{
+            //    lstOtherCosts.Items.Add($"{item.IdServiceNavigation?.Name ?? "Phí khác"}: {item.Total:N0} VND");
+            //}
 
             // 3. Cập nhật nút và màu sắc
             UpdateStatusUI();

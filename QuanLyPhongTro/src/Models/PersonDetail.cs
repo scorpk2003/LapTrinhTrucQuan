@@ -33,5 +33,5 @@ public partial class PersonDetail
     public string? Gmail { get; set; }
 
     [InverseProperty("IdDetailNavigation")]
-    public virtual ICollection<Person> People { get; set; } = new List<Person>();
+    public virtual Person People { get; set; } = new Person();
 }

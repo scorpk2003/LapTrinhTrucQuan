@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongTro.src.Models;
 
-namespace QuanLyPhongTro.src.Services
+namespace QuanLyPhongTro.src.Services1
 {
     public class PersonDetailServices
     {
         /// <summary>
-        /// Lấy chi tiết người dùng theo Id
+        /// L?y chi ti?t ngu?i d�ng theo Id
         /// </summary>
         public PersonDetail GetPersonDetailById(Guid id)
         {
@@ -22,13 +22,13 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi GetPersonDetailById: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"L?i GetPersonDetailById: {ex.Message}");
                 return null;
             }
         }
 
         /// <summary>
-        /// Thêm chi tiết người dùng mới
+        /// Th�m chi ti?t ngu?i d�ng m?i
         /// </summary>
         public bool AddPersonDetail(PersonDetail detail)
         {
@@ -41,13 +41,13 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi AddPersonDetail: {ex.Message}");
+                Console.WriteLine($"L?i AddPersonDetail: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// Cập nhật chi tiết người dùng
+        /// C?p nh?t chi ti?t ngu?i d�ng
         /// </summary>
         public bool UpdatePersonDetail(PersonDetail detail)
         {
@@ -67,13 +67,13 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi UpdatePersonDetail: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"L?i UpdatePersonDetail: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// Xóa chi tiết người dùng theo Id
+        /// X�a chi ti?t ngu?i d�ng theo Id
         /// </summary>
         public bool DeletePersonDetail(Guid id)
         {
@@ -89,13 +89,13 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi DeletePersonDetail: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"L?i DeletePersonDetail: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// Lấy tất cả chi tiết người dùng
+        /// L?y t?t c? chi ti?t ngu?i d�ng
         /// </summary>
         public List<PersonDetail> GetAllPersonDetails()
         {
@@ -106,7 +106,7 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi GetAllPersonDetails: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"L?i GetAllPersonDetails: {ex.Message}");
                 return new List<PersonDetail>();
             }
         }

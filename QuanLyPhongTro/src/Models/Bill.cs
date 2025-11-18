@@ -25,7 +25,7 @@ public partial class Bill
     public DateTime? PaymentDate { get; set; }
 
     [InverseProperty("IdBillNavigation")]
-    public virtual ICollection<BillDetail> BillDetails { get; set; } = new List<BillDetail>();
+    public virtual BillDetail BillDetails { get; set; } = new BillDetail();
 
     [ForeignKey("IdPerson")]
     [InverseProperty("Bills")]

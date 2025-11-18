@@ -2,11 +2,11 @@
 using QuanLyPhongTro.src.Models;
 using System;
 using System.Collections.Generic;
-using System.IO; // Thêm để xử lý xóa file
+using System.IO;
 using System.Linq;
-using System.Windows.Forms; // Thêm để lấy Application.StartupPath
+using System.Windows.Forms;
 
-namespace QuanLyPhongTro.src.Services
+namespace QuanLyPhongTro.src.Services1
 {
     public class RoomService
     {
@@ -24,7 +24,7 @@ namespace QuanLyPhongTro.src.Services
                         try
                         {
                             // 1. Lưu phòng
-                            context.Rooms.Add(room);
+                            context.Rooms.Add(room); 
                             context.SaveChanges();
 
                             // 2. Lưu các hình ảnh
@@ -34,10 +34,10 @@ namespace QuanLyPhongTro.src.Services
                                 {
                                     var roomImage = new RoomImage
                                     {
-                                        IdRoom = room.Id, // Gán ID phòng vừa tạo
+                                        IdRoom = room.Id,
                                         ImageUrl = url
                                     };
-                                    context.RoomImages.Add(roomImage);
+                                    context.RoomImages.Add(roomImage); 
                                 }
                                 context.SaveChanges();
                             }
@@ -77,10 +77,12 @@ namespace QuanLyPhongTro.src.Services
                     existingRoom.Name = roomData.Name;
                     existingRoom.Address = roomData.Address;
                     existingRoom.Price = roomData.Price;
-                    existingRoom.Area = roomData.Area;
+
+                    existingRoom.Area = roomData.Area; 
+
                     existingRoom.Status = roomData.Status;
 
-                    context.Rooms.Update(existingRoom);
+                    context.Rooms.Update(existingRoom); 
                     context.SaveChanges();
                     return true;
                 }
@@ -127,8 +129,7 @@ namespace QuanLyPhongTro.src.Services
             {
                 using (var context = new AppContextDB())
                 {
-                    // Dùng Include để tải danh sách ảnh
-                    var room = context.Rooms
+                    var room = context.Rooms 
                         .Include(r => r.RoomImages)
                         .FirstOrDefault(r => r.Id == roomId);
                     return room;
@@ -179,7 +180,7 @@ namespace QuanLyPhongTro.src.Services
                 {
                     context.RoomImages.Add(newImage);
                     context.SaveChanges();
-                    return newImage; // Trả về ảnh đã tạo (có ID)
+                    return newImage;
                 }
             }
             catch (Exception ex)
@@ -204,7 +205,6 @@ namespace QuanLyPhongTro.src.Services
                     context.RoomImages.Remove(image);
                     context.SaveChanges();
 
-                    // (Tùy chọn) Xóa file ảnh thật trong thư mục "RoomImages"
                     try
                     {
                         string fullPath = Path.Combine(Application.StartupPath, image.ImageUrl);
@@ -216,7 +216,6 @@ namespace QuanLyPhongTro.src.Services
                     catch (Exception ex)
                     {
                         Console.WriteLine($"Lỗi xóa file ảnh: {ex.Message}");
-                        // (Không return false, vì CSDL đã xóa thành công)
                     }
 
                     return true;
@@ -226,6 +225,29 @@ namespace QuanLyPhongTro.src.Services
             {
                 Console.WriteLine($"Lỗi DeleteRoomImage: {ex.Message}");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả các phòng đang "Còn trống"
+        /// </summary>
+        public List<Room> GetAllAvailableRooms()
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return context.Rooms
+                        .Include(r => r.RoomImages)
+                        .Where(r => r.Status == "Trống")
+                        .OrderBy(r => r.Price)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetAllAvailableRooms: {ex.Message}");
+                return new List<Room>();
             }
         }
     }

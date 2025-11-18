@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Test.Mediator;
-using QuanLyPhongTro.src.Test.Models;
+﻿using QuanLyPhongTro.src.Services1;
+using QuanLyPhongTro.src.Mediator;
+using QuanLyPhongTro.src.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using QuanLyPhongTro.src.UserSession;
+using QuanLyPhongTro.src.Login;
 
 namespace QuanLyPhongTro
 {
@@ -27,10 +29,9 @@ namespace QuanLyPhongTro
 
         private const string PlaceholderText = "Nhập tên, địa chỉ...";
 
-        public Owner_TrangChu(Person loggedInOwner)
+        public Owner_TrangChu()
         {
             InitializeComponent();
-            _currentOwner = loggedInOwner;
             _roomService = new RoomService();
 
             this.Load += Owner_TrangChu_Load;
@@ -62,7 +63,7 @@ namespace QuanLyPhongTro
 
         private void Owner_TrangChu_Load(object sender, EventArgs e)
         {
-            lblOwnerName.Text = $"Chào mừng, {_currentOwner.Username}"; // <-- SỬA LỖI 2
+            lblOwnerName.Text = $"Chào mừng, {UserSession.Instance._user?.Username}"; // <-- SỬA LỖI 2
 
             nudPriceFrom.Maximum = 999999999;
             nudPriceTo.Maximum = 999999999;
@@ -95,7 +96,7 @@ namespace QuanLyPhongTro
 
         private void BtnCreate_Click(object sender, EventArgs e)
         {
-            using (FormCreateRoom frm = new FormCreateRoom(_currentOwner.Id))
+            using (FormCreateRoom frm = new FormCreateRoom(UserSession.Instance._user!.Id))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
@@ -106,11 +107,6 @@ namespace QuanLyPhongTro
 
         private async void BtnBill_Click(object sender, EventArgs e)
         {
-            //await Mediator.Instance.PublishForm<Person>("UcBillManagement", _currentOwner, async (control) =>
-            //{
-            //    _billControl = (ucBillManagement)control;
-            //    await ShowView(control, _billControl);
-            //});
             List<Room> rooms = _roomService.GetAllRoomsByOwner(_currentOwner.Id);
             List<Bill> bills = rooms.Where(r => r.Bills != null)
                                     .SelectMany(r => r.Bills)
@@ -119,6 +115,7 @@ namespace QuanLyPhongTro
             {
                 foreach (var control in controls)
                     flowPanelRooms.Controls.Add(control);
+                await Task.CompletedTask;
             });
         }
         private async void BtnContract_Click(object sender, EventArgs e)
@@ -148,10 +145,10 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                AuthForm authForm = new AuthForm();
-                authForm.ShowDialog(this);
                 this.Close();
             }
+            Loginmain form = new();
+            form.Show();
         }
 
         private async Task ShowView<T>(Control control, T uc) where T : Control
@@ -169,6 +166,7 @@ namespace QuanLyPhongTro
             }
             control.BringToFront();
             control.Visible = true;
+            await Task.CompletedTask;
         }
 
         #endregion
@@ -177,7 +175,7 @@ namespace QuanLyPhongTro
 
         private void LoadRooms()
         {
-            _allRooms = _roomService.GetAllRoomsByOwner(_currentOwner.Id);
+            _allRooms = _roomService.GetAllRoomsByOwner(UserSession.Instance._user!.Id);
             // (Nạp lại bộ lọc Max/Min dựa trên dữ liệu mới)
             InitializeFilters();
             FilterAndDisplayRooms();
@@ -218,7 +216,7 @@ namespace QuanLyPhongTro
             cboFilterStatus.SelectedIndex = 0; // Set về "Tất cả"
         }
 
-        private void FilterAndDisplayRooms()
+        private async void FilterAndDisplayRooms()
         {
             if (_allRooms == null) return;
 
@@ -257,7 +255,7 @@ namespace QuanLyPhongTro
             }
 
             // 4. Hiển thị kết quả
-            DisplayRooms(filteredList.ToList());
+            await DisplayRooms(filteredList.ToList());
         }
 
         private async Task DisplayRooms(List<Room> rooms)

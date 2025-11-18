@@ -32,20 +32,20 @@ namespace QuanLyPhongTro.src.Login
             }
         }
 
-        private void btnUser_Click(object sender, EventArgs e)
+        private async void btnUser_Click(object sender, EventArgs e)
         {
-            
-
-                    MainForm main = new MainForm();
+            Renter_TrangChu form = new();
+            form.Show();
             this.Hide();
-            main.FormClosed += (s, args) => this.Close();
-            main.Show();
-
+            await Task.CompletedTask;
         }
 
-        private void btnAdmin_Click(object sender, EventArgs e)
+        private async void btnAdmin_Click(object sender, EventArgs e)
         {
-           
+            Owner_TrangChu form = new();
+            form.Show();
+            this.Hide();
+            await Task.CompletedTask;
         }
     }
 }

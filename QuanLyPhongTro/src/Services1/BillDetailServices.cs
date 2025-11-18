@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongTro.src.Models;
 
-namespace QuanLyPhongTro.src.Services
+namespace QuanLyPhongTro.src.Services1
 {
     public class BillDetailServices
     {
         /// <summary>
-        /// Lấy danh sách chi tiết hóa đơn theo BillId (bao gồm thông tin dịch vụ)
+        /// L?y danh s�ch chi ti?t h�a don theo BillId (bao g?m th�ng tin d?ch v?)
         /// </summary>
         public List<BillDetail> GetBillDetailsByBillId(Guid billId)
         {
@@ -19,22 +19,22 @@ namespace QuanLyPhongTro.src.Services
 
                 {
 
-                    // ✅ Lấy chi tiết hóa đơn theo IdBill
+                    // ? L?y chi ti?t h�a don theo IdBill
                     return context.BillDetails
                                   .Where(d => d.IdBill == billId)
-                                  .Include(d => d.IdServiceNavigation) // Lấy thông tin dịch vụ liên quan
+                                  .Include(d => d.IdServiceNavigation) // L?y th�ng tin d?ch v? li�n quan
                                   .ToList();
                 }    
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi GetBillDetailsByBillId: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"L?i GetBillDetailsByBillId: {ex.Message}");
                 return new List<BillDetail>();
             }
         }
 
         /// <summary>
-        /// Thêm nhiều chi tiết hóa đơn cùng lúc
+        /// Th�m nhi?u chi ti?t h�a don c�ng l�c
         /// </summary>
         public bool AddBillDetails(List<BillDetail> details)
         {
@@ -47,7 +47,7 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi AddBillDetails: {ex.Message}");
+                Console.WriteLine($"L?i AddBillDetails: {ex.Message}");
                 return false;
             }
         }
@@ -59,25 +59,25 @@ namespace QuanLyPhongTro.src.Services
 
                 var billWithDetails = context.Bills
     .Where(b => b.Id == billId)
-    .Include(b => b.BillDetails) // Lấy chi tiết hóa đơn
-        .ThenInclude(d => d.IdServiceNavigation) // Lấy dịch vụ
-    .Include(b => b.Payment) // Lấy thông tin thanh toán
+    .Include(b => b.BillDetails) // L?y chi ti?t h�a don
+        .ThenInclude(d => d.IdServiceNavigation) // L?y d?ch v?
+    .Include(b => b.Payment) // L?y th�ng tin thanh to�n
     .FirstOrDefault();
 
-                System.Diagnostics.Debug.WriteLine($"\n\n\tLấy được BillWithDetails: {billWithDetails}\n\n");
+                System.Diagnostics.Debug.WriteLine($"\n\n\tL?y du?c BillWithDetails: {billWithDetails}\n\n");
 
                 return billWithDetails;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"\n\n\tLỗi GetBillWithDetails: {ex.Message}\n\n");
+                System.Diagnostics.Debug.WriteLine($"\n\n\tL?i GetBillWithDetails: {ex.Message}\n\n");
                 return null;
             }
         }
 
 
         /// <summary>
-        /// Cập nhật thông tin chi tiết hóa đơn
+        /// C?p nh?t th�ng tin chi ti?t h�a don
         /// </summary>
         public bool UpdateBillDetail(BillDetail detail)
         {
@@ -96,13 +96,13 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi UpdateBillDetail: {ex.Message}");
+                Console.WriteLine($"L?i UpdateBillDetail: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// Xóa chi tiết hóa đơn theo ID
+        /// X�a chi ti?t h�a don theo ID
         /// </summary>
         public bool DeleteBillDetail(Guid id)
         {
@@ -118,7 +118,7 @@ namespace QuanLyPhongTro.src.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi DeleteBillDetail: {ex.Message}");
+                Console.WriteLine($"L?i DeleteBillDetail: {ex.Message}");
                 return false;
             }
         }

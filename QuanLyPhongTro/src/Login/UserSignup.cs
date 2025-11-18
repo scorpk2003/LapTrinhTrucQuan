@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualBasic.Logging;
+using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,21 +19,19 @@ namespace QuanLyPhongTro.src.Login
 {
     public partial class UserSignup : Form
     {
-        private Label lblErrHovaten;
-        private Label lblErrSdt;
-        private Label lblErrGioitinh;
+        private Label? lblErrHovaten;
+        private Label? lblErrSdt;
+        private Label? lblErrGioitinh;
         // Label báo lỗi
-        private Label lblErrEmail;
-        private Label lblErrUser;
-        private Label lblErrPass;
-        private Label lblErrRePass;
-        private Loginmain _loginForm;
-        private Label lblErrRole;
-        public UserSignup(Loginmain login)
+        private Label? lblErrEmail;
+        private Label? lblErrUser;
+        private Label? lblErrPass;
+        private Label? lblErrRePass;
+        private Label? lblErrRole;
+        public UserSignup()
         {
             InitializeComponent(
                 );
-            _loginForm = login;
 
             // Ẩn password lúc đầu
             tbPass.UseSystemPasswordChar = true;
@@ -101,69 +101,95 @@ namespace QuanLyPhongTro.src.Login
             // Họ và tên
             if (string.IsNullOrWhiteSpace(tbHovaten.Text) || !Regex.IsMatch(tbHovaten.Text, @"^[a-zA-ZÀ-ỹ\s]+$"))
             {
-                lblErrHovaten.Text = "Họ và tên không hợp lệ.";
+                lblErrHovaten!.Text = "Họ và tên không hợp lệ.";
                 ok = false;
             }
-            else lblErrHovaten.Text = "";
+            else lblErrHovaten!.Text = "";
 
             // Email 
             if (!IsValidEmail(tbEmailv.Text))
             {
-                lblErrEmail.Text = "Email không hợp lệ.";
+                lblErrEmail!.Text = "Email không hợp lệ.";
                 ok = false;
             }
             else
             {
-                lblErrEmail.Text = "";
+                lblErrEmail!.Text = "";
             }
 
             // Số điện thoại (riêng)
             if (string.IsNullOrWhiteSpace(tbSđt.Text) || !Regex.IsMatch(tbSđt.Text, @"^(0|\+84)[0-9]{9}$"))
             {
-                lblErrSdt.Text = "Số điện thoại không hợp lệ.";
+                lblErrSdt!.Text = "Số điện thoại không hợp lệ.";
                 ok = false;
             }
-            else lblErrSdt.Text = "";
+            else lblErrSdt!.Text = "";
 
             // Giới tính
             if (cbbGioitinh.SelectedIndex == -1)
             {
-                lblErrGioitinh.Text = "Vui lòng chọn giới tính.";
+                lblErrGioitinh!.Text = "Vui lòng chọn giới tính.";
                 ok = false;
             }
-            else lblErrGioitinh.Text = "";
+            else lblErrGioitinh!.Text = "";
 
             // Password
             if (tbPass.Text.Length < 6)
             {
-                lblErrPass.Text = "Mật khẩu phải ≥ 6 ký tự.";
+                lblErrPass!.Text = "Mật khẩu phải ≥ 6 ký tự.";
                 ok = false;
             }
-            else lblErrPass.Text = "";
+            else lblErrPass!.Text = "";
 
             if (tbPass1.Text != tbPass.Text)
             {
-                lblErrRePass.Text = "Mật khẩu nhập lại không khớp.";
+                lblErrRePass!.Text = "Mật khẩu nhập lại không khớp.";
                 ok = false;
             }
-            else lblErrRePass.Text = "";
+            else lblErrRePass!.Text = "";
             if (cbbRole.SelectedIndex == -1)
             {
-                lblErrRole.Text = "Vui lòng chọn vai trò.";
+                lblErrRole!.Text = "Vui lòng chọn vai trò.";
                 ok = false;
             }
             else
             {
-                lblErrRole.Text = "";
+                lblErrRole!.Text = "";
             }
 
             // Lấy giá trị Role
             string selectedRole = cbbRole.SelectedItem?.ToString() ?? "";
             if (!ok) return;
             MessageBox.Show("Đăng ký thành công!", "Thành công");
-            // Hiển thị lại form login gốc
-            _loginForm.Show();
+
+            Person people = new Person
+            {
+                Username = tbHovaten.Text.Trim(),
+                Password = tbPass.Text.Trim(),
+                Role = selectedRole,
+                IdDetailNavigation = new PersonDetail
+                {
+                    Name = tbHovaten.Text.Trim(),
+                    Gmail = tbEmailv.Text.Trim(),
+                    Phone = tbSđt.Text.Trim(),
+                }
+            };
+            PersonService personService = new PersonService();
+            Person? exist = personService.GetAccount(people.IdDetailNavigation.Gmail, people.Password);
+            if(exist != null)
+            {
+                MessageBox.Show("Tài khoản đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            else
+            {
+                personService.SignUp(people);
+            }
+                // Hiển thị lại form login gốc
+
             this.Close();
+            Loginmain loginmain = new Loginmain();
+            loginmain.Show();
 
         }
 
@@ -183,20 +209,20 @@ namespace QuanLyPhongTro.src.Login
             this.BeginInvoke((Action)(() =>
             {
                 if (string.IsNullOrWhiteSpace(tbEmailv.Text))
-                    lblErrEmail.Text = "Không được để trống.";
+                    lblErrEmail!.Text = "Không được để trống.";
                 else if (!IsValidEmail(tbEmailv.Text))
-                    lblErrEmail.Text = "Email không hợp lệ.";
+                    lblErrEmail!.Text = "Email không hợp lệ.";
                 else
-                    lblErrEmail.Text = "";
+                    lblErrEmail!.Text = "";
             }));
         }
 
         private void tbEmailv_Leave(object sender, EventArgs e)
         {
             if (!IsValidEmail(tbEmailv.Text))
-                lblErrEmail.Text = "Email không hợp lệ.";
+                lblErrEmail!.Text = "Email không hợp lệ.";
             else
-                lblErrEmail.Text = "";
+                lblErrEmail!.Text = "";
         }
 
 
@@ -205,30 +231,30 @@ namespace QuanLyPhongTro.src.Login
         private void tbPass_TextChanged(object sender, EventArgs e)
         {
             if (tbPass.Text.Length < 6)
-                lblErrPass.Text = "Mật khẩu phải ≥ 6 ký tự.";
+                lblErrPass!.Text = "Mật khẩu phải ≥ 6 ký tự.";
             else
-                lblErrPass.Text = "";
+                lblErrPass!.Text = "";
         }
 
         private void tbPass_Leave(object sender, EventArgs e)
         {
             if (tbPass.Text.Length < 6)
-                lblErrPass.Text = "Mật khẩu phải ≥ 6 ký tự.";
+                lblErrPass!.Text = "Mật khẩu phải ≥ 6 ký tự.";
         }
 
         // Realtime nhập lại mật khẩu
         private void tbPass1_TextChanged(object sender, EventArgs e)
         {
             if (tbPass1.Text != tbPass.Text)
-                lblErrRePass.Text = "Mật khẩu nhập lại không khớp.";
+                lblErrRePass!.Text = "Mật khẩu nhập lại không khớp.";
             else
-                lblErrRePass.Text = "";
+                lblErrRePass!.Text = "";
         }
 
         private void tbPass1_Leave(object sender, EventArgs e)
         {
             if (tbPass1.Text != tbPass.Text)
-                lblErrRePass.Text = "Mật khẩu nhập lại không khớp.";
+                lblErrRePass!.Text = "Mật khẩu nhập lại không khớp.";
         }
 
         private void checkshowpass_CheckedChanged(object sender, EventArgs e)
@@ -241,38 +267,39 @@ namespace QuanLyPhongTro.src.Login
 
         private void llblogin_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            _loginForm.Show(); // hiện lại form login hiện tại
+            Loginmain loginmain = new Loginmain(); // hiện lại form login hiện tại
             this.Close();      // đóng form signup
+            loginmain.Show();
         }
 
         private void tbHovaten_TextChanged(object sender, EventArgs e)
         {
             string name = tbHovaten.Text.Trim();
             if (string.IsNullOrWhiteSpace(name))
-                lblErrHovaten.Text = "Họ và tên không được để trống.";
+                lblErrHovaten!.Text = "Họ và tên không được để trống.";
             else if (!Regex.IsMatch(name, @"^[a-zA-ZÀ-ỹ\s]+$"))
-                lblErrHovaten.Text = "Họ và tên chỉ chứa chữ cái.";
+                lblErrHovaten!.Text = "Họ và tên chỉ chứa chữ cái.";
             else
-                lblErrHovaten.Text = "";
+                lblErrHovaten!.Text = "";
         }
 
         private void tbSđt_TextChanged(object sender, EventArgs e)
         {
             string phone = tbSđt.Text.Trim();
             if (string.IsNullOrWhiteSpace(phone))
-                lblErrSdt.Text = "Số điện thoại không được để trống.";
+                lblErrSdt!.Text = "Số điện thoại không được để trống.";
             else if (!Regex.IsMatch(phone, @"^(0|\+84)[0-9]{9}$"))
-                lblErrSdt.Text = "Số điện thoại không hợp lệ.";
+                lblErrSdt!.Text = "Số điện thoại không hợp lệ.";
             else
-                lblErrSdt.Text = "";
+                lblErrSdt!.Text = "";
         }
 
         private void cbbGioitinh_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbbGioitinh.SelectedIndex == -1)
-                lblErrGioitinh.Text = "Vui lòng chọn giới tính.";
+                lblErrGioitinh!.Text = "Vui lòng chọn giới tính.";
             else
-                lblErrGioitinh.Text = "";
+                lblErrGioitinh!.Text = "";
         }
 
         private void lblSignup_Click(object sender, EventArgs e)
@@ -283,7 +310,7 @@ namespace QuanLyPhongTro.src.Login
         private void cbbRole_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbbRole.SelectedIndex != -1)
-                lblErrRole.Text = "";
+                lblErrRole!.Text = "";
         }
     }
 }

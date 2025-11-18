@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.src.Test.Models;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -63,14 +63,14 @@ namespace QuanLyPhongTro
 
             if (_bill.BillDetails != null)
             {
-                foreach (var detail in _bill.BillDetails)
-                {
-                    dgvBillDetails.Rows.Add(
-                        detail.IdServiceNavigation?.Name ?? "N/A",
-                        detail.Quantity,
-                        detail.Total
-                    );
-                }
+                //foreach (var detail in _bill.BillDetails)
+                //{
+                //    dgvBillDetails.Rows.Add(
+                //        detail.IdServiceNavigation?.Name ?? "N/A",
+                //        detail.Quantity,
+                //        detail.Total
+                //    );
+                //}
             }
 
             lblTotalMoney.Text = $"Tổng cộng: {(_bill.TotalMoney ?? 0):N0} VND";

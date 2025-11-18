@@ -42,11 +42,12 @@
             btnAdmin.ForeColor = Color.Blue;
             btnAdmin.Image = (Image)resources.GetObject("btnAdmin.Image");
             btnAdmin.ImageAlign = ContentAlignment.TopCenter;
-            btnAdmin.Location = new Point(456, 275);
+            btnAdmin.Location = new Point(399, 206);
+            btnAdmin.Margin = new Padding(3, 2, 3, 2);
             btnAdmin.Name = "btnAdmin";
-            btnAdmin.Size = new Size(200, 93);
+            btnAdmin.Size = new Size(175, 70);
             btnAdmin.TabIndex = 8;
-            btnAdmin.Text = "Admin";
+            btnAdmin.Text = "Owner";
             btnAdmin.TextAlign = ContentAlignment.BottomCenter;
             btnAdmin.UseVisualStyleBackColor = false;
             btnAdmin.Click += btnAdmin_Click;
@@ -58,11 +59,12 @@
             btnUser.ForeColor = Color.Blue;
             btnUser.Image = (Image)resources.GetObject("btnUser.Image");
             btnUser.ImageAlign = ContentAlignment.TopCenter;
-            btnUser.Location = new Point(158, 275);
+            btnUser.Location = new Point(138, 206);
+            btnUser.Margin = new Padding(3, 2, 3, 2);
             btnUser.Name = "btnUser";
-            btnUser.Size = new Size(200, 93);
+            btnUser.Size = new Size(175, 70);
             btnUser.TabIndex = 7;
-            btnUser.Text = "User";
+            btnUser.Text = "Renter";
             btnUser.TextAlign = ContentAlignment.BottomCenter;
             btnUser.UseVisualStyleBackColor = false;
             btnUser.Click += btnUser_Click;
@@ -71,9 +73,9 @@
             // 
             lblSignin.AutoSize = true;
             lblSignin.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblSignin.Location = new Point(327, 186);
+            lblSignin.Location = new Point(286, 140);
             lblSignin.Name = "lblSignin";
-            lblSignin.Size = new Size(151, 38);
+            lblSignin.Size = new Size(117, 30);
             lblSignin.TabIndex = 6;
             lblSignin.Text = "Sign in as:";
             // 
@@ -81,24 +83,25 @@
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe Script", 28.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitle.Location = new Point(32, 83);
+            lblTitle.Location = new Point(28, 62);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(736, 78);
+            lblTitle.Size = new Size(600, 63);
             lblTitle.TabIndex = 5;
             lblTitle.Text = "Room management software";
             // 
             // ChooseLogin
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(0, 192, 192);
             BackgroundImage = Properties.Resources._1;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(800, 490);
+            ClientSize = new Size(700, 368);
             Controls.Add(btnAdmin);
             Controls.Add(btnUser);
             Controls.Add(lblSignin);
             Controls.Add(lblTitle);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "ChooseLogin";
             Text = "ChooseLogin";
             ResumeLayout(false);

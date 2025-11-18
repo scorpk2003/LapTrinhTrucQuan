@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.src.Test.Models;
-using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Test.Mediator;
+﻿using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
+using QuanLyPhongTro.src.Mediator;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using QuanLyPhongTro.src.UserSession;
 
 namespace QuanLyPhongTro
 {
@@ -30,10 +31,10 @@ namespace QuanLyPhongTro
         private ucMyContract _myContractControl;
         private ucMyReports _myReportsControl;
 
-        public Renter_TrangChu(Person loggedInRenter)
+        public Renter_TrangChu()
         {
             InitializeComponent();
-            _currentRenter = loggedInRenter;
+            _currentRenter = UserSession.Instance._user;
             _roomService = new RoomService();
             _personService = new PersonService();
             _contractService = new ContractService();
@@ -141,8 +142,6 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                AuthForm authForm = new AuthForm();
-                authForm.ShowDialog(this);
                 this.Close();
             }
         }

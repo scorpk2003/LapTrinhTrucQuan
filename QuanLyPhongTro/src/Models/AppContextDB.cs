@@ -61,7 +61,7 @@ public partial class AppContextDB : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.HasOne(d => d.IdBillNavigation).WithMany(p => p.BillDetails).HasConstraintName("FK__BillDetai__IdBil__619B8048");
+            entity.HasOne(d => d.IdBillNavigation).WithOne(p => p.BillDetails).HasConstraintName("FK__BillDetai__IdBil__619B8048");
 
             entity.HasOne(d => d.IdServiceNavigation).WithMany(p => p.BillDetails).HasConstraintName("FK__BillDetai__IdSer__628FA481");
         });
@@ -107,7 +107,7 @@ public partial class AppContextDB : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.HasOne(d => d.IdDetailNavigation).WithMany(p => p.People).HasConstraintName("FK__Person__IdDetail__4D94879B");
+            entity.HasOne(d => d.IdDetailNavigation).WithOne(p => p.People).HasConstraintName("FK__Person__IdDetail__4D94879B");
         });
 
         modelBuilder.Entity<PersonDetail>(entity =>
