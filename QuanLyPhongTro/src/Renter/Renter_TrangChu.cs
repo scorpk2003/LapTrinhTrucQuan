@@ -1,6 +1,6 @@
-﻿using QuanLyPhongTro.src.Test.Models;
-using QuanLyPhongTro.Services;
-using QuanLyPhongTro.src.Test.Mediator;
+﻿using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services;
+using QuanLyPhongTro.src.Mediator;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

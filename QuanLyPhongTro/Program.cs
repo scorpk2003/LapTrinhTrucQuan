@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 using QuanLyPhongTro.src.Test.Models;
 using System;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Threading;
 using QuanLyPhongTro.src.Test.Mediator;
+=======
+
+using QuanLyPhongTro.src.Login;
+>>>>>>> origin/main
 
 namespace QuanLyPhongTro
 {
@@ -31,9 +36,13 @@ namespace QuanLyPhongTro
 
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
             ApplicationConfiguration.Initialize();
+<<<<<<< HEAD
 
             // Chạy Form Auth (Form này sẽ tự xử lý việc đăng nhập)
             Application.Run(new AuthForm());
+=======
+            Application.Run(new Loginmain());
+>>>>>>> origin/main
         }
     }
 }
