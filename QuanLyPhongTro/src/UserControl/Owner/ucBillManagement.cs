@@ -31,14 +31,14 @@ namespace QuanLyPhongTro
             });
 
             // (Bạn chưa gán sự kiện cho btnConfirmPayment trong Designer?)
-            this.btnConfirmPayment.Click += BtnConfirmPayment_Click;
+            this.btnConfirmPayment.Click += async ( s, e) => await BtnConfirmPayment_Click( s!, e);
 
-            this.Load += UcBillManagement_Load;
+            this.Load += ( s, e) => UcBillManagement_Load( s!, e);
 
             this.cboMonth.SelectedIndexChanged += async (s, e) => await LoadBillsByMonth();
             this.cboYear.SelectedIndexChanged += async (s, e) => await LoadBillsByMonth();
             this.btnShowUnpaid.Click += (s, e) => LoadUnpaidBills();
-            this.btnGenerateBills.Click += BtnGenerateBills_Click;
+            this.btnGenerateBills.Click += async (s, e) => await BtnGenerateBills_Click(s, e);
         }
 
         private void UcBillManagement_Load(object sender, EventArgs e)
@@ -73,7 +73,7 @@ namespace QuanLyPhongTro
             await Task.CompletedTask;
         }
 
-        private void LoadUnpaidBills()
+        private async void LoadUnpaidBills()
         {
             if (_ownerId == Guid.Empty) return;
 
@@ -81,9 +81,10 @@ namespace QuanLyPhongTro
             List<Bill> bills = _billService.GetUnpaidBills(_ownerId); // Sửa tên hàm
             PopulateBills(bills);
             // --- HẾT SỬA ---
+            await Task.CompletedTask;
         }
 
-        private void PopulateBills(List<Bill> bills)
+        private async void PopulateBills(List<Bill> bills)
         {
             flowPanelBills.Controls.Clear();
             if (bills == null || bills.Count == 0)
@@ -91,21 +92,30 @@ namespace QuanLyPhongTro
                 return;
             }
 
-            foreach (var bill in bills)
+            await Mediator.Instance.PublishList<Bill>("ucBillCard", bills, async (controls) =>
             {
-                // (Giả sử ucBillCard tồn tại và đã được cập nhật Model mới)
-                var card = new ucBillCard(bill);
-                // card.SendBillClicked += Card_OnSendBillClicked; // (Logic Status đã bị xóa)
-                card.ExportPDFClicked += Card_OnExportPDFClicked;
+                foreach (var control in controls)
+                {
+                    flowPanelBills.Controls.Add(control);
+                }
+                await Task.CompletedTask;
+            });
 
-                // (Sự kiện mới để mở Form Edit)
-                //card.EditDetailsClicked += Card_OnEditDetailsClicked;
+            //foreach (var bill in bills)
+            //{
+            //    // (Giả sử ucBillCard tồn tại và đã được cập nhật Model mới)
+            //    var card = new ucBillCard(bill);
+            //    // card.SendBillClicked += Card_OnSendBillClicked; // (Logic Status đã bị xóa)
+            //    card.ExportPDFClicked += Card_OnExportPDFClicked;
 
-                flowPanelBills.Controls.Add(card);
-            }
+            //    // (Sự kiện mới để mở Form Edit)
+            //    //card.EditDetailsClicked += Card_OnEditDetailsClicked;
+
+            //    flowPanelBills.Controls.Add(card);
+            //}
         }
 
-        private void BtnGenerateBills_Click(object sender, EventArgs e)
+        private async Task BtnGenerateBills_Click(object sender, EventArgs e)
         {
             // --- SỬA LỖI 2 (Encoding) ---
             var confirm = MessageBox.Show($"Bạn có chắc muốn tạo HĐ nháp cho tháng {DateTime.Now:MM/yyyy}?",
@@ -117,7 +127,7 @@ namespace QuanLyPhongTro
                 if (success)
                 {
                     MessageBox.Show("Tạo HĐ nháp thành công!");
-                    LoadBillsByMonth();
+                    await LoadBillsByMonth();
                 }
                 else
                 {
@@ -144,7 +154,7 @@ namespace QuanLyPhongTro
             _billService.ExportBillToPDF(billId);
         }
 
-        private void BtnConfirmPayment_Click(object sender, EventArgs e)
+        private async Task BtnConfirmPayment_Click(object sender, EventArgs e)
         {
             // (FormConfirmPayment này đã bị xóa vì logic không còn phù hợp Model)
             // var formConfirm = new FormConfirmPayment(_ownerId);
@@ -153,7 +163,7 @@ namespace QuanLyPhongTro
             // Thay vào đó, bạn có thể muốn mở Form "Nhập Excel" ở đây
             MessageBox.Show("Chức năng này đã bị vô hiệu hóa do thay đổi Model.\n(Logic Payment 1-1 thay thế Status).");
 
-            LoadBillsByMonth();
+            await LoadBillsByMonth();
         }
     }
 }

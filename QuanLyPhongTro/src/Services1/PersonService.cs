@@ -9,19 +9,21 @@ namespace QuanLyPhongTro.src.Services1
     {
         public Person? GetAccount(string username, string password)
         {
-            try
+            using (var context = new AppContextDB())
             {
-                using (var context = new AppContextDB())
+                try
                 {
-                    Person? person = context.People 
+                
+                    Person? person = context.People
+                        .Include(p => p.IdDetailNavigation)
                         .FirstOrDefault(p => p.IdDetailNavigation!.Gmail == username && p.Password == password);
                     return person;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Lỗi GetAccount: {ex.Message}");
-                return null;
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi GetAccount: {ex.Message}");
+                    return null;
+                }
             }
         }
 

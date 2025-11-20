@@ -44,9 +44,7 @@ namespace QuanLyPhongTro
 
             // 2. Đổ dữ liệu Text
             txtRoomName.Text = _roomToEdit.Name;
-            txtAddress.Text = _roomToEdit.Address;
             numPrice.Value = _roomToEdit.Price ?? 0;
-            numArea.Value = _roomToEdit.Area ?? 0;
 
             if (cboStatus.Items.Count == 0)
             {
@@ -92,7 +90,7 @@ namespace QuanLyPhongTro
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             _roomToEdit.Name = txtRoomName.Text;
-            _roomToEdit.Address = txtAddress.Text;
+            //_roomToEdit.Address = txtAddress.Text;
             _roomToEdit.Price = numPrice.Value;
             _roomToEdit.Area = numArea.Value;
             _roomToEdit.Status = cboStatus.SelectedItem.ToString();

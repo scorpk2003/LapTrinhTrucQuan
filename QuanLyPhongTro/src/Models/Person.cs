@@ -13,10 +13,10 @@ public partial class Person
     public Guid Id { get; set; }
 
     [StringLength(50)]
-    public string Username { get; set; } = null!;
+    public string? Username { get; set; }
 
     [StringLength(255)]
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; }
 
     [StringLength(20)]
     public string? Role { get; set; }
@@ -30,7 +30,6 @@ public partial class Person
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
     [ForeignKey("IdDetail")]
-    [InverseProperty("People")]
     public virtual PersonDetail? IdDetailNavigation { get; set; }
 
     [InverseProperty("IdReporterNavigation")]

@@ -1,6 +1,8 @@
 ﻿using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,14 +22,13 @@ namespace QuanLyPhongTro.src.UserSession
 
         public void Login(string Gmail, string pass)
         {
-            AppContextDB appContextDB = new AppContextDB();
-            Person? user = appContextDB.People
-                .FirstOrDefault(u => u.IdDetailNavigation!.Gmail == Gmail && u.Password == pass);
-            if (user != null)
+            PersonService personService = new PersonService();
+            Person? user = personService.GetAccount(Gmail, pass);
+            if(user != null)
             {
-                System.Diagnostics.Debug.WriteLine("\n\n\tLogin successful for user: " + user + "\n\n");
                 _user = user;
                 IsAuthenticated = true;
+                System.Diagnostics.Debug.WriteLine($"Login successful {user.IdDetailNavigation.Name}");
             }
         }
 

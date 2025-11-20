@@ -65,7 +65,7 @@ namespace QuanLyPhongTro
             lblRoomName.Text = _contract.IdRoomNavigation.Name;
             lblRoomPrice.Text = $"Giá thuê: {_contract.IdRoomNavigation.Price:N0} VND";
             lblRoomArea.Text = $"Diện tích: {_contract.IdRoomNavigation.Area:N2} m²"; 
-            lblRoomAddress.Text = $"Địa chỉ: {_contract.IdRoomNavigation.Address}"; 
+            //lblRoomAddress.Text = $"Địa chỉ: {_contract.IdRoomNavigation.Address}"; 
              
         }
 

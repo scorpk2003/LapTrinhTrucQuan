@@ -187,9 +187,9 @@ namespace QuanLyPhongTro.src.Login
             }
                 // Hiển thị lại form login gốc
 
-            this.Close();
             Loginmain loginmain = new Loginmain();
             loginmain.Show();
+            this.Close();
 
         }
 

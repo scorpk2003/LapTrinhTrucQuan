@@ -228,8 +228,8 @@ namespace QuanLyPhongTro
             if (!string.IsNullOrEmpty(keyword) && keyword != PlaceholderText.ToLower())
             {
                 filteredList = filteredList.Where(r =>
-                    (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
-                    (r.Address != null && r.Address.ToLower().Contains(keyword))
+                    (r.Name != null && r.Name.ToLower().Contains(keyword))
+                    //(r.Address != null && r.Address.ToLower().Contains(keyword))
                 );
             }
 
@@ -316,7 +316,7 @@ namespace QuanLyPhongTro
 
                 Label lblAddress = new Label
                 {
-                    Text = $"Ðịa chỉ: {room.Address}",
+                    //Text = $"Ðịa chỉ: {room.Address}",
                     Font = new Font("Segoe UI", 12F),
                     Dock = DockStyle.Top,
                     Padding = new Padding(15, 0, 15, 8),

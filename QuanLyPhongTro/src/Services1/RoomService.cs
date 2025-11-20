@@ -75,7 +75,7 @@ namespace QuanLyPhongTro.src.Services1
 
                     // Cập nhật các thuộc tính
                     existingRoom.Name = roomData.Name;
-                    existingRoom.Address = roomData.Address;
+                    //existingRoom.Address = roomData.Address;
                     existingRoom.Price = roomData.Price;
 
                     existingRoom.Area = roomData.Area; 

@@ -47,9 +47,9 @@ namespace QuanLyPhongTro.src.Login
         private void btCreateaccount_Click(object sender, EventArgs e)
         {
             UserSignup signupForm = new UserSignup();
-            this.Close();
+            signupForm.FormClosed += (s, args) => Application.Exit();
             signupForm.Show();
-            //this.Show();
+            this.Hide();
         }
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
@@ -157,37 +157,31 @@ namespace QuanLyPhongTro.src.Login
             // Kiểm tra đăng nhập (ví dụ admin)
             if (UserSession.UserSession.Instance.IsAuthenticated)
             {
-                if (UserSession.UserSession.Instance?._user?.Role == "Both")
-                {
-                    lblErrEmail.Text = "";
-                    lblErrPass.Text = "";
-                    ChooseLogin chooseLogin = new ChooseLogin();
-                    chooseLogin.Show();
-                    this.Hide();
-                    return;
-                }
                 switch (UserSession.UserSession.Instance?._user?.Role)
                 {
                     case "Owner":
                         lblErrEmail.Text = "";
                         lblErrPass.Text = "";
                         Owner_TrangChu ownform = new();
+                        ownform.FormClosed += (s, args) => Application.Exit();
                         ownform.Show();
-                        this.Close();
+                        this.Hide();
                         break;
                     case "Renter":
                         lblErrEmail.Text = "";
                         lblErrPass.Text = "";
                         Renter_TrangChu rentform = new();
+                        rentform.FormClosed += (s, args) => Application.Exit();
                         rentform.Show();
-                        this.Close();
+                        this.Hide();
                         break;
                     default:
                         lblErrEmail.Text = "";
                         lblErrPass.Text = "";
                         ChooseLogin chooseLogin = new ChooseLogin();
+                        chooseLogin.FormClosed += (s, args) => Application.Exit();
                         chooseLogin.Show();
-                        this.Close();
+                        this.Hide();
                         return;
                 }
             }

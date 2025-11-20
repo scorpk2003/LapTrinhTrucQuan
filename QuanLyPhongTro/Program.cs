@@ -1,5 +1,6 @@
 
 using QuanLyPhongTro.src.Login;
+using QuanLyPhongTro.src.Mediator;
 
 namespace QuanLyPhongTro
 {
@@ -12,7 +13,15 @@ namespace QuanLyPhongTro
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+            RegisterFactory();
             Application.Run(new Loginmain());
+        }
+
+        static void RegisterFactory()
+        {
+            Mediator.Instance.RegisterFactory("UcBillManagement", () => new ucBillManagement());
+            Mediator.Instance.RegisterFactory("UcContractManagement", () => new ucContractManagement());
+            Mediator.Instance.RegisterFactory("UcIncidentManagement", () => new ucIncidentManagement());
         }
     }
 }

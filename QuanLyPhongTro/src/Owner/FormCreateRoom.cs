@@ -116,7 +116,6 @@ namespace QuanLyPhongTro
             Room newRoom = new Room
             {
                 Name = txtRoomName.Text,
-                Address = txtAddress.Text,
                 Price = numPrice.Value,
                 Area = numArea.Value, 
                 Status = "Trống",

@@ -33,5 +33,5 @@ public partial class PersonDetail
     public string? Gmail { get; set; }
 
     [InverseProperty("IdDetailNavigation")]
-    public virtual Person People { get; set; } = new Person();
+    public virtual Person? People { get; set; }
 }

@@ -15,12 +15,12 @@ namespace QuanLyPhongTro
 {
     public partial class Owner_TrangChu : Form
     {
-        private readonly Person _currentOwner;
+        //private readonly Person _currentOwner;
         private readonly RoomService _roomService;
         private readonly ContractService _contractService;
         private List<Room> _allRooms;
 
-        //private ucBillManagement _billControl;
+        private ucBillManagement _billControl;
         private ucContractManagement _contractControl;
         //private ucReportManagement _reportControl;
         private ucIncidentManagement _incidentControl;
@@ -35,6 +35,7 @@ namespace QuanLyPhongTro
             _roomService = new RoomService();
 
             this.Load += Owner_TrangChu_Load;
+            this.FormClosed += (s, e) => Application.Exit();
 
             btnHome.Click += BtnHome_Click;//
             btnCreate.Click += BtnCreate_Click;//
@@ -86,7 +87,7 @@ namespace QuanLyPhongTro
             panelRoomManagement.Visible = true;
             panelRoomManagement.BringToFront();
 
-            //if (_billControl != null) _billControl.Visible = false;
+            if (_billControl != null) _billControl.Visible = false;
             if (_contractControl != null) _contractControl.Visible = false;
             //if (_reportControl != null) _reportControl.Visible = false;
             if (_incidentControl != null) _incidentControl.Visible = false;
@@ -107,20 +108,23 @@ namespace QuanLyPhongTro
 
         private async void BtnBill_Click(object sender, EventArgs e)
         {
-            List<Room> rooms = _roomService.GetAllRoomsByOwner(_currentOwner.Id);
-            List<Bill> bills = rooms.Where(r => r.Bills != null)
-                                    .SelectMany(r => r.Bills)
-                                    .ToList();
-            await Mediator.Instance.PublishList<Bill>("ucBill", bills, async (controls) =>
+            //List<Room> rooms = _roomService.GetAllRoomsByOwner(UserSession.Instance._user!.Id);
+            //List<Bill> bills = rooms.Where(r => r.Bills != null)
+            //                        .SelectMany(r => r.Bills)
+            //                        .ToList();
+            await Mediator.Instance.PublishForm<Person>("UcBillManagement",
+                UserSession.Instance._user!,
+                async (controls) =>
             {
-                foreach (var control in controls)
-                    flowPanelRooms.Controls.Add(control);
-                await Task.CompletedTask;
+                _billControl = (ucBillManagement)controls;
+                await ShowView(controls,  _billControl);
             });
         }
         private async void BtnContract_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Person>("UcContractManagement", _currentOwner, async (control) =>
+            await Mediator.Instance.PublishForm<Person>("UcContractManagement", 
+                UserSession.Instance._user!, 
+                async (control) =>
             {
                 _contractControl = (ucContractManagement)control;
                 await ShowView(control, _contractControl);
@@ -132,7 +136,9 @@ namespace QuanLyPhongTro
         }
         private async void BtnIncidents_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Person>("UcIncidentManagement", _currentOwner, async (control) =>
+            await Mediator.Instance.PublishForm<Person>("UcIncidentManagement",
+                UserSession.Instance._user!,
+                async (control) =>
             {
                 _incidentControl = (ucIncidentManagement)control;
                 await ShowView(control, _incidentControl);
@@ -145,16 +151,17 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                this.Close();
+                UserSession.Instance.Logout();
+                Loginmain form = new();
+                form.Show();
+                this.Hide();
             }
-            Loginmain form = new();
-            form.Show();
         }
 
         private async Task ShowView<T>(Control control, T uc) where T : Control
         {
             panelRoomManagement.Visible = false;
-            //if (_billControl != null && uc != _billControl) _billControl.Visible = false;
+            if (_billControl != null && uc != _billControl) _billControl.Visible = false;
             if (_contractControl != null && uc != _contractControl) _contractControl.Visible = false;
             //if (_reportControl != null && uc != _reportControl) _reportControl.Visible = false;
             if (_incidentControl != null && uc != _incidentControl) _incidentControl.Visible = false;
@@ -249,7 +256,7 @@ namespace QuanLyPhongTro
             {
                 filteredList = filteredList.Where(r =>
                     (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
-                    (r.Address != null && r.Address.ToLower().Contains(keyword)) ||
+                    //(r.Address != null && r.Address.ToLower().Contains(keyword)) ||
                     (r.Price.HasValue && r.Price.Value.ToString("N0").Contains(keyword))
                 );
             }

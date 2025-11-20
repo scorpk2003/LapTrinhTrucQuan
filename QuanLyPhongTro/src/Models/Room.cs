@@ -17,11 +17,7 @@ public partial class Room
 
     public Guid? IdOwner { get; set; }
 
-    [StringLength(255)]
-    public string? Address { get; set; }
-
-    [Column(TypeName = "decimal(5, 2)")]
-    public decimal? Area { get; set; }
+    public Guid? IdListRoom { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? Price { get; set; }
@@ -32,6 +28,9 @@ public partial class Room
     [StringLength(255)]
     public string? Description { get; set; }
 
+    [Column(TypeName = "decimal(5, 2)")]
+    public decimal? Area { get; set; }
+
     [InverseProperty("IdRoomNavigation")]
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
@@ -41,6 +40,9 @@ public partial class Room
     [ForeignKey("IdOwner")]
     [InverseProperty("Rooms")]
     public virtual Person? IdOwnerNavigation { get; set; }
+
+    [ForeignKey("IdListRoom")]
+    public virtual ListRoom? ListRooms { get; set; }
 
     [InverseProperty("IdRoomNavigation")]
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
