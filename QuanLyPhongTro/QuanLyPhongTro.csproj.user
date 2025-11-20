@@ -1,10 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
   <ItemGroup>
+    <Compile Update="src\Components\ucBill.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucBillDetail.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucListRoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucNotice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucReport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucRoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucRoomDetail.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Components\ucUser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="src\Login\ChooseLogin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Login\Updatepassword.cs">
+    <Compile Update="src\Login\Loginmain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="src\Login\OTP.cs">
@@ -13,7 +38,7 @@
     <Compile Update="src\Login\passwordrecovery.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\Login\Loginmain.cs">
+    <Compile Update="src\Login\Updatepassword.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="src\Login\UserSignup.cs">
