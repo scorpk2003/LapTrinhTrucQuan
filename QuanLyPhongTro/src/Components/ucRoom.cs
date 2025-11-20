@@ -60,11 +60,11 @@ namespace QuanLyPhongTro.src.Components
 
                 if (status.Contains("Trống"))
                 {
-                    this.BackColor = Color.LightGreen;
+                    this.BackColor = AppColors.Success;
                 }
                 else if (status.Contains("Đã thuê"))
                 {
-                    this.BackColor = Color.LightCoral;
+                    this.BackColor = AppColors.Fail;
                     state_radio.Checked = true;
                 }
                 else
@@ -84,6 +84,8 @@ namespace QuanLyPhongTro.src.Components
         private async void ucRoom_Click(object sender, EventArgs e)
         {
             if (room_session == null) return;
+
+            await Mediator.Mediator.Instance.Publish<Room>("ucRoomDetail", room_session);
 
             // Mở form chi tiết
             Form detailForm = new Form();

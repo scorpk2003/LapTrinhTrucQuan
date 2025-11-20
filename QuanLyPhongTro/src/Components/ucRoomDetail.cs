@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuanLyPhongTro.src.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,10 +13,22 @@ namespace QuanLyPhongTro.src.Components
 {
     public partial class ucRoomDetail : UserControl
     {
+        private Room? room_session;
         public ucRoomDetail()
         {
             InitializeComponent();
+            Mediator.Mediator.Instance.Register<Room>("ucRoomDetail", async (room) =>
+            {
+                room_session = room ?? new();
+                await BindData();
+            });
             
+        }
+
+        private async Task BindData()
+        {
+            name_opp.Text = room_session!.IdOwnerNavigation!.Username;
+            await Task.CompletedTask;
         }
 
         private void label1_Click(object sender, EventArgs e)
