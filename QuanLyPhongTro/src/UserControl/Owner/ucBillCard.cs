@@ -36,8 +36,8 @@ namespace QuanLyPhongTro
             lblTotal.Text = $"TỔNG: {(_bill.TotalMoney ?? 0):N0} VND";
 
             // 2. Tải chi tiết (Điện, Nước, Khác)
-            var electric = _bill.BillDetails.Electricity;
-            var water = _bill.BillDetails.Water;
+            var electric = _bill.BillDetail!.Electricity;
+            var water = _bill.BillDetail.Water;
             //var others = _bill.BillDetails.Where(d => 
             //    d.IdServiceNavigation != null && 
             //    d.IdServiceNavigation.Name != "Dien" && 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QuanLyPhongTro.Entities;
+namespace QuanLyPhongTro.src.Models;
 
 public partial class Notice
 {

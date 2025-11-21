@@ -15,7 +15,7 @@ namespace QuanLyPhongTro.src.Components
     {
         // Sử dụng một biến nội bộ để lưu dữ liệu Room
         // **Lưu ý: Bạn cần thay thế 'Room' bằng 'RoomDetail' nếu bạn có lớp chi tiết riêng.**
-        private Room room_session = new();
+        private Room? room_session;
 
         // Constructor
         public ucRoom()
@@ -34,7 +34,7 @@ namespace QuanLyPhongTro.src.Components
                 if (model != null)
                     room_session = model;
 
-                await BindRoom(room_session);
+                await BindRoom(room_session!);
             });
 
             // Đăng ký sự kiện click cho các controls
@@ -57,19 +57,18 @@ namespace QuanLyPhongTro.src.Components
                 // 2. Cập nhật Trạng thái phòng và màu sắc
                 string status = r.Status ?? "Không xác định";
                 state_radio.Text = status;
-
-                if (status.Contains("Trống"))
+                switch (r.Status)
                 {
-                    this.BackColor = AppColors.Success;
-                }
-                else if (status.Contains("Đã thuê"))
-                {
-                    this.BackColor = AppColors.Fail;
-                    state_radio.Checked = true;
-                }
-                else
-                {
-                    this.BackColor = SystemColors.Control;
+                    case State.Full:
+                        this.BackColor = AppColors.Fail;
+                        btSign.Enabled = false;
+                        break;
+                    case State.Room_Empty:
+                        this.BackColor = AppColors.Success;
+                        break;
+                    default:
+                        this.BackColor = AppColors.Background;
+                        break;
                 }
 
                 await Task.CompletedTask;
@@ -85,23 +84,25 @@ namespace QuanLyPhongTro.src.Components
         {
             if (room_session == null) return;
 
-            await Mediator.Mediator.Instance.Publish<Room>("ucRoomDetail", room_session);
+            if (!Mediator.Mediator.Instance.TryLock("ucRoomDetail")) return;
 
-            // Mở form chi tiết
-            Form detailForm = new Form();
-            detailForm.AutoSize = true;
-            detailForm.Text = $"Chi tiết Phòng: {room_session.Name}";
+            Form Detail = new();
+            Detail.AutoSize = true;
 
-            // Hiển thị thông tin trực tiếp trong các Label/TextBox (Ví dụ)
-            Label lbName = new Label() { Left = 20, Top = 20, Width = 300, Text = "Tên: " + room_session.Name };
-            Label lbPrice = new Label() { Left = 20, Top = 50, Width = 300, Text = "Giá: " + room_session.Price?.ToString("N0") + " VND" };
-            Label lbStatus = new Label() { Left = 20, Top = 80, Width = 300, Text = "Trạng thái: " + room_session.Status };
-            detailForm.Controls.Add(lbName);
-            detailForm.Controls.Add(lbPrice);
-            detailForm.Controls.Add(lbStatus);
-
-            detailForm.Show();
-            await Task.CompletedTask;
+            await Mediator.Mediator.Instance.PublishForm<Room>("ucRoomDetail", 
+                room_session, 
+                async (detail) =>
+                {
+                    Detail.Controls.Add(detail);
+                    Detail.FormClosed += (_, _) =>
+                    {
+                        Mediator.Mediator.Instance.ReleaseLock("ucRoomDetail");
+                        Detail.Dispose();
+                    };
+                    Detail.Show();
+                    await Task.CompletedTask;
+                }
+                );
         }
     }
 }

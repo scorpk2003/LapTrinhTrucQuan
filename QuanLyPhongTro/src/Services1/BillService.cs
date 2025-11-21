@@ -30,7 +30,7 @@ namespace QuanLyPhongTro.src.Services1
                     return context.Bills
                         .Include(b => b.IdRoomNavigation) 
                         .Include(b => b.IdPersonNavigation) 
-                        .Include(b => b.BillDetails)
+                        .Include(b => b.BillDetail)
                             .ThenInclude(bd => bd.IdServiceNavigation)
                         .Where(b => b.IdRoomNavigation.IdOwner == ownerId && 
                                     b.PaymentDate.HasValue && 
@@ -99,7 +99,7 @@ namespace QuanLyPhongTro.src.Services1
                         .AsNoTracking()
                         .Include(b => b.IdRoomNavigation)
                         .Include(b => b.IdPersonNavigation)
-                        .Include(b => b.BillDetails)
+                        .Include(b => b.BillDetail)
                             .ThenInclude(bd => bd.IdServiceNavigation)
                         .Include(b => b.Payment)
                         .FirstOrDefault(b => b.Id == billId);
@@ -176,7 +176,9 @@ namespace QuanLyPhongTro.src.Services1
                             PaymentMethod = paymentMethod,
                             PaymentDate = DateTime.Now
                         };
+                        bill.Status = "Đã Thanh Toán";
                         context.Payments.Add(payment);
+                        context.Bills.Update(bill);
                     }
                     else
                     {
@@ -185,12 +187,6 @@ namespace QuanLyPhongTro.src.Services1
                         bill.Payment.PaymentDate = DateTime.Now;
                         bill.Payment.PaymentMethod = paymentMethod;
                     }
-
-                    // decimal totalPaid = bill.Payment.Amount ?? 0;
-                    // if (totalPaid >= bill.TotalMoney)
-                    // {
-                    //    // (ucMyRoom sẽ tự set status)
-                    // }
 
                     context.SaveChanges();
                     return true;
@@ -221,7 +217,7 @@ namespace QuanLyPhongTro.src.Services1
                             IdRoom = contract.IdRoom.Value,
                             IdPerson = contract.IdRenter.Value,
                             PaymentDate = new DateTime(year, month, DateTime.DaysInMonth(year, month)),
-                            TotalMoney = contract.IdRoomNavigation.Price ?? 0,
+                            TotalMoney = contract.IdRoomNavigation?.Price ?? 0,
                         };
                         context.Bills.Add(newBill);
                     }
@@ -302,12 +298,12 @@ namespace QuanLyPhongTro.src.Services1
                                 col.Item().PaddingTop(15).Text("--- CHI TIET DICH VU ---").Bold();
 
                                 // Thêm tiền phòng
-                                decimal roomPrice = (billToExport.TotalMoney ?? 0) - billToExport.BillDetails.Total ?? 0;
+                                decimal roomPrice = (billToExport.TotalMoney ?? 0) - billToExport.BillDetail?.Total ?? 0;
                                 col.Item().Text($"- Tien phong: {roomPrice:N0} VND");
 
-                                if (billToExport.BillDetails != null)
+                                if (billToExport.BillDetail != null)
                                 {
-                                     string text = $"- {billToExport.BillDetails.IdServiceNavigation?.Name ?? "Dich vu"}: {billToExport.BillDetails.Total:N0} VND";
+                                     string text = $"- {billToExport.BillDetail.IdServiceNavigation?.Name ?? "Dich vu"}: {billToExport.BillDetail.Total:N0} VND";
                                      col.Item().Text(text);
                                 }
 

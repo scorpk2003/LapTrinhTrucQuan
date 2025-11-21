@@ -96,10 +96,10 @@ namespace QuanLyPhongTro.src.Services1
                     System.Diagnostics.Debug.WriteLine($"Pending requests: {pendingCount}");
                     
                     var result = context.BookingRequests
-                        .Include(req => req.Renter)
+                        .Include(req => req.IdRenterNavigation)
                             .ThenInclude(r => r.IdDetailNavigation)
-                        .Include(req => req.Room)
-                        .Where(req => req.Room.IdOwner == ownerId && req.Status == "Pending")
+                        .Include(req => req.IdRoomNavigation)
+                        .Where(req => req.IdRoomNavigation.IdOwner == ownerId && req.Status == "Pending")
                         .OrderByDescending(req => req.DateCreated)
                         .ToList();
                     
@@ -119,16 +119,16 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// L?y chi ti?t yêu c?u theo ID
         /// </summary>
-        public BookingRequest GetRequestById(Guid requestId)
+        public BookingRequest? GetRequestById(Guid requestId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
                     return context.BookingRequests
-                        .Include(req => req.Renter)
+                        .Include(req => req.IdRenterNavigation)
                             .ThenInclude(r => r.IdDetail)
-                        .Include(req => req.Room)
+                        .Include(req => req.IdRoomNavigation)
                         .FirstOrDefault(req => req.Id == requestId);
                 }
             }
@@ -201,7 +201,7 @@ namespace QuanLyPhongTro.src.Services1
                 using (var context = new AppContextDB())
                 {
                     return context.BookingRequests
-                        .Include(req => req.Room)
+                        .Include(req => req.IdRoomNavigation)
                         .Where(req => req.IdRenter == renterId)
                         .OrderByDescending(req => req.DateCreated)
                         .ToList();

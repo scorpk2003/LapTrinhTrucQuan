@@ -18,9 +18,9 @@ namespace QuanLyPhongTro.src.Services1
                 using (var context = new AppContextDB())
                 {
                     return context.Payments
-                        .Include(p => p.IdPaymentNavigation)
+                        .Include(p => p.IdBillNavigation)
                             .ThenInclude(b => b.IdRoomNavigation)
-                        .Where(p => p.IdPaymentNavigation.IdRoomNavigation.IdOwner == ownerId &&
+                        .Where(p => p.IdBillNavigation.IdRoomNavigation!.IdOwner == ownerId &&
                                     p.PaymentDate.HasValue && 
                                     p.PaymentDate.Value >= startDate && 
                                     p.PaymentDate.Value <= endDate)
@@ -106,9 +106,9 @@ namespace QuanLyPhongTro.src.Services1
                     for (int month = 1; month <= 12; month++)
                     {
                         var revenue = context.Payments
-                            .Include(p => p.IdPaymentNavigation)
+                            .Include(p => p.IdBillNavigation)
                                 .ThenInclude(b => b.IdRoomNavigation)
-                            .Where(p => p.IdPaymentNavigation.IdRoomNavigation.IdOwner == ownerId && // Sửa
+                            .Where(p => p.IdBillNavigation.IdRoomNavigation!.IdOwner == ownerId && // Sửa
                                         p.PaymentDate.HasValue && 
                                         p.PaymentDate.Value.Year == year &&
                                         p.PaymentDate.Value.Month == month)

@@ -31,7 +31,46 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public List<Report> GetReportsByOwner(Guid ownerId)
+        public List<Notice> GetNotice(Guid ownerID)
+        {
+            List<Notice> notices = new List<Notice>();
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return context.Notices
+                        .Include(p => p.IdreportNavigation)
+                        .Include(p => p.IdreportNavigation!.IdReporterNavigation)
+                        .Include(p => p.IdreportNavigation!.IdRoomNavigation)
+                        .Where(p => p.IdreportNavigation!.IdRoomNavigation!.IdOwner == ownerID)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Get Notice: {ex.Message}");
+            }
+        }
+
+        public Report? GetReport(Guid nocticeID)
+        {
+            Report rp = new();
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return context.Reports
+                        .Where(p => p.Notice!.Id == nocticeID)
+                        .First();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Get Report: {ex.Message}");
+            }
+        }
+
+        public List<Report> GetReportsByOwner(Guid? ownerId)
         {
             try
             {
@@ -73,7 +112,7 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public List<Report> GetReportsByRenter(Guid renterId)
+        public List<Report> GetReportsByRenter(Guid? renterId)
         {
             try
             {

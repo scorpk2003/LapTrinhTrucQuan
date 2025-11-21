@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using QuanLyPhongTro.Entities;
+using QuanLyPhongTro.src;
 
-namespace QuanLyPhongTro.Data;
+namespace QuanLyPhongTro.src.Models;
 
 public partial class AppContextDB : DbContext
 {

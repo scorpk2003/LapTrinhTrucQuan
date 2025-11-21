@@ -59,7 +59,7 @@ namespace QuanLyPhongTro.src.Services1
 
                 var billWithDetails = context.Bills
     .Where(b => b.Id == billId)
-    .Include(b => b.BillDetails) // L?y chi ti?t hóa don
+    .Include(b => b.BillDetail) // L?y chi ti?t hóa don
         .ThenInclude(d => d.IdServiceNavigation) // L?y d?ch v?
     .Include(b => b.Payment) // L?y thông tin thanh toán
     .FirstOrDefault();
@@ -87,9 +87,8 @@ namespace QuanLyPhongTro.src.Services1
                 var existing = context.BillDetails.Find(detail.Id);
                 if (existing == null) return false;
 
-                existing.Quantity = detail.Quantity;
-                existing.Total = detail.Total;
-                existing.IdService = detail.IdService;
+                existing = detail;
+                context.BillDetails.Update(existing);
 
                 context.SaveChanges();
                 return true;

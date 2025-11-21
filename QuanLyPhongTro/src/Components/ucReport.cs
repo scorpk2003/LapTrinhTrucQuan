@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyPhongTro.src.Models;
-using QuanLyPhongTro.src.Services;
+using QuanLyPhongTro.src.Services1;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,21 +15,17 @@ namespace QuanLyPhongTro.src.Components
 {
     public partial class ucReport : UserControl
     {
-        private Report report_session = new();
-        private readonly ReportService reportService; // service xử lý báo cáo
-
-        public ucReport(ReportService reportService)
+        private Room report_session = new();
+        public ucReport()
         {
             InitializeComponent();
-            Name = "ucReport" + Guid.NewGuid().ToString().Substring(0, 4);
-
-            this.reportService = reportService; // gán service
+            Name = "ucReport";
 
             // Debug Mediator
             System.Diagnostics.Debug.WriteLine($"[-- {Name} --] Mediator instance: {Mediator.Mediator.Instance.GetHashCode()}");
 
             // Đăng ký nhận dữ liệu Report từ Mediator
-            Mediator.Mediator.Instance.Register<Report>(Name, async (model) =>
+            Mediator.Mediator.Instance.Register<Room>(Name, async (model) =>
             {
                 if (model != null)
                     report_session = model;
@@ -39,15 +35,17 @@ namespace QuanLyPhongTro.src.Components
         }
 
         // Bind dữ liệu Report lên các control
-        private async Task BindReport(Report r)
+        private async Task BindReport(Room r)
         {
             try
             {
                 if (r == null)
                     throw new Exception("Report model is NULL");
 
-                name_room.Text = r.IdRoomNavigation?.Name ?? "Room";
-                name_usr.Text = r.IdReporterNavigation?.Username ?? "User";
+                //name_room.Text = r.IdRoomNavigation?.Name ?? "Room";
+                //name_usr.Text = r.IdReporterNavigation?.Username ?? "User";
+                name_room.Text = r.Name;
+                name_usr.Text = r.Contracts.First().IdRenterNavigation!.Username;
 
                 await Task.CompletedTask;
             }
@@ -69,18 +67,27 @@ namespace QuanLyPhongTro.src.Components
 
             try
             {
+                AppContextDB db = new AppContextDB();
                 var newReport = new Report
                 {
                     Id = Guid.NewGuid(),
-                    IdReporter = report_session.IdReporter,
-                    IdRoom = report_session.IdRoom,
-                    Title = "Báo cáo phòng",
+                    IdReporter = report_session.Contracts.First().IdRenter,
+                    IdRoom = report_session.Id,
+                    Title = tb_title.Text,
                     Description = des_rtxt.Text.Trim(),
                     DateCreated = DateTime.Now,
-                    Status = "Pending"
+                    Status = State.Pending,
+                    Notice = new Notice()
+                    {
+                        Title = tb_title.Text,
+                        Status = State.Pending,
+                    },
+                    IdReporterNavigation = db.People.Find(report_session.Contracts.First().IdRenter),
+                    IdRoomNavigation = report_session,
                 };
 
                 // Gọi service để lưu
+                ReportService reportService = new ReportService();
                 reportService.CreateReport(newReport);
 
                 MessageBox.Show("Gửi báo cáo thành công!", "Thành công",

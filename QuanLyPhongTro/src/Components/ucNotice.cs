@@ -1,4 +1,5 @@
-﻿using QuanLyPhongTro.src.Test;
+﻿using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,20 +18,20 @@ namespace QuanLyPhongTro.src.Components
         public ucNotice()
         {
             InitializeComponent();
-            Name = "ucNotice" + Guid.NewGuid();
+            Name = "ucNotice" + Guid.NewGuid().ToString().Substring(0, 4);
             Mediator.Mediator.Instance.Register<Notice>(Name, async (message) =>
             {
                 notice_session = message;
                 switch (notice_session.Status)
                 {
-                    case "Đã xử lí":
-                        this.BackColor = AppColors.Read;
-                        break;
-                    case "Đã Đọc":
+                    case State.Handled:
                         this.BackColor = AppColors.Success;
                         break;
+                    case State.Recv:
+                        this.BackColor = AppColors.Read;
+                        break;
                     default:
-                        this.BackColor = AppColors.Fail;
+                        this.BackColor = AppColors.Background;
                         break;
                 }
                 title_lb.Text = notice_session.Title;
@@ -38,10 +39,11 @@ namespace QuanLyPhongTro.src.Components
             });
         }
 
-        private async void stat_btn_Click(object sender, EventArgs e)
+        private async Task stat_btn_Click(object sender, EventArgs e)
         {
-            if (!Mediator.Mediator.Instance.TryLock("ucReport")) return;
-            Report rp = new();
+            ReportService report = new();
+            Report? rp;
+            rp = report.GetReport(notice_session.Id!);
             await Mediator.Mediator.Instance.Publish<Report>("ucReport", rp);
         }
     }

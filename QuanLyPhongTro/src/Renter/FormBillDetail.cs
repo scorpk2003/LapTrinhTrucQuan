@@ -61,7 +61,7 @@ namespace QuanLyPhongTro
             dgvBillDetails.Columns.Add("Total", "Thành tiền");
             dgvBillDetails.Columns["Total"].DefaultCellStyle.Format = "N0";
 
-            if (_bill.BillDetails != null)
+            if (_bill.BillDetail != null)
             {
                 //foreach (var detail in _bill.BillDetails)
                 //{

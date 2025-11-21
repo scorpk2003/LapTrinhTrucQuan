@@ -28,7 +28,21 @@ namespace QuanLyPhongTro.src.Components
         private async Task BindData()
         {
             name_opp.Text = room_session!.IdOwnerNavigation!.Username;
-            await Task.CompletedTask;
+            room_name.Text = room_session.Name;
+            if (room_session.Bills.First().IdPersonNavigation?.IdDetailNavigation?.Avatar != null && 
+                room_session.Bills.First().IdPersonNavigation?.IdDetailNavigation?.Avatar?.Length > 0)
+            {
+                using (MemoryStream ms = new MemoryStream(room_session.Bills.First().IdPersonNavigation!.IdDetailNavigation!.Avatar!))
+                {
+                    avatar_img.Image = Image.FromStream(ms);
+                }
+            }
+            else
+            {
+                avatar_img.Image = null;
+            }
+            tbNameuser.Text = room_session.Bills.First().IdPersonNavigation?.Username;
+                await Task.CompletedTask;
         }
 
         private void label1_Click(object sender, EventArgs e)

@@ -1,5 +1,5 @@
 ﻿
-using QuanLyPhongTro.Model;
+using QuanLyPhongTro.src.Models;
 
 namespace QuanLyPhongTro.src.Components
 {

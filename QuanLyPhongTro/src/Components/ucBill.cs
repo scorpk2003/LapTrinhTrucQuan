@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QuanLyPhongTro.Model;
+using QuanLyPhongTro.src.Models;
 using QuanLyPhongTro.src.Mediator;
 using QuanLyPhongTro.src.UserSession;
 
@@ -16,6 +16,7 @@ namespace QuanLyPhongTro.src.Components
     public partial class ucBill : UserControl
     {
         private Bill bill_session = new();
+
         public ucBill()
         {
             InitializeComponent();
@@ -27,7 +28,8 @@ namespace QuanLyPhongTro.src.Components
                     bill_session = bill;
                 await GetBill(bill_session);
             });
-        }
+
+            }
 
         private async Task GetBill(Bill bill)
         {
@@ -39,19 +41,19 @@ namespace QuanLyPhongTro.src.Components
                 }
 
                 // Bind Bill data here
-
-                name_room.Text = bill_session?.Room?.Name;
-                name_opp.Text = bill_session?.Person?.Username;
-                date_create.Value = bill_session.PaymentDate;
+                name_room.Text = bill_session.IdRoomNavigation?.Name;
+                name_opp.Text = bill_session.IdPersonNavigation?.Username;
+                date_create.Value = (DateTime)bill_session.PaymentDate!;
                 date_create.Enabled = false;
 
                 /*
                  * Get User -> Role -> Bind Role to label
                  */
+                role_lb.Text = bill_session.IdPersonNavigation?.Role;
 
                 // End Bind
 
-                if (bill.Status == "Chưa Thanh Toán")
+                if (bill.Status == State.Unpaid)
                 {
                     stat.Text = bill.Status;
                     stat.BackColor = Color.Red;
@@ -75,13 +77,14 @@ namespace QuanLyPhongTro.src.Components
             Form Detail = new();
             Detail.AutoSize = true;
             BillDetail detail = new();
-            detail.Bill = bill_session;
+            detail.IdBillNavigation = bill_session;
             await Mediator.Mediator.Instance.PublishForm<BillDetail>("ucBillDetail", detail, async (control) =>
             {
                 Detail.Controls.Add(control);
                 Detail.FormClosed += (_, _) =>
                 {
                     Mediator.Mediator.Instance.ReleaseLock("ucBillDetail");
+                    Detail.Dispose();
                 };
                 Detail.Show();
                 await Task.CompletedTask;

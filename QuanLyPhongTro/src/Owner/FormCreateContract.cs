@@ -28,8 +28,8 @@ namespace QuanLyPhongTro
         {
             if (_request == null) return;
 
-            lblRoomName.Text = _request.Room?.Name ?? "N/A";
-            lblRenterName.Text = _request.Renter?.Username ?? "N/A";
+            lblRoomName.Text = _request.IdRoomNavigation.Name ?? "N/A";
+            lblRenterName.Text = _request.IdRenterNavigation.Username ?? "N/A";
 
             if (_request.DesiredStartDate > DateTime.Now)
                 dtpStartDate.Value = _request.DesiredStartDate;
@@ -37,8 +37,8 @@ namespace QuanLyPhongTro
             numDuration.Value = _request.DesiredDurationMonths;
             txtNote.Text = _request.Note ?? string.Empty;
 
-            if (_request.Room?.Price.HasValue == true)
-                nudDeposit.Value = _request.Room.Price.Value;
+            if (_request.IdRoomNavigation?.Price.HasValue == true)
+                nudDeposit.Value = _request.IdRoomNavigation.Price.Value;
         }
 
         private void BtnCreate_Click(object sender, EventArgs e)

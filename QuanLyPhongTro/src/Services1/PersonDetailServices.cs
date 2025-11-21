@@ -53,14 +53,11 @@ namespace QuanLyPhongTro.src.Services1
         {
             try
             {
-                using var context = new AppContextDB(); context.PersonDetails.Update(detail);
-                var existing = context.PersonDetails.Find(detail.Id);
-                if (existing == null) return false;
-
-                existing.Name = detail.Name;
-                existing.Cccd = detail.Cccd;
-                existing.Phone = detail.Phone;
-                existing.Avatar = detail.Avatar;
+                using var context = new AppContextDB(); 
+                context.PersonDetails.Update(detail);
+                Person? people = context.People.Find(detail.Person!.Id);
+                people!.Username = detail.Name!;
+                context.People.Update(people);
 
                 context.SaveChanges();
                 return true;
