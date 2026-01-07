@@ -11,6 +11,9 @@
     <Compile Update="src\Components\ucListRoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="src\Components\ucMap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="src\Components\ucNotice.cs">
       <SubType>UserControl</SubType>
     </Compile>

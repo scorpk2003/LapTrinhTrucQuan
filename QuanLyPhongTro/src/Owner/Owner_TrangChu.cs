@@ -15,7 +15,6 @@ namespace QuanLyPhongTro
 {
     public partial class Owner_TrangChu : Form
     {
-        //private readonly Person _currentOwner;
         private readonly RoomService _roomService;
         private readonly ContractService _contractService;
         private List<Room> _allRooms;
@@ -108,10 +107,6 @@ namespace QuanLyPhongTro
 
         private async void BtnBill_Click(object sender, EventArgs e)
         {
-            //List<Room> rooms = _roomService.GetAllRoomsByOwner(UserSession.Instance._user!.Id);
-            //List<Bill> bills = rooms.Where(r => r.Bills != null)
-            //                        .SelectMany(r => r.Bills)
-            //                        .ToList();
             await Mediator.Instance.PublishForm<Person>("UcBillManagement",
                 UserSession.Instance._user!,
                 async (controls) =>
@@ -153,8 +148,8 @@ namespace QuanLyPhongTro
             {
                 UserSession.Instance.Logout();
                 Loginmain form = new();
-                form.Show();
                 this.Hide();
+                form.Show();
             }
         }
 
