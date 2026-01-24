@@ -17,59 +17,63 @@
 
         private void InitializeComponent()
         {
-            this.panelTop = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.dgvBills = new System.Windows.Forms.DataGridView();
-            this.panelTop.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvBills)).BeginInit();
-            this.SuspendLayout();
+            panelTop = new Panel();
+            label1 = new Label();
+            dgvBills = new DataGridView();
+            panelTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvBills).BeginInit();
+            SuspendLayout();
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.White;
-            this.panelTop.Controls.Add(this.label1);
-            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTop.Location = new System.Drawing.Point(0, 0);
-            this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1100, 70);
-            this.panelTop.TabIndex = 0;
+            panelTop.BackColor = Color.White;
+            panelTop.Controls.Add(label1);
+            panelTop.Dock = DockStyle.Top;
+            panelTop.Location = new Point(0, 0);
+            panelTop.Margin = new Padding(6, 6, 6, 6);
+            panelTop.Name = "panelTop";
+            panelTop.Size = new Size(2078, 144);
+            panelTop.TabIndex = 0;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(20, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(288, 38);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Lịch sử Thanh toán";
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
+            label1.Location = new Point(38, 31);
+            label1.Margin = new Padding(6, 0, 6, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(536, 76);
+            label1.TabIndex = 0;
+            label1.Text = "Lịch sử Thanh toán";
             // 
             // dgvBills
             // 
-            this.dgvBills.AllowUserToAddRows = false;
-            this.dgvBills.AllowUserToDeleteRows = false;
-            this.dgvBills.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvBills.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvBills.Location = new System.Drawing.Point(0, 70);
-            this.dgvBills.Name = "dgvBills";
-            this.dgvBills.ReadOnly = true;
-            this.dgvBills.RowHeadersWidth = 62;
-            this.dgvBills.RowTemplate.Height = 28;
-            this.dgvBills.Size = new System.Drawing.Size(1100, 730);
-            this.dgvBills.TabIndex = 1;
+            dgvBills.AllowUserToAddRows = false;
+            dgvBills.AllowUserToDeleteRows = false;
+            dgvBills.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvBills.Dock = DockStyle.Fill;
+            dgvBills.Location = new Point(0, 144);
+            dgvBills.Margin = new Padding(6, 6, 6, 6);
+            dgvBills.Name = "dgvBills";
+            dgvBills.ReadOnly = true;
+            dgvBills.RowHeadersWidth = 62;
+            dgvBills.RowTemplate.Height = 28;
+            dgvBills.Size = new Size(2078, 1496);
+            dgvBills.TabIndex = 1;
             // 
             // ucMyBills
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.dgvBills);
-            this.Controls.Add(this.panelTop);
-            this.Name = "ucMyBills";
-            this.Size = new System.Drawing.Size(1100, 800);
-            this.panelTop.ResumeLayout(false);
-            this.panelTop.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvBills)).EndInit();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(17F, 41F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(dgvBills);
+            Controls.Add(panelTop);
+            Margin = new Padding(6, 6, 6, 6);
+            Name = "ucMyBills";
+            Size = new Size(2078, 1640);
+            panelTop.ResumeLayout(false);
+            panelTop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvBills).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion

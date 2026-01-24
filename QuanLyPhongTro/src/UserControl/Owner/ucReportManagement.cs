@@ -1,183 +1,364 @@
-//using QuanLyPhongTro.src.Test.Models;
-//using QuanLyPhongTro.src.Test.Services;
-//using ScottPlot;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using System.Windows.Forms;
-//using QuanLyPhongTro.src.Test.Mediator;
+Ôªø// ucReportManagement.cs
+using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
+using ScottPlot;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using QuanLyPhongTro.src.Mediator;
 
-//namespace QuanLyPhongTro
-//{
-//    public partial class ucReportManagement : UserControl
-//    {
-//        private Guid _ownerId;
-//        //private readonly DashboardService _dashboardService;
+using WinColor = System.Drawing.Color;
+using SPColor = ScottPlot.Color;
 
-//        public ucReportManagement()
-//        {
-//            InitializeComponent();
-//            _dashboardService = new DashboardService();
-//            _ownerId = Guid.Empty;
+namespace QuanLyPhongTro
+{
+    public partial class ucReportManagement : UserControl
+    {
+        private Guid _ownerId;
+        private readonly DashboardService _dashboardService;
 
-//            Mediator.Instance.Register<Person>("UcReportManagement", (owner) =>
-//            {
-//                _ownerId = owner.Id;
+        public ucReportManagement()
+        {
+            InitializeComponent();
 
-//                if (cboYear.Items.Count > 0)
-//                {
-//                    cboYear.SelectedItem = DateTime.Now.Year;
-//                }
-//                LoadData(); 
+            _dashboardService = new DashboardService();
+            _ownerId = Guid.Empty;
 
-//                return Task.CompletedTask;
-//            });
+            InitYearList();
+            SetupDgv();
 
-//            this.Load += UcReportManagement_Load;
-//            this.btnRefresh.Click += (s, e) => LoadData();
-//            this.cboYear.SelectedIndexChanged += (s, e) => LoadRevenueChart();
-//        }
+            // Mediator nh·∫≠n Owner t·ª´ TrangChu
+            Mediator.Instance.Register<Person>("UcReportManagement", (owner) =>
+            {
+                _ownerId = owner.Id;
 
-//        private void UcReportManagement_Load(object sender, EventArgs e)
-//        {
-//            int currentYear = DateTime.Now.Year;
-//            cboYear.Items.Add(currentYear - 2);
-//            cboYear.Items.Add(currentYear - 1);
-//            cboYear.Items.Add(currentYear);
+                if (cboYear.Items.Count > 0)
+                    cboYear.SelectedItem = DateTime.Now.Year;
 
-//            if (cboYear.SelectedItem == null)
-//            {
-//                cboYear.SelectedItem = currentYear;
-//            }
+                LoadData();
+                return Task.CompletedTask;
+            });
 
-//            SetupDgv();
-//        }
+            this.Load += UcReportManagement_Load;
+            this.btnRefresh.Click += (s, e) => LoadData();
+            this.cboYear.SelectedIndexChanged += (s, e) => LoadRevenueChart();
+        }
 
-//        /// <summary>
-//        /// H‡m n‡y du?c Owner_TrangChu g?i (qua Mediator)
-//        /// </summary>
-//        public void LoadData()
-//        {
-//            if (_ownerId == Guid.Empty) return;
+        private void InitYearList()
+        {
+            int y = DateTime.Now.Year;
+            if (cboYear.Items.Count == 0)
+            {
+                cboYear.Items.Add(y - 2);
+                cboYear.Items.Add(y - 1);
+                cboYear.Items.Add(y);
+                cboYear.SelectedItem = y;
+            }
+        }
 
-//            LoadOccupancyChart();
-//            LoadUnpaidBills();
-//        }
+        private void UcReportManagement_Load(object sender, EventArgs e)
+        {
+            if (cboYear.SelectedItem == null)
+                cboYear.SelectedItem = DateTime.Now.Year;
 
-//        /// <summary>
-//        /// 1. V? Bi?u d? Doanh thu (–√ S?A L?I CAN GI?A)
-//        /// </summary>
-//        private void LoadRevenueChart()
-//        {
-//            if (cboYear.SelectedItem == null) return;
-//            if (_ownerId == Guid.Empty) return;
+            if (_ownerId != Guid.Empty)
+                LoadData();
+        }
 
-//            int year = (int)cboYear.SelectedItem;
+        public void LoadData()
+        {
+            if (_ownerId == Guid.Empty) return;
 
-//            var monthlyData = _dashboardService.GetMonthlyRevenue(_ownerId, year) ?? new Dictionary<string, decimal>();
+            LoadRevenueChart();
+            LoadOccupancyChart();
+            LoadUnpaidBills();
+        }
 
-//            revenueChart.Plot.Clear();
+        private void LoadRevenueChart()
+        {
+            if (cboYear.SelectedItem == null) return;
+            if (_ownerId == Guid.Empty) return;
 
-//            // t?o d? li?u 12 th·ng theo th? t?
-//            double[] values = new double[12];
-//            for (int m = 1; m <= 12; m++)
-//            {
-//                if (monthlyData.TryGetValue(m.ToString(), out var val))
-//                    values[m - 1] = (double)val;
-//                else if (monthlyData.TryGetValue(m.ToString("00"), out var val2))
-//                    values[m - 1] = (double)val2;
-//                else
-//                    values[m - 1] = 0;
-//            }
+            int year = (int)cboYear.SelectedItem;
 
-//            // V? trÌ c?t 0..11
-//            double[] positions = Enumerable.Range(0, 12).Select(i => (double)i).ToArray();
-//            var bars = revenueChart.Plot.Add.Bars(positions, values);
+            var monthlyData = _dashboardService.GetMonthlyRevenue(_ownerId, year) ?? new Dictionary<string, decimal>();
 
-//            string[] labels = { "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12" };
-//            revenueChart.Plot.Axes.Bottom.SetTicks(positions, labels);
+            revenueChart.Plot.Clear();
 
-//            revenueChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5);
+            double[] values = new double[12];
+            for (int m = 1; m <= 12; m++)
+            {
+                if (monthlyData.TryGetValue(m.ToString(), out var val))
+                    values[m - 1] = (double)val;
+                else if (monthlyData.TryGetValue(m.ToString("00"), out var val2))
+                    values[m - 1] = (double)val2;
+                else
+                    values[m - 1] = 0;
+            }
 
-//            try { revenueChart.Plot.Axes.Left.Label.Text = "Doanh thu (VND)"; } catch { }
-//            try { revenueChart.Plot.Title($"Doanh thu nam {year}"); } catch { }
+            double[] positions = Enumerable.Range(0, 12).Select(i => (double)i).ToArray();
+            var bars = revenueChart.Plot.Add.Bars(positions, values);
+            bars.Color = SPColor.FromHex("#3498db");
 
-//            revenueChart.Refresh();
-//        }
+            string[] labels = { "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12" };
+            revenueChart.Plot.Axes.Bottom.SetTicks(positions, labels);
+            revenueChart.Plot.Axes.Bottom.TickLabelStyle.FontSize = 12;
+            revenueChart.Plot.Axes.Left.TickLabelStyle.FontSize = 12;
 
-//        /// <summary>
-//        /// 2. V? Bi?u d? T? l? L?p d?y (–√ M? L?I NH√N)
-//        /// </summary>
-//        private void LoadOccupancyChart()
-//        {
-//            if (_ownerId == Guid.Empty) return;
+            revenueChart.Plot.Axes.SetLimits(left: -0.5, right: 11.5);
 
-//            (int occupied, int total) = _dashboardService.GetOccupancyStats(_ownerId);
-//            int available = total - occupied;
-//            occupancyChart.Plot.Clear();
+            try
+            {
+                revenueChart.Plot.Axes.Left.Label.Text = "Doanh thu (VND)";
+                revenueChart.Plot.Axes.Left.Label.FontSize = 13;
+                revenueChart.Plot.Axes.Left.Label.Bold = true;
+            }
+            catch { }
 
-//            if (total > 0)
-//            {
-//                double[] values = { (double)occupied, (double)available };
-//                var pie = occupancyChart.Plot.Add.Pie(values);
+            try
+            {
+                revenueChart.Plot.Title($"Doanh thu nƒÉm {year}");
+            }
+            catch { }
 
-//                var rentedColor = ScottPlot.Color.FromHex("#28a745");
-//                var availableColor = ScottPlot.Color.FromHex("#6c757d");
+            revenueChart.Refresh();
+        }
 
-//                pie.Slices[0].Fill.Color = rentedColor;
-//                pie.Slices[1].Fill.Color = availableColor;
+        private void LoadOccupancyChart()
+        {
+            if (_ownerId == Guid.Empty) return;
 
-//                // G·n nh„n cho Ch˙ gi?i
-//                //pie.Slices[0].LegendLabel = $"–„ thuÍ: {occupied} ({((double)occupied / total):P1})";
-//                //pie.Slices[1].LegendLabel = $"CÚn tr?ng: {available} ({((double)available / total):P1})";
+            (int occupied, int total) = _dashboardService.GetOccupancyStats(_ownerId);
+            int available = total - occupied;
 
-//                //// ?n nh„n trÍn mi?ng b·nh (d„ cÛ ch˙ gi?i)
-//                //pie.ShowSliceLabels = false;
-//                // --- H?T ---
+            occupancyChart.Plot.Clear();
 
-//                occupancyChart.Plot.Legend.IsVisible = true;
-//                occupancyChart.Plot.Legend.Alignment = Alignment.MiddleRight;
-//            }
+            if (total > 0)
+            {
+                double[] values = { (double)occupied, (double)available };
+                var pie = occupancyChart.Plot.Add.Pie(values);
 
-//            try { occupancyChart.Plot.Title($"T? l? l?p d?y (T?ng: {total} phÚng)"); } catch { }
-//            occupancyChart.Refresh();
-//        }
+                var rentedColor = SPColor.FromHex("#27ae60");
+                var availableColor = SPColor.FromHex("#95a5a6");
 
-//        /// <summary>
-//        /// 3. Hi?n th? B·o c·o n? d?ng
-//        /// </summary>
-//        private void LoadUnpaidBills()
-//        {
-//            if (_ownerId == Guid.Empty) return; // B?o v?
+                pie.Slices[0].Fill.Color = rentedColor;
+                pie.Slices[1].Fill.Color = availableColor;
 
-//            var unpaidBills = _dashboardService.GetUnpaidBill(_ownerId) ?? new List<Bill>();
-//            dgvUnpaidBills.Rows.Clear();
+                pie.Slices[0].LegendText = $"ƒê√£ thu√™: {occupied} ({((double)occupied / total):P1})";
+                pie.Slices[1].LegendText = $"C√≤n tr·ªëng: {available} ({((double)available / total):P1})";
 
-//            foreach (var bill in unpaidBills)
-//            {
-//                dgvUnpaidBills.Rows.Add(
-//                    bill.Room?.Name ?? "N/A",
-//                    bill.Person?.Username ?? "N/A",
-//                    bill.PaymentDate.ToString("dd/MM/yyyy"),
-//                    bill.TotalMoney,
-//                    bill.Status ?? string.Empty
-//                );
-//            }
-//        }
+                occupancyChart.Plot.Legend.IsVisible = true;
+                occupancyChart.Plot.Legend.Alignment = Alignment.MiddleRight;
+                occupancyChart.Plot.Legend.FontSize = 11;
+            }
 
-//        private void SetupDgv()
-//        {
-//            dgvUnpaidBills.AutoGenerateColumns = false;
-//            dgvUnpaidBills.Columns.Clear();
-//            dgvUnpaidBills.Columns.Add("RoomName", "PhÚng");
-//            dgvUnpaidBills.Columns.Add("RenterName", "Ngu?i thuÍ");
-//            dgvUnpaidBills.Columns.Add("DueDate", "H?n thanh to·n");
-//            dgvUnpaidBills.Columns.Add("Amount", "S? ti?n");
-//            dgvUnpaidBills.Columns.Add("Status", "Tr?ng th·i");
+            try
+            {
+                occupancyChart.Plot.Title($"T·ªâ l·ªá l·∫•p ƒë·∫ßy (T·ªïng: {total} ph√≤ng)");
+            }
+            catch { }
 
-//            dgvUnpaidBills.Columns["Amount"].DefaultCellStyle.Format = "N0";
-//            dgvUnpaidBills.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-//        }
-//    }
-//}
+            occupancyChart.Refresh();
+        }
+
+        private void LoadUnpaidBills()
+        {
+            if (_ownerId == Guid.Empty) return;
+
+            if (dgvUnpaidBills.Columns.Count == 0)
+                SetupDgv();
+
+            var unpaidBills = _dashboardService.GetUnpaidBills(_ownerId) ?? new List<Bill>();
+
+            dgvUnpaidBills.Rows.Clear();
+
+            decimal totalDebt = 0;
+            foreach (var bill in unpaidBills)
+            {
+                decimal money = bill.TotalMoney ?? 0;
+                totalDebt += money;
+
+                dgvUnpaidBills.Rows.Add(
+                    bill.IdRoomNavigation?.Name ?? "N/A",
+                    bill.IdPersonNavigation?.Username ?? "N/A",
+                    bill.PaymentDate.HasValue ? bill.PaymentDate.Value.ToString("dd/MM/yyyy") : "N/A",
+                    money,
+                    bill.Status ?? string.Empty
+                );
+            }
+
+            // Summary UI
+            lblUnpaidCount.Text = $"S·ªë h√≥a ƒë∆°n n·ª£: {unpaidBills.Count}";
+            lblUnpaidTotal.Text = $"T·ªïng n·ª£: {totalDebt:N0} VND";
+        }
+
+        private void SetupDgv()
+        {
+            dgvUnpaidBills.SuspendLayout();
+
+            dgvUnpaidBills.AutoGenerateColumns = false;
+            dgvUnpaidBills.Columns.Clear();
+
+            // Core behavior
+            dgvUnpaidBills.ReadOnly = true;
+            dgvUnpaidBills.MultiSelect = false;
+            dgvUnpaidBills.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvUnpaidBills.RowHeadersVisible = false;
+            dgvUnpaidBills.AllowUserToAddRows = false;
+            dgvUnpaidBills.AllowUserToDeleteRows = false;
+            dgvUnpaidBills.AllowUserToResizeRows = false;
+            dgvUnpaidBills.AllowUserToOrderColumns = true;
+            dgvUnpaidBills.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // Visual polish (WinForms Color)
+            dgvUnpaidBills.BackgroundColor = WinColor.White;
+            dgvUnpaidBills.BorderStyle = BorderStyle.None;
+            dgvUnpaidBills.GridColor = WinColor.FromArgb(230, 235, 240);
+            dgvUnpaidBills.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvUnpaidBills.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
+            dgvUnpaidBills.EnableHeadersVisualStyles = false;
+
+            dgvUnpaidBills.DefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular);
+            dgvUnpaidBills.DefaultCellStyle.ForeColor = WinColor.FromArgb(33, 37, 41);
+            dgvUnpaidBills.DefaultCellStyle.BackColor = WinColor.White;
+            dgvUnpaidBills.DefaultCellStyle.SelectionBackColor = WinColor.FromArgb(225, 240, 255);
+            dgvUnpaidBills.DefaultCellStyle.SelectionForeColor = WinColor.FromArgb(33, 37, 41);
+            dgvUnpaidBills.DefaultCellStyle.Padding = new Padding(6, 4, 6, 4);
+
+            dgvUnpaidBills.AlternatingRowsDefaultCellStyle.BackColor = WinColor.FromArgb(250, 252, 254);
+
+            dgvUnpaidBills.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            dgvUnpaidBills.ColumnHeadersDefaultCellStyle.BackColor = WinColor.FromArgb(52, 152, 219);
+            dgvUnpaidBills.ColumnHeadersDefaultCellStyle.ForeColor = WinColor.White;
+            dgvUnpaidBills.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+
+            dgvUnpaidBills.ColumnHeadersHeight = 52;
+            dgvUnpaidBills.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
+            dgvUnpaidBills.RowTemplate.Height = 46;
+
+            // Columns
+            var colRoom = new DataGridViewTextBoxColumn
+            {
+                Name = "RoomName",
+                HeaderText = "Ph√≤ng",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 12
+            };
+
+            var colRenter = new DataGridViewTextBoxColumn
+            {
+                Name = "RenterName",
+                HeaderText = "Ng∆∞·ªùi thu√™",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 22
+            };
+
+            var colDueDate = new DataGridViewTextBoxColumn
+            {
+                Name = "DueDate",
+                HeaderText = "H·∫°n thanh to√°n",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 16
+            };
+
+            var colAmount = new DataGridViewTextBoxColumn
+            {
+                Name = "Amount",
+                HeaderText = "S·ªë ti·ªÅn (VND)",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 22,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N0",
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold)
+                }
+            };
+
+            var colStatus = new DataGridViewTextBoxColumn
+            {
+                Name = "Status",
+                HeaderText = "Tr·∫°ng th√°i",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 14,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleCenter
+                }
+            };
+
+            dgvUnpaidBills.Columns.AddRange(new DataGridViewColumn[]
+            {
+                colRoom, colRenter, colDueDate, colAmount, colStatus
+            });
+
+            foreach (DataGridViewColumn c in dgvUnpaidBills.Columns)
+                c.SortMode = DataGridViewColumnSortMode.Automatic;
+
+            // Semantic coloring
+            dgvUnpaidBills.CellFormatting -= DgvUnpaidBills_CellFormatting;
+            dgvUnpaidBills.CellFormatting += DgvUnpaidBills_CellFormatting;
+
+            // Reduce flicker
+            EnableDoubleBuffering(dgvUnpaidBills);
+
+            dgvUnpaidBills.ResumeLayout();
+        }
+
+        private void DgvUnpaidBills_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            if (dgvUnpaidBills.Columns[e.ColumnIndex].Name == "Status" && e.Value != null)
+            {
+                string status = e.Value.ToString().Trim().ToLowerInvariant();
+                var cell = dgvUnpaidBills.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+                // reset (ƒë·∫£m b·∫£o kh√¥ng ‚Äúd√≠nh‚Äù style c·ªßa row kh√°c)
+                cell.Style.BackColor = WinColor.White;
+                cell.Style.ForeColor = WinColor.FromArgb(33, 37, 41);
+                cell.Style.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
+
+                if (status.Contains("ch∆∞a") || status.Contains("unpaid") || status.Contains("n·ª£"))
+                {
+                    cell.Style.BackColor = WinColor.FromArgb(255, 235, 238);
+                    cell.Style.ForeColor = WinColor.FromArgb(198, 40, 40);
+                }
+                else if (status.Contains("ƒëang") || status.Contains("pending"))
+                {
+                    cell.Style.BackColor = WinColor.FromArgb(255, 248, 225);
+                    cell.Style.ForeColor = WinColor.FromArgb(245, 124, 0);
+                }
+                else if (status.Contains("ƒë√£") || status.Contains("paid"))
+                {
+                    cell.Style.BackColor = WinColor.FromArgb(232, 245, 233);
+                    cell.Style.ForeColor = WinColor.FromArgb(46, 125, 50);
+                }
+            }
+        }
+
+        private static void EnableDoubleBuffering(DataGridView dgv)
+        {
+            try
+            {
+                typeof(DataGridView).InvokeMember(
+                    "DoubleBuffered",
+                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                    null,
+                    dgv,
+                    new object[] { true }
+                );
+            }
+            catch
+            {
+                // ignore if reflection blocked
+            }
+        }
+    }
+}

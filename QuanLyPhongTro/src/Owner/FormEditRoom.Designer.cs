@@ -19,8 +19,9 @@
         {
             this.lblName = new System.Windows.Forms.Label();
             this.txtRoomName = new System.Windows.Forms.TextBox();
-            this.txtAddress = new System.Windows.Forms.TextBox();
-            this.lblAddress = new System.Windows.Forms.Label();
+            this.lblListRoom = new System.Windows.Forms.Label();
+            this.cboListRoom = new System.Windows.Forms.ComboBox();
+            this.btnEditListRoom = new System.Windows.Forms.Button();
             this.lblPrice = new System.Windows.Forms.Label();
             this.lblArea = new System.Windows.Forms.Label();
             this.numPrice = new System.Windows.Forms.NumericUpDown();
@@ -43,188 +44,197 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblName.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.lblName.Location = new System.Drawing.Point(30, 30);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(123, 28);
+            this.lblName.Size = new System.Drawing.Size(129, 30);
             this.lblName.TabIndex = 0;
             this.lblName.Text = "Tên phòng:";
             // 
             // txtRoomName
             // 
-            this.txtRoomName.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtRoomName.Location = new System.Drawing.Point(170, 27);
+            this.txtRoomName.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.txtRoomName.Location = new System.Drawing.Point(180, 26);
             this.txtRoomName.Name = "txtRoomName";
-            this.txtRoomName.Size = new System.Drawing.Size(400, 34);
+            this.txtRoomName.Size = new System.Drawing.Size(660, 39);
             this.txtRoomName.TabIndex = 0;
             // 
-            // txtAddress
+            // lblListRoom
             // 
-            this.txtAddress.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtAddress.Location = new System.Drawing.Point(170, 78);
-            this.txtAddress.Multiline = true;
-            this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(400, 70);
-            this.txtAddress.TabIndex = 1;
+            this.lblListRoom.AutoSize = true;
+            this.lblListRoom.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblListRoom.Location = new System.Drawing.Point(30, 95);
+            this.lblListRoom.Name = "lblListRoom";
+            this.lblListRoom.Size = new System.Drawing.Size(84, 28);
+            this.lblListRoom.TabIndex = 2;
+            this.lblListRoom.Text = "Dãy trọ:";
             // 
-            // lblAddress
+            // cboListRoom
             // 
-            this.lblAddress.AutoSize = true;
-            this.lblAddress.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblAddress.Location = new System.Drawing.Point(30, 81);
-            this.lblAddress.Name = "lblAddress";
-            this.lblAddress.Size = new System.Drawing.Size(78, 28);
-            this.lblAddress.TabIndex = 2;
-            this.lblAddress.Text = "Ðịa chỉ:";
+            this.cboListRoom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboListRoom.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.cboListRoom.FormattingEnabled = true;
+            this.cboListRoom.Location = new System.Drawing.Point(180, 91);
+            this.cboListRoom.Name = "cboListRoom";
+            this.cboListRoom.Size = new System.Drawing.Size(540, 38);
+            this.cboListRoom.TabIndex = 1;
+            // 
+            // btnEditListRoom
+            // 
+            this.btnEditListRoom.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnEditListRoom.Location = new System.Drawing.Point(730, 90);
+            this.btnEditListRoom.Name = "btnEditListRoom";
+            this.btnEditListRoom.Size = new System.Drawing.Size(110, 40);
+            this.btnEditListRoom.TabIndex = 2;
+            this.btnEditListRoom.Text = "Quản lý";
+            this.btnEditListRoom.UseVisualStyleBackColor = true;
             // 
             // lblPrice
             // 
             this.lblPrice.AutoSize = true;
             this.lblPrice.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblPrice.Location = new System.Drawing.Point(30, 168);
+            this.lblPrice.Location = new System.Drawing.Point(30, 160);
             this.lblPrice.Name = "lblPrice";
-            this.lblPrice.Size = new System.Drawing.Size(95, 28);
+            this.lblPrice.Size = new System.Drawing.Size(91, 28);
             this.lblPrice.TabIndex = 4;
             this.lblPrice.Text = "Giá thuê:";
+            // 
+            // numPrice
+            // 
+            this.numPrice.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.numPrice.Location = new System.Drawing.Point(180, 156);
+            this.numPrice.Maximum = new decimal(new int[] { 100000000, 0, 0, 0 });
+            this.numPrice.Name = "numPrice";
+            this.numPrice.Size = new System.Drawing.Size(230, 37);
+            this.numPrice.TabIndex = 3;
+            this.numPrice.ThousandsSeparator = true;
             // 
             // lblArea
             // 
             this.lblArea.AutoSize = true;
             this.lblArea.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblArea.Location = new System.Drawing.Point(30, 218);
+            this.lblArea.Location = new System.Drawing.Point(450, 160);
             this.lblArea.Name = "lblArea";
             this.lblArea.Size = new System.Drawing.Size(130, 28);
             this.lblArea.TabIndex = 6;
             this.lblArea.Text = "Diện tích (m²):";
             // 
-            // numPrice
-            // 
-            this.numPrice.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.numPrice.Location = new System.Drawing.Point(170, 166);
-            this.numPrice.Maximum = new decimal(new int[] { 100000000, 0, 0, 0 });
-            this.numPrice.Name = "numPrice";
-            this.numPrice.Size = new System.Drawing.Size(400, 34);
-            this.numPrice.TabIndex = 2;
-            this.numPrice.ThousandsSeparator = true;
-            // 
             // numArea
             // 
             this.numArea.DecimalPlaces = 1;
-            this.numArea.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.numArea.Location = new System.Drawing.Point(170, 216);
+            this.numArea.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.numArea.Location = new System.Drawing.Point(610, 156);
             this.numArea.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             this.numArea.Name = "numArea";
-            this.numArea.Size = new System.Drawing.Size(400, 34);
-            this.numArea.TabIndex = 3;
-            // 
-            // lblImages
-            // 
-            this.lblImages.AutoSize = true;
-            this.lblImages.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblImages.Location = new System.Drawing.Point(30, 320); // D?i xu?ng
-            this.lblImages.Name = "lblImages";
-            this.lblImages.Size = new System.Drawing.Size(95, 28);
-            this.lblImages.TabIndex = 9;
-            this.lblImages.Text = "Hình ảnh:";
-            // 
-            // btnAddImage
-            // 
-            this.btnAddImage.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnAddImage.Location = new System.Drawing.Point(170, 314); // D?i xu?ng
-            this.btnAddImage.Name = "btnAddImage";
-            this.btnAddImage.Size = new System.Drawing.Size(150, 40);
-            this.btnAddImage.TabIndex = 4;
-            this.btnAddImage.Text = "Thêm ảnh...";
-            this.btnAddImage.UseVisualStyleBackColor = true;
-            // 
-            // lstImages
-            // 
-            this.lstImages.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lstImages.FormattingEnabled = true;
-            this.lstImages.ItemHeight = 25;
-            this.lstImages.Location = new System.Drawing.Point(35, 370); // D?i xu?ng
-            this.lstImages.Name = "lstImages";
-            this.lstImages.Size = new System.Drawing.Size(285, 104);
-            this.lstImages.TabIndex = 5;
-            // 
-            // btnUpdate
-            // 
-            this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnUpdate.Location = new System.Drawing.Point(300, 500); // D?i xu?ng
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(130, 50);
-            this.btnUpdate.TabIndex = 6;
-            this.btnUpdate.Text = "Cập nhật";
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnCancel.Location = new System.Drawing.Point(440, 500); // D?i xu?ng
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(130, 50);
-            this.btnCancel.TabIndex = 7;
-            this.btnCancel.Text = "Hủy";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            // 
-            // openFileDialog
-            // 
-            this.openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif";
-            this.openFileDialog.Multiselect = false; // Ch? cho ch?n 1 ?nh 1 l?n
-            this.openFileDialog.Title = "Chọn hình ảnh";
-            // 
-            // picPreview
-            // 
-            this.picPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picPreview.Location = new System.Drawing.Point(340, 314); // D?i xu?ng
-            this.picPreview.Name = "picPreview";
-            this.picPreview.Size = new System.Drawing.Size(230, 160);
-            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picPreview.TabIndex = 14;
-            this.picPreview.TabStop = false;
-            // 
-            // btnDeleteImage
-            // 
-            this.btnDeleteImage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDeleteImage.Location = new System.Drawing.Point(245, 314); // D?i xu?ng
-            this.btnDeleteImage.Name = "btnDeleteImage";
-            this.btnDeleteImage.Size = new System.Drawing.Size(75, 40);
-            this.btnDeleteImage.TabIndex = 15;
-            this.btnDeleteImage.Text = "Xóa";
-            this.btnDeleteImage.UseVisualStyleBackColor = true;
+            this.numArea.Size = new System.Drawing.Size(230, 37);
+            this.numArea.TabIndex = 4;
             // 
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblStatus.Location = new System.Drawing.Point(30, 268);
+            this.lblStatus.Location = new System.Drawing.Point(30, 225);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(104, 28);
+            this.lblStatus.Size = new System.Drawing.Size(102, 28);
             this.lblStatus.TabIndex = 10;
             this.lblStatus.Text = "Trạng thái:";
             // 
             // cboStatus
             // 
             this.cboStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cboStatus.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.cboStatus.FormattingEnabled = true;
-            this.cboStatus.Items.AddRange(new object[] {
-            "Trống",
-            "Ðã thuê",
-            "Ðang sữa chữa"});
-            this.cboStatus.Location = new System.Drawing.Point(170, 265);
+            this.cboStatus.Items.AddRange(new object[] { "Trống", "Đã thuê", "Đang sửa chữa" });
+            this.cboStatus.Location = new System.Drawing.Point(180, 221);
             this.cboStatus.Name = "cboStatus";
-            this.cboStatus.Size = new System.Drawing.Size(400, 36);
-            this.cboStatus.TabIndex = 4;
+            this.cboStatus.Size = new System.Drawing.Size(660, 38);
+            this.cboStatus.TabIndex = 5;
+            // 
+            // lblImages
+            // 
+            this.lblImages.AutoSize = true;
+            this.lblImages.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblImages.Location = new System.Drawing.Point(30, 290);
+            this.lblImages.Name = "lblImages";
+            this.lblImages.Size = new System.Drawing.Size(185, 30);
+            this.lblImages.TabIndex = 9;
+            this.lblImages.Text = "Quản lý hình ảnh";
+            // 
+            // lstImages
+            // 
+            this.lstImages.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lstImages.FormattingEnabled = true;
+            this.lstImages.ItemHeight = 25;
+            this.lstImages.Location = new System.Drawing.Point(35, 335);
+            this.lstImages.Name = "lstImages";
+            this.lstImages.Size = new System.Drawing.Size(375, 254);
+            this.lstImages.TabIndex = 7;
+            // 
+            // btnAddImage
+            // 
+            this.btnAddImage.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnAddImage.Location = new System.Drawing.Point(35, 600);
+            this.btnAddImage.Name = "btnAddImage";
+            this.btnAddImage.Size = new System.Drawing.Size(180, 45);
+            this.btnAddImage.TabIndex = 6;
+            this.btnAddImage.Text = "➕ Thêm ảnh";
+            this.btnAddImage.UseVisualStyleBackColor = true;
+            // 
+            // btnDeleteImage
+            // 
+            this.btnDeleteImage.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnDeleteImage.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnDeleteImage.Location = new System.Drawing.Point(230, 600);
+            this.btnDeleteImage.Name = "btnDeleteImage";
+            this.btnDeleteImage.Size = new System.Drawing.Size(180, 45);
+            this.btnDeleteImage.TabIndex = 15;
+            this.btnDeleteImage.Text = "🗑️ Xóa ảnh chọn";
+            this.btnDeleteImage.UseVisualStyleBackColor = true;
+            // 
+            // picPreview
+            // 
+            this.picPreview.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.picPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picPreview.Location = new System.Drawing.Point(440, 335);
+            this.picPreview.Name = "picPreview";
+            this.picPreview.Size = new System.Drawing.Size(400, 310);
+            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picPreview.TabIndex = 14;
+            this.picPreview.TabStop = false;
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
+            this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.ForeColor = System.Drawing.Color.White;
+            this.btnUpdate.Location = new System.Drawing.Point(540, 652);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(150, 50);
+            this.btnUpdate.TabIndex = 8;
+            this.btnUpdate.Text = "Lưu thay đổi";
+            this.btnUpdate.UseVisualStyleBackColor = false;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.btnCancel.Location = new System.Drawing.Point(700, 652);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(140, 50);
+            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Text = "Hủy bỏ";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // FormEditRoom
             // 
             this.AcceptButton = this.btnUpdate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(603, 574); // Tang chi?u cao
+            this.ClientSize = new System.Drawing.Size(878, 714);
             this.Controls.Add(this.cboStatus);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnDeleteImage);
@@ -238,8 +248,9 @@
             this.Controls.Add(this.numPrice);
             this.Controls.Add(this.lblArea);
             this.Controls.Add(this.lblPrice);
-            this.Controls.Add(this.txtAddress);
-            this.Controls.Add(this.lblAddress);
+            this.Controls.Add(this.btnEditListRoom);
+            this.Controls.Add(this.cboListRoom);
+            this.Controls.Add(this.lblListRoom);
             this.Controls.Add(this.txtRoomName);
             this.Controls.Add(this.lblName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -247,7 +258,7 @@
             this.MinimizeBox = false;
             this.Name = "FormEditRoom";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Chỉnh sửa phòng";
+            this.Text = "Chỉnh sửa thông tin phòng";
             ((System.ComponentModel.ISupportInitialize)(this.numPrice)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numArea)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
@@ -260,8 +271,9 @@
 
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.TextBox txtRoomName;
-        private System.Windows.Forms.TextBox txtAddress;
-        private System.Windows.Forms.Label lblAddress;
+        private System.Windows.Forms.Label lblListRoom;
+        private System.Windows.Forms.ComboBox cboListRoom;
+        private System.Windows.Forms.Button btnEditListRoom;
         private System.Windows.Forms.Label lblPrice;
         private System.Windows.Forms.Label lblArea;
         private System.Windows.Forms.NumericUpDown numPrice;

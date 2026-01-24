@@ -1,5 +1,5 @@
-﻿using QuanLyPhongTro.src.Test.Models;
-using QuanLyPhongTro.Services;
+﻿using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -47,7 +47,6 @@ namespace QuanLyPhongTro
             _roomToView = _roomService.GetRoomWithDetails(_roomToView.Id);
             if (_roomToView == null)
             {
-                // --- SỬA LỖI 2 (Encoding) ---
                 MessageBox.Show("Phòng này có thể đã bị xóa.");
                 this.Close();
                 return;
@@ -56,21 +55,17 @@ namespace QuanLyPhongTro
 
             if (_isRenterView)
             {
-                // 1. LÀ RENTER
                 btnEdit.Visible = false;
                 btnDelete.Visible = false;
 
-                // Chỉ hiện nút Đặt phòng NẾU phòng còn "Trống"
                 if (_roomToView.Status == "Trống")
                 {
                     btnBook.Visible = true;
-                    // Đặt nút Đóng cạnh nút Đặt
                     btnClose.Location = new Point(btnBook.Location.X + btnBook.Width + 15, btnBook.Location.Y);
                 }
-                else // Phòng đã thuê
+                else
                 {
                     btnBook.Visible = false;
-                    // Căn giữa nút Đóng
                     btnClose.Location = new Point(
                         (this.ClientSize.Width - btnClose.Width) / 2,
                         btnClose.Location.Y);
@@ -78,20 +73,17 @@ namespace QuanLyPhongTro
             }
             else
             {
-                // 2. LÀ OWNER
                 btnEdit.Visible = true;
                 btnDelete.Visible = true;
                 btnBook.Visible = false;
             }
 
-            // 1. Tải thông tin phòng (SỬA LỖI 2 - Encoding)
             lblRoomName.Text = _roomToView.Name;
             lblPrice.Text = $"Giá: {_roomToView.Price:N0} VND";
             lblArea.Text = $"Diện tích: {_roomToView.Area:N2} m²";
-            lblAddress.Text = $"Địa chỉ: {_roomToView.Address}";
+            lblAddress.Text = $"Địa chỉ: {_roomToView.ListRooms?.Address ?? "N/A"}";
             lblStatus.Text = $"Trạng thái: {_roomToView.Status}";
 
-            // 2. Tải thông tin hợp đồng
             if (_roomToView.Status == "Đã thuê") 
             {
                 lblStatus.ForeColor = Color.DarkRed;
@@ -111,7 +103,6 @@ namespace QuanLyPhongTro
                 grpContractInfo.Visible = false;
             }
 
-            // 3. Tải hình ảnh
             LoadRoomImages();
         }
 
@@ -179,10 +170,8 @@ namespace QuanLyPhongTro
         }
         #endregion
 
-        // (Sự kiện cho Renter)
         private void BtnBook_Click(object sender, EventArgs e)
         {
-            // SỬA LỖI 2 (Encoding)
             if (btnBook.Text == "Đã gửi yêu cầu") return;
 
             using (FormRequestContract frm = new FormRequestContract(_user, _roomToView))

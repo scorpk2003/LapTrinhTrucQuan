@@ -17,106 +17,165 @@
 
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.grpContract = new System.Windows.Forms.GroupBox();
-            this.lblDeposit = new System.Windows.Forms.Label();
-            this.lblEndDate = new System.Windows.Forms.Label();
-            this.lblStartDate = new System.Windows.Forms.Label();
-            this.btnRequestTermination = new System.Windows.Forms.Button();
-            this.btnRequestRenewal = new System.Windows.Forms.Button();
-            this.grpContract.SuspendLayout();
-            this.SuspendLayout();
+            label1 = new Label();
+            grpContract = new GroupBox();
+            lblDeposit = new Label();
+            lblEndDate = new Label();
+            lblStartDate = new Label();
+            btnRequestTermination = new Button();
+            btnRequestRenewal = new Button();
+            grpContractImage = new GroupBox();
+            picContractImage = new PictureBox();
+            lblNoImage = new Label();
+            grpContract.SuspendLayout();
+            grpContractImage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picContractImage).BeginInit();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(20, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(268, 38);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Hợp đồng của tôi";
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
+            label1.Location = new Point(38, 41);
+            label1.Margin = new Padding(6, 0, 6, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(500, 76);
+            label1.TabIndex = 0;
+            label1.Text = "Hợp đồng của tôi";
             // 
             // grpContract
             // 
-            this.grpContract.Controls.Add(this.lblDeposit);
-            this.grpContract.Controls.Add(this.lblEndDate);
-            this.grpContract.Controls.Add(this.lblStartDate);
-            this.grpContract.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.grpContract.Location = new System.Drawing.Point(30, 80);
-            this.grpContract.Name = "grpContract";
-            this.grpContract.Size = new System.Drawing.Size(500, 200);
-            this.grpContract.TabIndex = 3;
-            this.grpContract.TabStop = false;
-            this.grpContract.Text = "Thông tin Hợp đồng";
+            grpContract.Controls.Add(lblDeposit);
+            grpContract.Controls.Add(lblEndDate);
+            grpContract.Controls.Add(lblStartDate);
+            grpContract.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            grpContract.Location = new Point(57, 164);
+            grpContract.Margin = new Padding(6, 6, 6, 6);
+            grpContract.Name = "grpContract";
+            grpContract.Padding = new Padding(6, 6, 6, 6);
+            grpContract.Size = new Size(944, 410);
+            grpContract.TabIndex = 3;
+            grpContract.TabStop = false;
+            grpContract.Text = "Thông tin Hợp đồng";
             // 
             // lblDeposit
             // 
-            this.lblDeposit.AutoSize = true;
-            this.lblDeposit.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblDeposit.Location = new System.Drawing.Point(20, 130);
-            this.lblDeposit.Name = "lblDeposit";
-            this.lblDeposit.Size = new System.Drawing.Size(100, 28);
-            this.lblDeposit.TabIndex = 2;
-            this.lblDeposit.Text = "Tiền cọc: ...";
+            lblDeposit.AutoSize = true;
+            lblDeposit.Font = new Font("Segoe UI", 13F);
+            lblDeposit.Location = new Point(38, 266);
+            lblDeposit.Margin = new Padding(6, 0, 6, 0);
+            lblDeposit.Name = "lblDeposit";
+            lblDeposit.Size = new Size(237, 60);
+            lblDeposit.TabIndex = 2;
+            lblDeposit.Text = "Tiền cọc: ...";
             // 
             // lblEndDate
             // 
-            this.lblEndDate.AutoSize = true;
-            this.lblEndDate.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblEndDate.Location = new System.Drawing.Point(20, 85);
-            this.lblEndDate.Name = "lblEndDate";
-            this.lblEndDate.Size = new System.Drawing.Size(142, 28);
-            this.lblEndDate.TabIndex = 1;
-            this.lblEndDate.Text = "Ngày kết thúc: ...";
+            lblEndDate.AutoSize = true;
+            lblEndDate.Font = new Font("Segoe UI", 13F);
+            lblEndDate.Location = new Point(38, 174);
+            lblEndDate.Margin = new Padding(6, 0, 6, 0);
+            lblEndDate.Name = "lblEndDate";
+            lblEndDate.Size = new Size(348, 60);
+            lblEndDate.TabIndex = 1;
+            lblEndDate.Text = "Ngày kết thúc: ...";
             // 
             // lblStartDate
             // 
-            this.lblStartDate.AutoSize = true;
-            this.lblStartDate.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblStartDate.Location = new System.Drawing.Point(20, 40);
-            this.lblStartDate.Name = "lblStartDate";
-            this.lblStartDate.Size = new System.Drawing.Size(139, 28);
-            this.lblStartDate.TabIndex = 0;
-            this.lblStartDate.Text = "Ngày bắt đầu: ...";
+            lblStartDate.AutoSize = true;
+            lblStartDate.Font = new Font("Segoe UI", 13F);
+            lblStartDate.Location = new Point(38, 82);
+            lblStartDate.Margin = new Padding(6, 0, 6, 0);
+            lblStartDate.Name = "lblStartDate";
+            lblStartDate.Size = new Size(339, 60);
+            lblStartDate.TabIndex = 0;
+            lblStartDate.Text = "Ngày bắt đầu: ...";
             // 
             // btnRequestTermination
             // 
-            this.btnRequestTermination.BackColor = System.Drawing.Color.MistyRose;
-            this.btnRequestTermination.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnRequestTermination.Location = new System.Drawing.Point(30, 380);
-            this.btnRequestTermination.Name = "btnRequestTermination";
-            this.btnRequestTermination.Size = new System.Drawing.Size(500, 50);
-            this.btnRequestTermination.TabIndex = 4;
-            this.btnRequestTermination.Text = "Gửi yêu cầu chấm dứt hợp đồng";
-            this.btnRequestTermination.UseVisualStyleBackColor = false;
+            btnRequestTermination.BackColor = Color.MistyRose;
+            btnRequestTermination.Font = new Font("Segoe UI", 13F);
+            btnRequestTermination.Location = new Point(57, 779);
+            btnRequestTermination.Margin = new Padding(6, 6, 6, 6);
+            btnRequestTermination.Name = "btnRequestTermination";
+            btnRequestTermination.Size = new Size(944, 102);
+            btnRequestTermination.TabIndex = 4;
+            btnRequestTermination.Text = "Gửi yêu cầu chấm dứt hợp đồng";
+            btnRequestTermination.UseVisualStyleBackColor = false;
             // 
             // btnRequestRenewal
             // 
-            this.btnRequestRenewal.BackColor = System.Drawing.Color.AliceBlue;
-            this.btnRequestRenewal.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnRequestRenewal.Location = new System.Drawing.Point(30, 310);
-            this.btnRequestRenewal.Name = "btnRequestRenewal";
-            this.btnRequestRenewal.Size = new System.Drawing.Size(500, 50);
-            this.btnRequestRenewal.TabIndex = 5;
-            this.btnRequestRenewal.Text = "Gửi yêu cầu gia hạn hợp đồng";
-            this.btnRequestRenewal.UseVisualStyleBackColor = false;
+            btnRequestRenewal.BackColor = Color.AliceBlue;
+            btnRequestRenewal.Font = new Font("Segoe UI", 13F);
+            btnRequestRenewal.Location = new Point(57, 636);
+            btnRequestRenewal.Margin = new Padding(6, 6, 6, 6);
+            btnRequestRenewal.Name = "btnRequestRenewal";
+            btnRequestRenewal.Size = new Size(944, 102);
+            btnRequestRenewal.TabIndex = 5;
+            btnRequestRenewal.Text = "Gửi yêu cầu gia hạn hợp đồng";
+            btnRequestRenewal.UseVisualStyleBackColor = false;
+            // 
+            // grpContractImage
+            // 
+            grpContractImage.Controls.Add(picContractImage);
+            grpContractImage.Controls.Add(lblNoImage);
+            grpContractImage.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            grpContractImage.Location = new Point(1077, 164);
+            grpContractImage.Margin = new Padding(6, 6, 6, 6);
+            grpContractImage.Name = "grpContractImage";
+            grpContractImage.Padding = new Padding(6, 6, 6, 6);
+            grpContractImage.Size = new Size(907, 1230);
+            grpContractImage.TabIndex = 6;
+            grpContractImage.TabStop = false;
+            grpContractImage.Text = "Ảnh Hợp đồng";
+            // 
+            // picContractImage
+            // 
+            picContractImage.BorderStyle = BorderStyle.FixedSingle;
+            picContractImage.Cursor = Cursors.Hand;
+            picContractImage.Location = new Point(38, 82);
+            picContractImage.Margin = new Padding(6, 6, 6, 6);
+            picContractImage.Name = "picContractImage";
+            picContractImage.Size = new Size(829, 1105);
+            picContractImage.SizeMode = PictureBoxSizeMode.Zoom;
+            picContractImage.TabIndex = 0;
+            picContractImage.TabStop = false;
+            // 
+            // lblNoImage
+            // 
+            lblNoImage.AutoSize = true;
+            lblNoImage.Font = new Font("Segoe UI", 10F, FontStyle.Italic);
+            lblNoImage.ForeColor = Color.Gray;
+            lblNoImage.Location = new Point(227, 574);
+            lblNoImage.Margin = new Padding(6, 0, 6, 0);
+            lblNoImage.Name = "lblNoImage";
+            lblNoImage.Size = new Size(353, 46);
+            lblNoImage.TabIndex = 1;
+            lblNoImage.Text = "Chưa có ảnh hợp đồng";
+            lblNoImage.TextAlign = ContentAlignment.MiddleCenter;
+            lblNoImage.Visible = false;
             // 
             // ucMyContract
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.btnRequestRenewal);
-            this.Controls.Add(this.btnRequestTermination);
-            this.Controls.Add(this.grpContract);
-            this.Controls.Add(this.label1);
-            this.Name = "ucMyContract";
-            this.Size = new System.Drawing.Size(1100, 800);
-            this.grpContract.ResumeLayout(false);
-            this.grpContract.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(17F, 41F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoScroll = true;
+            BackColor = Color.White;
+            Controls.Add(grpContractImage);
+            Controls.Add(btnRequestRenewal);
+            Controls.Add(btnRequestTermination);
+            Controls.Add(grpContract);
+            Controls.Add(label1);
+            Margin = new Padding(6, 6, 6, 6);
+            Name = "ucMyContract";
+            Size = new Size(2078, 1640);
+            grpContract.ResumeLayout(false);
+            grpContract.PerformLayout();
+            grpContractImage.ResumeLayout(false);
+            grpContractImage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picContractImage).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -128,5 +187,8 @@
         private System.Windows.Forms.Label lblStartDate;
         private System.Windows.Forms.Button btnRequestTermination;
         private System.Windows.Forms.Button btnRequestRenewal;
+        private System.Windows.Forms.GroupBox grpContractImage;
+        private System.Windows.Forms.PictureBox picContractImage;
+        private System.Windows.Forms.Label lblNoImage;
     }
 }
