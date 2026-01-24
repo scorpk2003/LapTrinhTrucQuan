@@ -65,7 +65,7 @@
             this.grpContractInfo.Size = new System.Drawing.Size(400, 200);
             this.grpContractInfo.TabIndex = 5;
             this.grpContractInfo.TabStop = false;
-            this.grpContractInfo.Text = "Thông tin hợp d?ng";
+            this.grpContractInfo.Text = "Thông tin hợp đồng";
             // 
             // lblRenterName
             // 

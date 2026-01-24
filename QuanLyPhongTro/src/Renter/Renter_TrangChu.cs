@@ -1,6 +1,9 @@
-﻿using QuanLyPhongTro.src.Models;
-using QuanLyPhongTro.src.Services1;
+﻿using QuanLyPhongTro.src.Common;
+using QuanLyPhongTro.src.Login;
 using QuanLyPhongTro.src.Mediator;
+using QuanLyPhongTro.src.Models;
+using QuanLyPhongTro.src.Services1;
+using QuanLyPhongTro.src.UserSession;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QuanLyPhongTro.src.UserSession;
 
 namespace QuanLyPhongTro
 {
@@ -18,6 +20,7 @@ namespace QuanLyPhongTro
         private readonly RoomService _roomService;
         private readonly PersonService _personService;
         private readonly ContractService _contractService;
+        private readonly BookingRequestService _requestService; // Thêm service
 
         private List<Room> _allAvailableRooms;
         private const string PlaceholderText = "Nhập tên, địa chỉ...";
@@ -31,6 +34,9 @@ namespace QuanLyPhongTro
         private ucMyContract _myContractControl;
         private ucMyReports _myReportsControl;
 
+        // Biến lưu nút đang được chọn
+        private Button _currentSelectedButton = null;
+
         public Renter_TrangChu()
         {
             InitializeComponent();
@@ -38,15 +44,18 @@ namespace QuanLyPhongTro
             _roomService = new RoomService();
             _personService = new PersonService();
             _contractService = new ContractService();
+            _requestService = new BookingRequestService(); 
 
             this.Load += Renter_TrangChu_Load;
 
             btnHome.Click += BtnHome_Click;
             btnBills.Click += BtnBills_Click;
             btnContract.Click += BtnContract_Click;
+            btnUploadContract.Click += BtnUploadContract_Click;
             btnReport.Click += BtnReport_Click;
             btnProfile.Click += BtnInfo_Click;
             btnLogout.Click += BtnLogout_Click;
+            btnLogoutFindRoom.Click += BtnLogout_Click; 
         }
 
         private void Renter_TrangChu_Load(object sender, EventArgs e)
@@ -54,81 +63,191 @@ namespace QuanLyPhongTro
             lblRenterName.Text = $"Chào mừng, {_currentRenter.Username}";
 
             _activeContract = _contractService.GetActiveContractByRenter(_currentRenter.Id);
+            
+            if (_activeContract == null)
+            {
+                _activeContract = _contractService.GetPendingContractsByRenter(_currentRenter.Id).FirstOrDefault();
+            }
 
             if (_activeContract == null)
             {
-                // CHƯA CÓ PHÒNG -> Hiển thị Giao diện TÌM PHÒNG
+                // CHƯA CÓ HỢP ĐỒNG NÀO -> Hiển thị Giao diện TÌM PHÒNG
                 panelMenu.Visible = false;
                 panelMainContent.Visible = false;
                 panelFindRoom.Visible = true;
                 panelFindRoom.Dock = DockStyle.Fill;
+                btnLogoutFindRoom.Visible = true;
 
                 InitializeFilterLogic();
                 this.ActiveControl = panelFindRoom;
             }
             else
             {
-                // ĐÃ CÓ PHÒNG -> Hiển thị Giao diện QUẢN LÝ
+                // ĐÃ CÓ HỢP ĐỒNG (Tạm thời hoặc Đang hoạt động) -> Hiển thị Giao diện QUẢN LÝ
                 panelMenu.Visible = true;
                 panelFindRoom.Visible = false;
                 panelMainContent.Visible = true;
-
-                BtnHome_Click(null, null);
+                btnLogoutFindRoom.Visible = false;
+                if (_activeContract.Status == "Tạm thời")
+                {
+                    MessageBox.Show(
+                        "Bạn có hợp đồng đang chờ upload ảnh để kích hoạt!\n\n" +
+                        "Vui lòng upload ảnh hợp đồng đã ký để bắt đầu sử dụng phòng.",
+                        "Thông báo quan trọng",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    
+                    BtnUploadContract_Click(null, null);
+                }
+                else
+                {
+                    // Hợp đồng đang hoạt động → Hiển thị màn Home bình thường
+                    BtnHome_Click(null, null);
+                }
             }
         }
 
-        #region X? lý Chuy?n View (Cho ngu?i dã thuê)
-
-        private async Task ShowView<T>(Control control, T uc) where T : Control
+        /// <summary>
+        /// Đánh dấu nút được chọn với màu trắng và chữ đậm
+        /// </summary>
+        private void HighlightButton(Button selectedButton)
         {
-            if (_myRoomControl != null && uc != _myRoomControl) _myRoomControl.Visible = false;
-            if (_myBillsControl != null && uc != _myBillsControl) _myBillsControl.Visible = false;
-            if (_myContractControl != null && uc != _myContractControl) _myContractControl.Visible = false;
-            if (_myReportsControl != null && uc != _myReportsControl) _myReportsControl.Visible = false;
-            if (control == null) return;
-            if (!panelMainContent.Controls.Contains(control))
+            // Reset nút cũ về màu mặc định
+            if (_currentSelectedButton != null)
             {
-                control.Dock = DockStyle.Fill;
-                panelMainContent.Controls.Add(control);
+                _currentSelectedButton.BackColor = SystemColors.Control;
+                _currentSelectedButton.ForeColor = Color.Black;
+                _currentSelectedButton.Font = new Font(_currentSelectedButton.Font, FontStyle.Regular);
             }
-            control.BringToFront();
-            control.Visible = true;
+
+            // Highlight nút mới
+            _currentSelectedButton = selectedButton;
+            _currentSelectedButton.BackColor = Color.White;
+            _currentSelectedButton.ForeColor = Color.FromArgb(41, 128, 185);
+            _currentSelectedButton.Font = new Font(_currentSelectedButton.Font, FontStyle.Bold);
+        }
+
+        #region Xử lý Chuyển View (Cho người đã thuê)
+
+        private async Task ShowView(UserControl instance)
+        {
+            if (instance == null) return; // Chặn lỗi null
+
+            panelMainContent.Controls.Clear();
+            instance.Dock = DockStyle.Fill;
+            panelMainContent.Controls.Add(instance);
+
+            await Task.Delay(1);
         }
 
         private async void BtnHome_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Contract>("UcMyRoom", _activeContract, async (control) =>
+            HighlightButton(btnHome);
+            
+            await ClickGuard.RunOnceAsync("HOME", async () =>
             {
-                _myRoomControl = (ucMyRoom)control;
-                await ShowView(control, _myRoomControl);
-            });
+                await Mediator.Instance.PublishForm<Contract>("UcMyRoom", _activeContract, async (control) =>
+                {
+                    if (control is ucMyRoom myRoomInstance)
+                    {
+                        _myRoomControl = myRoomInstance;
+                        await ShowView(_myRoomControl);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi: Control trả về null hoặc sai kiểu dữ liệu.");
+                    }
+                });
+            }, btnHome);
         }
+
         private async void BtnBills_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Contract>("UcMyBills", _activeContract, async (control) =>
+            HighlightButton(btnBills);
+            
+            await ClickGuard.RunOnceAsync("BILLS", async () =>
             {
-                _myBillsControl = (ucMyBills)control;
-                await ShowView(control, _myBillsControl);
-            });
+                await Mediator.Instance.PublishForm<Contract>("UcMyBills", _activeContract, async (control) =>
+                {
+                    if (control is ucMyBills myBillsInstance)
+                    {
+                        _myBillsControl = myBillsInstance;
+                        await ShowView(_myBillsControl);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi: Control trả về null hoặc sai kiểu dữ liệu.");
+                    }
+                });
+            }, btnBills);
         }
+
         private async void BtnContract_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Contract>("UcMyContract", _activeContract, async (control) =>
+            HighlightButton(btnContract);
+            
+            await ClickGuard.RunOnceAsync("CONTRACT", async () =>
             {
-                _myContractControl = (ucMyContract)control;
-                await ShowView(control, _myContractControl);
-            });
+                await Mediator.Instance.PublishForm<Contract>("UcMyContract", _activeContract, async (control) =>
+                {
+                    if (control is ucMyContract myContractInstance)
+                    {
+                        _myContractControl = myContractInstance;
+                        await ShowView(_myContractControl);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi: Control trả về null hoặc sai kiểu dữ liệu.");
+                    }
+                });
+            }, btnContract);
         }
+
         private async void BtnReport_Click(object sender, EventArgs e)
         {
-            await Mediator.Instance.PublishForm<Contract>("UcMyReports", _activeContract, async (control) =>
+            HighlightButton(btnReport);
+            
+            await ClickGuard.RunOnceAsync("REPORT", async () =>
             {
-                _myReportsControl = (ucMyReports)control;
-                await ShowView(control, _myReportsControl);
-            });
+                await Mediator.Instance.PublishForm<Contract>("UcMyReports", _activeContract, async (control) =>
+                {
+                    if (control is ucMyReports myReportsInstance)
+                    {
+                        _myReportsControl = myReportsInstance;
+                        await ShowView(_myReportsControl);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi: Control trả về null hoặc sai kiểu dữ liệu.");
+                    }
+                });
+            }, btnReport);
         }
+
+        private async void BtnUploadContract_Click(object sender, EventArgs e)
+        {
+            HighlightButton(btnUploadContract);
+            
+            await ClickGuard.RunOnceAsync("UPLOADCONTRACT", async () =>
+            {
+                await Mediator.Instance.PublishForm<Contract>("UcPendingContracts", _activeContract, async (control) =>
+                {
+                    if (control is ucPendingContracts pendingContractsInstance)
+                    {
+                        await ShowView(pendingContractsInstance);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi: Control trả về null hoặc sai kiểu dữ liệu.");
+                    }
+                });
+            }, btnUploadContract);
+        }
+
         private async void BtnInfo_Click(object sender, EventArgs e)
         {
+            HighlightButton(btnProfile);
+            
             using (var formInfo = new FormInformation(_currentRenter))
             {
                 formInfo.StartPosition = FormStartPosition.CenterParent;
@@ -142,15 +261,38 @@ namespace QuanLyPhongTro
                                                   "Đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                this.Close();
+                UserSession.Instance.Logout();
+                Loginmain form = new();
+                form.Show();
+                this.Hide();
+            }
+        }
+
+        /// <summary>
+        /// Phương thức reload lại giao diện sau khi upload hợp đồng thành công
+        /// </summary>
+        public void ReloadAfterContractActivation()
+        {
+            // Reload lại contract từ database
+            _activeContract = _contractService.GetActiveContractByRenter(_currentRenter.Id);
+            
+            if (_activeContract != null && _activeContract.Status == "Đang hoạt động")
+            {
+                // Chuyển về trang Home
+                BtnHome_Click(null, null);
+            }
+            else
+            {
+                // Nếu vẫn chưa có hợp đồng hoạt động, reload lại form
+                Renter_TrangChu_Load(null, null);
             }
         }
         #endregion
 
-        #region Giao di?n TÌM PHÒNG (Cho ngu?i chua thuê)
+        #region Giao diện TÌM PHÒNG (Cho người chưa thuê)
 
         /// <summary>
-        /// Kh?i t?o s? ki?n, giá tr? cho b? l?c và t?i phòng l?n d?u
+        /// Khởi tạo sự kiện, giá trị cho bộ lọc và tải phòng lần đầu
         /// </summary>
         private void InitializeFilterLogic()
         {
@@ -196,12 +338,12 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// Hàm l?c và tìm ki?m chính
+        /// Hàm lọc và tìm kiếm chính
         /// </summary>
         private void FilterAndDisplayRooms()
         {
             if (_allAvailableRooms == null) return;
-
+            _allAvailableRooms = _roomService.GetAllAvailableRooms();
             IEnumerable<Room> filteredList = _allAvailableRooms;
 
             decimal priceFrom = nudPriceFrom.Value;
@@ -225,11 +367,13 @@ namespace QuanLyPhongTro
                     r.Area.Value <= areaTo);    
             }
 
+            // Tìm kiếm theo tên phòng, giá, và địa chỉ ListRoom
             if (!string.IsNullOrEmpty(keyword) && keyword != PlaceholderText.ToLower())
             {
                 filteredList = filteredList.Where(r =>
-                    (r.Name != null && r.Name.ToLower().Contains(keyword))
-                    //(r.Address != null && r.Address.ToLower().Contains(keyword))
+                    (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
+                    (r.Price.HasValue && r.Price.Value.ToString("N0").Contains(keyword)) ||
+                    (r.ListRooms != null && r.ListRooms.Address != null && r.ListRooms.Address.ToLower().Contains(keyword))
                 );
             }
 
@@ -238,7 +382,7 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// Hàm v? giao di?n các Card phòng
+        /// Hàm vẽ giao diện các Card phòng
         /// </summary>
         private void DisplayRoomsUI(List<Room> rooms)
         {
@@ -316,7 +460,7 @@ namespace QuanLyPhongTro
 
                 Label lblAddress = new Label
                 {
-                    //Text = $"Ðịa chỉ: {room.Address}",
+                    //Text = $"Địa chỉ: {room.Address}",
                     Font = new Font("Segoe UI", 12F),
                     Dock = DockStyle.Top,
                     Padding = new Padding(15, 0, 15, 8),
@@ -326,18 +470,32 @@ namespace QuanLyPhongTro
                     Tag = room
                 };
 
+                // Kiểm tra xem renter đã gửi yêu cầu cho phòng này chưa
+                bool hasPendingRequest = _requestService.HasPendingRequestForRoom(_currentRenter.Id, room.Id);
+
                 Button btnBook = new Button
                 {
-                    Text = "Gửi yêu cầu thuê",
                     Tag = room,
                     Dock = DockStyle.Bottom,
                     Height = 65,
                     Font = new Font("Segoe UI", 13F, FontStyle.Bold),
-                    FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.FromArgb(41, 128, 185),
-                    ForeColor = Color.White
+                    FlatStyle = FlatStyle.Flat
                 };
-                btnBook.Click += BtnBook_Click;
+
+                if (hasPendingRequest)
+                {
+                    btnBook.Text = "Đã gửi yêu cầu";
+                    btnBook.Enabled = false;
+                    btnBook.BackColor = Color.Gray;
+                    btnBook.ForeColor = Color.White;
+                }
+                else
+                {
+                    btnBook.Text = "Gửi yêu cầu thuê";
+                    btnBook.BackColor = Color.FromArgb(41, 128, 185);
+                    btnBook.ForeColor = Color.White;
+                    btnBook.Click += BtnBook_Click;
+                }
 
                 roomPanel.Controls.Add(lblAddress);
                 roomPanel.Controls.Add(lblArea);
@@ -358,7 +516,7 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// X? lý click vào Card (Panel, Pic, Label) d? XEM CHI TI?T
+        /// Xử lý click vào Card (Panel, Pic, Label) để XEM CHI TIẾT
         /// </summary>
         private void BtnView_Click(object sender, EventArgs e)
         {
@@ -384,21 +542,21 @@ namespace QuanLyPhongTro
         }
 
         /// <summary>
-        /// X? lý click vào nút "G?i Yêu C?u"
+        /// Xử lý click vào nút "Gửi Yêu Cầu"
         /// </summary>
         private void BtnBook_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
             Room room = (Room)btn.Tag;
 
-            if (btn.Text == "Ðã gửi yêu cầu") return;
+            if (btn.Text == "Đã gửi yêu cầu") return;
 
             using (FormRequestContract frm = new FormRequestContract(_currentRenter, room))
             {
                 if (frm.ShowDialog(this) == DialogResult.OK)
                 {
                     btn.Enabled = false;
-                    btn.Text = "Ðã gửi yêu cầu";
+                    btn.Text = "Đã gửi yêu cầu";
                     btn.BackColor = Color.Gray;
                 }
             }

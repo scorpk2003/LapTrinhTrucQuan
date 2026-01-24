@@ -13,6 +13,7 @@ namespace QuanLyPhongTro
     {
         private readonly Guid _ownerId;
         private readonly RoomService _roomService;
+        private readonly ListRoomService _listRoomService;
 
         private readonly Dictionary<string, string> _imagePaths = new Dictionary<string, string>();
         private List<string> _copiedImagePaths = new List<string>();
@@ -23,12 +24,71 @@ namespace QuanLyPhongTro
 
             _ownerId = ownerId;
             _roomService = new RoomService();
+            _listRoomService = new ListRoomService();
 
+            this.Load += FormCreateRoom_Load;
             this.btnSave.Click += BtnSave_Click;
             this.btnCancel.Click += BtnCancel_Click;
             this.btnAddImage.Click += BtnAddImage_Click;
             this.btnDeleteImage.Click += BtnDeleteImage_Click;
+            this.btnNewListRoom.Click += BtnNewListRoom_Click;
             this.lstImages.SelectedIndexChanged += LstImages_SelectedIndexChanged;
+        }
+
+        private void FormCreateRoom_Load(object sender, EventArgs e)
+        {
+            LoadListRoomComboBox();
+        }
+
+        private void LoadListRoomComboBox()
+        {
+            var listRooms = _listRoomService.GetListRoomsByOwner(_ownerId);
+            
+            cboListRoom.DataSource = null;
+            cboListRoom.Items.Clear();
+            
+            if (listRooms.Count == 0)
+            {
+                // Nếu chưa có ListRoom nào, tự động tạo mới
+                var defaultListRoom = _listRoomService.GetOrCreateDefaultListRoom(_ownerId);
+                if (defaultListRoom != null)
+                {
+                    listRooms.Add(defaultListRoom);
+                }
+            }
+
+            cboListRoom.DataSource = listRooms;
+            cboListRoom.DisplayMember = "Name";
+            cboListRoom.ValueMember = "Id";
+
+            if (cboListRoom.Items.Count > 0)
+            {
+                cboListRoom.SelectedIndex = 0;
+            }
+        }
+
+        private void BtnNewListRoom_Click(object sender, EventArgs e)
+        {
+            using (var frm = new FormListRoomEditor(_ownerId))
+            {
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadListRoomComboBox();
+                    
+                    // Chọn ListRoom mới tạo
+                    if (frm.ResultListRoom != null)
+                    {
+                        for (int i = 0; i < cboListRoom.Items.Count; i++)
+                        {
+                            if (((ListRoom)cboListRoom.Items[i]).Id == frm.ResultListRoom.Id)
+                            {
+                                cboListRoom.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void BtnAddImage_Click(object sender, EventArgs e)
@@ -105,12 +165,23 @@ namespace QuanLyPhongTro
                 txtRoomName.Focus();
                 return;
             }
+
+            if (cboListRoom.SelectedItem == null)
+            {
+                MessageBox.Show("Vui lòng chọn dãy trọ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboListRoom.Focus();
+                return;
+            }
+
             if (numPrice.Value <= 0)
             {
                 MessageBox.Show("Vui lòng nhập giá thuê hợp lệ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 numPrice.Focus();
                 return;
             }
+
+            // Lấy ListRoom được chọn
+            var selectedListRoom = (ListRoom)cboListRoom.SelectedItem;
 
             // 1. Tạo đối tượng Room
             Room newRoom = new Room
@@ -119,12 +190,13 @@ namespace QuanLyPhongTro
                 Price = numPrice.Value,
                 Area = numArea.Value, 
                 Status = "Trống",
-                IdOwner = _ownerId
+                IdOwner = _ownerId,
+                IdListRoom = selectedListRoom.Id
             };
 
             // 2. Xử lý sao chép ảnh
             List<string> relativeImagePaths = new List<string>();
-            _copiedImagePaths.Clear(); // Xóa danh sách dọn dẹp cũ
+            _copiedImagePaths.Clear();
 
             try
             {
@@ -137,18 +209,14 @@ namespace QuanLyPhongTro
                     string destinationPath = Path.Combine(imageFolder, newFileName);
 
                     File.Copy(sourcePath, destinationPath);
-
-                    // --- SỬA LỖI 3: Thêm vào danh sách dọn dẹp ---
                     _copiedImagePaths.Add(destinationPath);
-                    // --- HẾT SỬA ---
-
                     relativeImagePaths.Add(Path.Combine("RoomImages", newFileName));
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi lưu ảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                CleanupCopiedImages(); // Dọn dẹp nếu copy lỗi
+                CleanupCopiedImages();
                 return;
             }
 
@@ -194,7 +262,6 @@ namespace QuanLyPhongTro
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            // --- SỬA LỖI 4: Gán DialogResult ---
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.IdentityModel.Tokens;
 
 namespace QuanLyPhongTro
 {
@@ -28,6 +29,8 @@ namespace QuanLyPhongTro
             _requestService = new BookingRequestService();
             _ownerId = Guid.Empty;
 
+            SetupDataGridViews();
+
             Mediator.Instance.Register<Person>("UcContractManagement", (owner) =>
             {
                 _ownerId = owner.Id;
@@ -40,12 +43,10 @@ namespace QuanLyPhongTro
             this.btnApprove.Click += BtnApprove_Click;
             this.btnReject.Click += BtnReject_Click;
             this.btnEndContract.Click += BtnEndContract_Click;
-            // (Nút btnRenewContract chưa gán sự kiện)
         }
 
         private void UcContractManagement_Load(object sender, EventArgs e)
         {
-            SetupDataGridViews();
             _isLoaded = true;
             if (_ownerId != Guid.Empty)
             {
@@ -72,6 +73,22 @@ namespace QuanLyPhongTro
             dgvRequests.Columns.Add("Duration", "Thời hạn (tháng)");
             dgvRequests.Columns.Add("Note", "Ghi chú");
 
+            dgvRequests.RowTemplate.Height = 60;
+            dgvRequests.DefaultCellStyle.Padding = new Padding(5);
+            dgvRequests.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvRequests.DefaultCellStyle.Font = new Font("Segoe UI", 11F);
+
+            dgvRequests.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            dgvRequests.ColumnHeadersHeight = 60;
+            dgvRequests.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+
+            dgvRequests.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgvRequests.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            dgvRequests.EnableHeadersVisualStyles = false;
+            dgvRequests.ColumnHeadersDefaultCellStyle.BackColor = Color.WhiteSmoke;
+
+
             dgvContracts.AutoGenerateColumns = false;
             dgvContracts.Columns.Clear();
             dgvContracts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -83,56 +100,73 @@ namespace QuanLyPhongTro
             dgvContracts.Columns.Add("Deposit", "Tiền cọc");
 
             dgvContracts.Columns["Deposit"].DefaultCellStyle.Format = "N0";
+
+            dgvContracts.RowTemplate.Height = 60;
+            dgvContracts.DefaultCellStyle.Padding = new Padding(5);
+            dgvContracts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvContracts.DefaultCellStyle.Font = new Font("Segoe UI", 11F);
+
+            dgvContracts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            dgvContracts.ColumnHeadersHeight = 60;
+            dgvContracts.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+
+            dgvContracts.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgvContracts.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            dgvContracts.EnableHeadersVisualStyles = false;
+            dgvContracts.ColumnHeadersDefaultCellStyle.BackColor = Color.WhiteSmoke;
         }
 
-        private async void LoadPendingRequests()
+        private void LoadPendingRequests()
         {
             _pendingRequests = _requestService.GetPendingRequestsByOwner(_ownerId);
+            dgvRequests.Rows.Clear();
 
-            await Mediator.Instance.PublishList<BookingRequest>("ucBooking", _pendingRequests, async (controls) =>
+            if (_pendingRequests == null || _pendingRequests.Count == 0)
             {
-                foreach (var control in controls)
-                    this.Controls.Add(control);
-            });
-            //dgvRequests.Rows.Clear();
-            //foreach (var req in _pendingRequests)
-            //{
-            //    dgvRequests.Rows.Add(
-            //        req.Renter?.Username ?? "N/A",
-            //        req.Room?.Name ?? "N/A",
-            //        req.DesiredStartDate.ToString("dd/MM/yyyy"),
-            //        req.DesiredDurationMonths,
-            //        req.Note
-            //    );
-            //    dgvRequests.Rows[dgvRequests.Rows.Count - 1].Tag = req; 
-            //}
-            //tabPendingRequests.Text = $"Yêu cầu đang chờ ({_pendingRequests.Count})";
+                tabPendingRequests.Text = "Yêu cầu đang chờ (0)";
+                return;
+            }
+
+            foreach (var req in _pendingRequests)
+            {
+                int row = dgvRequests.Rows.Add(
+                    req.Renter?.Username ?? "N/A",
+                    req.Room?.Name ?? "N/A",
+                    req.DesiredStartDate.ToString("dd/MM/yyyy"),
+                    req.DesiredDurationMonths,
+                    req.Note ?? string.Empty
+                );
+                dgvRequests.Rows[row].Tag = req;
+            }
+            dgvRequests.AutoResizeRows();
+            tabPendingRequests.Text = $"Yêu cầu đang chờ ({_pendingRequests.Count})";
         }
 
         private async Task LoadActiveContracts()
         {
             _activeContracts = _contractService.GetAllActiveContractsByOwner(_ownerId);
+            dgvContracts.Rows.Clear();
 
-            await Mediator.Instance.PublishList<Contract>("ucContract", _activeContracts, async (controls) =>
+            if (_activeContracts == null || _activeContracts.Count == 0)
             {
-                foreach (var control in controls)
-                    this.Controls.Add(control);
-            });
+                tabActiveContracts.Text = "Hợp đồng đang hoạt động (0)";
+                return;
+            }
 
-            //dgvContracts.Rows.Clear();
-            //foreach (var contract in _activeContracts)
-            //{
-            //    dgvContracts.Rows.Add(
-            //        contract.IdRoomNavigation?.Name ?? "N/A",
-            //        contract.IdRenterNavigation?.Username ?? "N/A",
-            //        contract.StartDate.HasValue ? contract.StartDate.Value.ToString("dd/MM/yyyy") : "N/A",
-            //        contract.EndDate.HasValue ? contract.EndDate.Value.ToString("dd/MM/yyyy") : "N/A",
-                    
-            //        contract.Deposit
-            //    );
-            //    dgvContracts.Rows[dgvContracts.Rows.Count - 1].Tag = contract.Id;
-            //}
-            //tabActiveContracts.Text = $"Hợp đồng đang hoạt động ({_activeContracts.Count})";
+            foreach (var c in _activeContracts)
+            {
+                int row = dgvContracts.Rows.Add(
+                    c.IdRoomNavigation?.Name ?? "N/A",
+                    c.IdRenterNavigation?.Username ?? "N/A",
+                    c.StartDate.HasValue ? c.StartDate.Value.ToString("dd/MM/yyyy") : "N/A",
+                    c.EndDate.HasValue ? c.EndDate.Value.ToString("dd/MM/yyyy") : "N/A",
+                    c.Deposit ?? 0
+                );
+                dgvContracts.Rows[row].Tag = c.Id;
+            }
+            dgvContracts.AutoResizeRows();
+            tabActiveContracts.Text = $"Hợp đồng đang hoạt động ({_activeContracts.Count})";
         }
 
         private void BtnApprove_Click(object sender, EventArgs e)

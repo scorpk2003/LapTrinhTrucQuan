@@ -57,10 +57,8 @@ namespace QuanLyPhongTro
                 IdRenter = _request.IdRenter,
                 StartDate = DateOnly.FromDateTime(dtpStartDate.Value.Date),
                 EndDate = DateOnly.FromDateTime(dtpStartDate.Value.Date.AddMonths(duration)),
-                
-
                 Deposit = nudDeposit.Value,
-                Status = "Active"
+                Status = "Tạm thời" // ✅ Thay đổi: Chờ Renter upload ảnh hợp đồng
             };
 
             // Gọi Service
@@ -70,7 +68,14 @@ namespace QuanLyPhongTro
                 // Cập nhật trạng thái của Yêu cầu (Request)
                 _requestService.UpdateRequestStatus(_request.Id, "Approved");
 
-                MessageBox.Show("Tạo hợp đồng thành công!");
+                MessageBox.Show(
+                    "Tạo hợp đồng thành công!\n\n" +
+                    "Hợp đồng đang ở trạng thái 'Tạm thời'.\n" +
+                    "Người thuê cần upload ảnh hợp đồng đã ký để kích hoạt.",
+                    "Thành công",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                    
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

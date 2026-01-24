@@ -2,6 +2,8 @@
 using QuanLyPhongTro.src.Mediator;
 using QuanLyPhongTro.src.Models;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -27,6 +29,7 @@ namespace QuanLyPhongTro
             this.Load += (s, e) => { /* placeholder to ensure InitializeComponent ran */ };
             this.btnRequestRenewal.Click += BtnRequestRenewal_Click;
             this.btnRequestTermination.Click += BtnRequestTermination_Click;
+            this.picContractImage.Click += PicContractImage_Click;
         }
 
         public void LoadData()
@@ -36,6 +39,90 @@ namespace QuanLyPhongTro
             lblEndDate.Text = $"Ngày kết thúc: {_contract.EndDate.Value.ToString("dd/MM/yyyy")}";
             lblDeposit.Text = $"Tiền cọc: {_contract.Deposit:N0} VND";
             
+            // Load và hiển thị ảnh hợp đồng
+            LoadContractImage();
+        }
+
+        private void LoadContractImage()
+        {
+            try
+            {
+                // Kiểm tra xem hợp đồng có ảnh không
+                if (string.IsNullOrEmpty(_contract.ImageUrl))
+                {
+                    // Không có ảnh
+                    picContractImage.Image = null;
+                    picContractImage.Visible = false;
+                    lblNoImage.Visible = true;
+                    lblNoImage.BringToFront();
+                    return;
+                }
+
+                // Tạo đường dẫn đầy đủ đến file ảnh
+                string fullPath = Path.Combine(Application.StartupPath, _contract.ImageUrl);
+
+                // Kiểm tra file có tồn tại không
+                if (File.Exists(fullPath))
+                {
+                    // Dispose ảnh cũ nếu có
+                    if (picContractImage.Image != null)
+                    {
+                        picContractImage.Image.Dispose();
+                    }
+
+                    // Load ảnh mới
+                    using (var fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                    {
+                        picContractImage.Image = Image.FromStream(fs);
+                    }
+                    
+                    picContractImage.Visible = true;
+                    lblNoImage.Visible = false;
+                }
+                else
+                {
+                    // File không tồn tại
+                    picContractImage.Image = null;
+                    picContractImage.Visible = false;
+                    lblNoImage.Text = "Ảnh hợp đồng không tìm thấy";
+                    lblNoImage.Visible = true;
+                    lblNoImage.BringToFront();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi load ảnh hợp đồng: {ex.Message}");
+                picContractImage.Image = null;
+                picContractImage.Visible = false;
+                lblNoImage.Text = "Lỗi khi tải ảnh hợp đồng";
+                lblNoImage.Visible = true;
+                lblNoImage.BringToFront();
+            }
+        }
+
+        private void PicContractImage_Click(object sender, EventArgs e)
+        {
+            // Cho phép xem ảnh full size khi click vào
+            if (picContractImage.Image != null)
+            {
+                using (Form fullSizeForm = new Form())
+                {
+                    fullSizeForm.Text = "Ảnh Hợp đồng - Xem toàn màn hình";
+                    fullSizeForm.Size = new Size(1000, 800);
+                    fullSizeForm.StartPosition = FormStartPosition.CenterParent;
+                    fullSizeForm.FormBorderStyle = FormBorderStyle.Sizable;
+
+                    PictureBox fullSizePic = new PictureBox
+                    {
+                        Dock = DockStyle.Fill,
+                        SizeMode = PictureBoxSizeMode.Zoom,
+                        Image = picContractImage.Image
+                    };
+
+                    fullSizeForm.Controls.Add(fullSizePic);
+                    fullSizeForm.ShowDialog(this);
+                }
+            }
         }
 
         private void BtnRequestRenewal_Click(object sender, EventArgs e)
@@ -84,6 +171,17 @@ namespace QuanLyPhongTro
                 MessageBox.Show("Gửi yêu cầu thành công!", "Thành công");
             else
                 MessageBox.Show("Gửi yêu cầu thất bại.", "Lỗi");
+        }
+
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            // Dispose ảnh khi control bị destroy
+            if (picContractImage.Image != null)
+            {
+                picContractImage.Image.Dispose();
+                picContractImage.Image = null;
+            }
+            base.OnHandleDestroyed(e);
         }
     }
 }
