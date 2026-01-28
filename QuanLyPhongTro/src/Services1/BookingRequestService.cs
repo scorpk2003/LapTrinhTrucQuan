@@ -3,6 +3,7 @@ using QuanLyPhongTro.src.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Services1
 {
@@ -11,7 +12,7 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// T?o yêu c?u thuê phòng m?i
         /// </summary>
-        public bool CreateRequest(BookingRequest request)
+        public async Task <bool> CreateRequestAsync(BookingRequest request)
         {
             try
             {
@@ -23,8 +24,8 @@ namespace QuanLyPhongTro.src.Services1
                     System.Diagnostics.Debug.WriteLine($"IdRoom: {request.IdRoom}");
                     
                     // Ki?m tra xem Renter và Room có t?n t?i không
-                    var renterExists = context.People.Any(p => p.Id == request.IdRenter);
-                    var roomExists = context.Rooms.Any(r => r.Id == request.IdRoom);
+                    var renterExists =  await context.People.AnyAsync(p => p.Id == request.IdRenter);
+                    var roomExists = await context.Rooms.AnyAsync(r => r.Id == request.IdRoom);
                     
                     System.Diagnostics.Debug.WriteLine($"Renter exists: {renterExists}");
                     System.Diagnostics.Debug.WriteLine($"Room exists: {roomExists}");
@@ -42,7 +43,7 @@ namespace QuanLyPhongTro.src.Services1
                     }
 
                     // Ki?m tra trùng l?p - Ngu?i thuê này dã g?i yêu c?u Pending cho phòng này chua?
-                    bool alreadyExists = context.BookingRequests.Any(req =>
+                    bool alreadyExists = await context.BookingRequests.AnyAsync(req =>
                         req.IdRenter == request.IdRenter &&
                         req.IdRoom == request.IdRoom &&
                         req.Status == "Pending");
@@ -56,8 +57,8 @@ namespace QuanLyPhongTro.src.Services1
                     }
 
                     // Thêm yêu c?u m?i
-                    context.BookingRequests.Add(request);
-                    context.SaveChanges();
+                     await context.BookingRequests.AddAsync(request);
+                   await context.SaveChangesAsync();
                     
                     System.Diagnostics.Debug.WriteLine("SUCCESS: Request created!");
                     return true;
@@ -78,30 +79,30 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// L?y t?t c? yêu c?u Pending c?a Owner
         /// </summary>
-        public List<BookingRequest> GetPendingRequestsByOwner(Guid ownerId)
+        public async Task< List<BookingRequest>> GetPendingRequestsByOwnerAsync(Guid ownerId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    System.Diagnostics.Debug.WriteLine($"=== GetPendingRequestsByOwner DEBUG ===");
+                    System.Diagnostics.Debug.WriteLine($"=== GetPendingRequestsByOwnerAsync DEBUG ===");
                     System.Diagnostics.Debug.WriteLine($"OwnerId: {ownerId}");
                     
                     // ??m t?ng s? booking requests trong DB
-                    var totalRequests = context.BookingRequests.Count();
+                    var totalRequests =  await context.BookingRequests.CountAsync();
                     System.Diagnostics.Debug.WriteLine($"Total BookingRequests in DB: {totalRequests}");
                     
                     // ??m s? pending requests
-                    var pendingCount = context.BookingRequests.Count(req => req.Status == "Pending");
+                    var pendingCount = await context.BookingRequests.CountAsync(req => req.Status == "Pending");
                     System.Diagnostics.Debug.WriteLine($"Pending requests: {pendingCount}");
                     
-                    var result = context.BookingRequests
+                    var result =  await context.BookingRequests
                         .Include(req => req.IdRenterNavigation)
                             .ThenInclude(r => r.IdDetailNavigation)
                         .Include(req => req.IdRoomNavigation)
                         .Where(req => req.IdRoomNavigation.IdOwner == ownerId && req.Status == "Pending")
                         .OrderByDescending(req => req.DateCreated)
-                        .ToList();
+                        .ToListAsync();
                     
                     System.Diagnostics.Debug.WriteLine($"Requests for owner {ownerId}: {result.Count}");
                     
@@ -119,17 +120,17 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// L?y chi ti?t yêu c?u theo ID
         /// </summary>
-        public BookingRequest? GetRequestById(Guid requestId)
+        public  async Task <BookingRequest?> GetRequestByIdAsync(Guid requestId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.BookingRequests
+                    return  await context.BookingRequests
                         .Include(req => req.IdRenterNavigation)
                             .ThenInclude(r => r.IdDetail)
                         .Include(req => req.IdRoomNavigation)
-                        .FirstOrDefault(req => req.Id == requestId);
+                        .FirstOrDefaultAsync(req => req.Id == requestId);
                 }
             }
             catch (Exception ex)
@@ -142,13 +143,13 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// C?p nh?t tr?ng thái yêu c?u (Approved/Rejected)
         /// </summary>
-        public bool UpdateRequestStatus(Guid requestId, string newStatus)
+        public async Task <bool> UpdateRequestStatusAsync(Guid requestId, string newStatus)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var request = context.BookingRequests.Find(requestId);
+                    var request =  await context.BookingRequests.FindAsync(requestId);
                     if (request == null) return false;
 
                     // Ch? cho phép các tr?ng thái h?p l?
@@ -156,7 +157,7 @@ namespace QuanLyPhongTro.src.Services1
                         return false;
 
                     request.Status = newStatus;
-                    context.SaveChanges();
+                     await context.SaveChangesAsync();
                     return true;
                 }
             }
@@ -170,17 +171,17 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Xóa yêu c?u (n?u c?n)
         /// </summary>
-        public bool DeleteRequest(Guid requestId)
+        public  async Task <bool> DeleteRequestAsync(Guid requestId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var request = context.BookingRequests.Find(requestId);
+                    var request = await context.BookingRequests.FindAsync(requestId);
                     if (request == null) return false;
 
                     context.BookingRequests.Remove(request);
-                    context.SaveChanges();
+                   await context.SaveChangesAsync();
                     return true;
                 }
             }
@@ -194,23 +195,111 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// L?y l?ch s? yêu c?u c?a Renter
         /// </summary>
-        public List<BookingRequest> GetRequestsByRenter(Guid renterId)
+        public async Task <List<BookingRequest>> GetRequestsByRenterAsync(Guid renterId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.BookingRequests
+                    return  await context.BookingRequests
                         .Include(req => req.IdRoomNavigation)
                         .Where(req => req.IdRenter == renterId)
                         .OrderByDescending(req => req.DateCreated)
-                        .ToList();
+                        .ToListAsync();
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Lỗi GetRequestsByRenter: {ex.Message}");
                 return new List<BookingRequest>();
+            }
+        }
+        /// <summary>
+        /// Lấy tất cả yêu cầu theo trạng thái
+        /// </summary>
+        public async Task<List<BookingRequest>> GetRequestsByStatusAsync(Guid ownerId, string status)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.BookingRequests
+                        .Include(req => req.IdRenterNavigation)
+                            .ThenInclude(r => r.IdDetailNavigation)
+                        .Include(req => req.IdRoomNavigation)
+                        .Where(req => req.IdRoomNavigation.IdOwner == ownerId && req.Status == status)
+                        .OrderByDescending(req => req.DateCreated)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi GetRequestsByStatusAsync: {ex.Message}");
+                return new List<BookingRequest>();
+            }
+        }
+
+        /// <summary>
+        /// Kiểm tra xem người thuê đã có yêu cầu pending cho phòng này chưa
+        /// </summary>
+        public async Task<bool> HasPendingRequestAsync(Guid renterId, Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.BookingRequests.AnyAsync(req =>
+                        req.IdRenter == renterId &&
+                        req.IdRoom == roomId &&
+                        req.Status == "Pending");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi HasPendingRequestAsync: {ex.Message}");
+                return false;
+            }
+        }
+        /// <summary>
+        /// Đếm số lượng yêu cầu pending của owner
+        /// </summary>
+        public async Task<int> CountPendingRequestsAsync(Guid ownerId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.BookingRequests
+                        .CountAsync(req => req.IdRoomNavigation.IdOwner == ownerId && req.Status == "Pending");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi CountPendingRequestsAsync: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Lấy yêu cầu gần nhất của renter cho một phòng cụ thể
+        /// </summary>
+        public async Task<BookingRequest?> GetLatestRequestForRoomAsync(Guid renterId, Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.BookingRequests
+                        .Include(req => req.IdRoomNavigation)
+                        .Where(req => req.IdRenter == renterId && req.IdRoom == roomId)
+                        .OrderByDescending(req => req.DateCreated)
+                        .FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi GetLatestRequestForRoomAsync: {ex.Message}");
+                return null;
             }
         }
     }

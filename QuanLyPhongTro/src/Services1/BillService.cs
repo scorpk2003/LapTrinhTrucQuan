@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Services1
 {
@@ -21,13 +22,13 @@ namespace QuanLyPhongTro.src.Services1
             _contractService = new ContractService();
         }
 
-        public List<Bill> GetBillsByMonth(int month, int year, Guid ownerId)
+        public  async Task< List<Bill>> GetBillsByMonthAsync(int month, int year, Guid ownerId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.Bills
+                    return await context.Bills
                         .Include(b => b.IdRoomNavigation) 
                         .Include(b => b.IdPersonNavigation) 
                         .Include(b => b.BillDetail)
@@ -37,7 +38,7 @@ namespace QuanLyPhongTro.src.Services1
                                     b.PaymentDate.Value.Month == month && 
                                     b.PaymentDate.Value.Year == year) 
                         .OrderBy(b => b.IdRoomNavigation.Name) 
-                        .ToList();
+                        .ToListAsync();
                 }
             }
             catch (Exception ex)
@@ -47,19 +48,19 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public List<Bill> GetUnpaidBills(Guid ownerId)
+        public  async Task <List<Bill>> GetUnpaidBillsAsync(Guid ownerId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.Bills 
+                    return  await context.Bills 
                         .Include(b => b.IdRoomNavigation)
                         .Include(b => b.IdPersonNavigation)
                         .Where(b => b.IdRoomNavigation.IdOwner == ownerId &&
                                    (b.Payment == null || b.Payment.Amount < b.TotalMoney))
                         .OrderBy(b => b.PaymentDate)
-                        .ToList();
+                        .ToListAsync();
                 }
             }
             catch (Exception ex)
@@ -69,17 +70,17 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public List<Bill> GetBillsByRenter(Guid renterId)
+        public  async Task< List<Bill>> GetBillsByRenterAsync(Guid renterId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.Bills 
+                    return await context.Bills 
                         .Include(b => b.IdRoomNavigation)
                         .Where(b => b.IdPerson == renterId)
                         .OrderByDescending(b => b.PaymentDate)
-                        .ToList();
+                        .ToListAsync();
                 }
             }
             catch (Exception ex)
@@ -89,20 +90,20 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public Bill GetBillWithDetails(Guid billId)
+        public  async Task <Bill> GetBillWithDetailsAsync(Guid billId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var bill = context.Bills
+                    var bill = await context.Bills
                         .AsNoTracking()
                         .Include(b => b.IdRoomNavigation)
                         .Include(b => b.IdPersonNavigation)
                         .Include(b => b.BillDetail)
                             .ThenInclude(bd => bd.IdServiceNavigation)
                         .Include(b => b.Payment)
-                        .FirstOrDefault(b => b.Id == billId);
+                        .FirstOrDefaultAsync(b => b.Id == billId);
                     return bill;
                 }
             }
@@ -113,35 +114,35 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public bool CreateBill(Bill bill, List<BillDetail> details = null)
+        public  async Task <bool> CreateBillAsync(Bill bill, List<BillDetail> details = null)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    using (var transaction = context.Database.BeginTransaction())
+                    using (var transaction = await context.Database.BeginTransactionAsync())
                     {
                         try
                         {
-                            context.Bills.Add(bill);
-                            context.SaveChanges();
+                            context.Bills.AddAsync(bill);
+                            context.SaveChangesAsync();
 
                             if (details != null)
                             {
                                 foreach (var detail in details)
                                 {
                                     detail.IdBill = bill.Id;
-                                    context.BillDetails.Add(detail);
+                                    context.BillDetails.AddAsync(detail);
                                 }
-                                context.SaveChanges();
+                                context.SaveChangesAsync();
                             }
 
-                            transaction.Commit();
+                            transaction.CommitAsync();
                             return true;
                         }
                         catch (Exception ex)
                         {
-                            transaction.Rollback();
+                            transaction.RollbackAsync();
                             Console.WriteLine($"Lỗi CreateBill: {ex.Message}");
                             return false;
                         }
@@ -157,13 +158,13 @@ namespace QuanLyPhongTro.src.Services1
 
         // public bool UpdateBillStatus(Guid billId, string newStatus) { ... }
 
-        public bool PayBill(Guid billId, decimal amount, string paymentMethod)
+        public async Task< bool> PayBillAsync(Guid billId, decimal amount, string paymentMethod)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var bill = context.Bills.Include(b => b.Payment).FirstOrDefault(b => b.Id == billId); // Sửa
+                    var bill =  await context.Bills.Include(b => b.Payment).FirstOrDefaultAsync(b => b.Id == billId); // Sửa
                     if (bill == null) return false;
 
                     if (bill.Payment == null)
@@ -177,7 +178,7 @@ namespace QuanLyPhongTro.src.Services1
                             PaymentDate = DateTime.Now
                         };
                         bill.Status = "Đã Thanh Toán";
-                        context.Payments.Add(payment);
+                        context.Payments.AddAsync(payment);
                         context.Bills.Update(bill);
                     }
                     else
@@ -188,7 +189,7 @@ namespace QuanLyPhongTro.src.Services1
                         bill.Payment.PaymentMethod = paymentMethod;
                     }
 
-                    context.SaveChanges();
+                    context.SaveChangesAsync();
                     return true;
                 }
             }
@@ -199,11 +200,11 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public bool GenerateMonthlyBills(Guid ownerId, int month, int year)
+        public async Task< bool> GenerateMonthlyBillsAsync(Guid ownerId, int month, int year)
         {
             try
             {
-                var activeContracts = _contractService.GetAllActiveContractsByOwner(ownerId);
+                var activeContracts = _contractService.GetAllActiveContractsByOwnerAsync(ownerId);
                 using (var context = new AppContextDB())
                 {
                     foreach (var contract in activeContracts)
@@ -219,9 +220,9 @@ namespace QuanLyPhongTro.src.Services1
                             PaymentDate = new DateTime(year, month, DateTime.DaysInMonth(year, month)),
                             TotalMoney = contract.IdRoomNavigation?.Price ?? 0,
                         };
-                        context.Bills.Add(newBill);
+                        await context.Bills.AddAsync(newBill);
                     }
-                    context.SaveChanges();
+                   await context.SaveChangesAsync();
                     return true;
                 }
             }
@@ -232,10 +233,10 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public bool ExportBillToPDF(Guid billId)
+        public async Task <bool> ExportBillToPDFAsync(Guid billId)
         {
             // 1. Lấy dữ liệu
-            Bill billToExport = GetBillWithDetails(billId);
+            Bill billToExport =  await GetBillWithDetailsAsync(billId);
             if (billToExport == null)
             {
                 MessageBox.Show("Không thể tải chi tiết hóa đơn.");
@@ -262,65 +263,68 @@ namespace QuanLyPhongTro.src.Services1
             try
             {
                 QuestPDF.Settings.License = LicenseType.Community;
-
-                Document.Create(container =>
+                await Task.Run(() =>
                 {
-                    container.Page(page =>
+
+                    Document.Create(container =>
                     {
-                        page.Margin(50);
+                        container.Page(page =>
+                        {
+                            page.Margin(50);
 
-                        page.Header()
-                            .AlignCenter()
-                            .Text("HOA DON TIEN PHONG")
-                            .SemiBold().FontSize(20).FontColor(Colors.Blue.Medium);
+                            page.Header()
+                                .AlignCenter()
+                                .Text("HOA DON TIEN PHONG")
+                                .SemiBold().FontSize(20).FontColor(Colors.Blue.Medium);
 
-                        page.Content()
-                            .PaddingVertical(20)
-                            .Column(col =>
-                            {
-                                col.Spacing(10); 
-
-                                col.Item().Text($"Phong: {billToExport.IdRoomNavigation?.Name ?? "N/A"}");
-                                col.Item().Text($"Nguoi thue: {billToExport.IdPersonNavigation?.Username ?? "N/A"}");
-                                col.Item().Text($"Ngay chot hoa don: {(billToExport.PaymentDate.HasValue ? billToExport.PaymentDate.Value.ToString("dd/MM/yyyy") : "N/A")}");
-
-                                string statusText = "Chưa thanh toán";
-                                if (billToExport.Payment != null && billToExport.Payment.Amount >= billToExport.TotalMoney)
+                            page.Content()
+                                .PaddingVertical(20)
+                                .Column(col =>
                                 {
-                                    statusText = "Đã thanh toán";
-                                }
-                                else if (billToExport.Payment != null)
+                                    col.Spacing(10);
+
+                                    col.Item().Text($"Phong: {billToExport.IdRoomNavigation?.Name ?? "N/A"}");
+                                    col.Item().Text($"Nguoi thue: {billToExport.IdPersonNavigation?.Username ?? "N/A"}");
+                                    col.Item().Text($"Ngay chot hoa don: {(billToExport.PaymentDate.HasValue ? billToExport.PaymentDate.Value.ToString("dd/MM/yyyy") : "N/A")}");
+
+                                    string statusText = "Chưa thanh toán";
+                                    if (billToExport.Payment != null && billToExport.Payment.Amount >= billToExport.TotalMoney)
+                                    {
+                                        statusText = "Đã thanh toán";
+                                    }
+                                    else if (billToExport.Payment != null)
+                                    {
+                                        statusText = $"Đã thanh toán một phần ({billToExport.Payment.Amount:N0} VND)";
+                                    }
+                                    col.Item().Text($"Trang thai: {statusText}");
+
+                                    col.Item().PaddingTop(15).Text("--- CHI TIET DICH VU ---").Bold();
+
+                                    // Thêm tiền phòng
+                                    decimal roomPrice = (billToExport.TotalMoney ?? 0) - billToExport.BillDetail?.Total ?? 0;
+                                    col.Item().Text($"- Tien phong: {roomPrice:N0} VND");
+
+                                    if (billToExport.BillDetail != null)
+                                    {
+                                        string text = $"- {billToExport.BillDetail.IdServiceNavigation?.Name ?? "Dich vu"}: {billToExport.BillDetail.Total:N0} VND";
+                                        col.Item().Text(text);
+                                    }
+
+                                    col.Item().PaddingTop(20).Text($"TONG CONG: {billToExport.TotalMoney:N0} VND").Bold().FontSize(14);
+
+                                });
+
+                            page.Footer()
+                                .AlignCenter()
+                                .Text(x =>
                                 {
-                                    statusText = $"Đã thanh toán một phần ({billToExport.Payment.Amount:N0} VND)";
-                                }
-                                col.Item().Text($"Trang thai: {statusText}");
-
-                                col.Item().PaddingTop(15).Text("--- CHI TIET DICH VU ---").Bold();
-
-                                // Thêm tiền phòng
-                                decimal roomPrice = (billToExport.TotalMoney ?? 0) - billToExport.BillDetail?.Total ?? 0;
-                                col.Item().Text($"- Tien phong: {roomPrice:N0} VND");
-
-                                if (billToExport.BillDetail != null)
-                                {
-                                     string text = $"- {billToExport.BillDetail.IdServiceNavigation?.Name ?? "Dich vu"}: {billToExport.BillDetail.Total:N0} VND";
-                                     col.Item().Text(text);
-                                }
-
-                                col.Item().PaddingTop(20).Text($"TONG CONG: {billToExport.TotalMoney:N0} VND").Bold().FontSize(14);
-                               
-                            });
-
-                        page.Footer()
-                            .AlignCenter()
-                            .Text(x =>
-                            {
-                                x.Span("Trang ");
-                                x.CurrentPageNumber();
-                            });
-                    });
-                })
-                .GeneratePdf(filePath);
+                                    x.Span("Trang ");
+                                    x.CurrentPageNumber();
+                                });
+                        });
+                    })
+                    .GeneratePdf(filePath);
+                });
 
                 // 4. Tự động mở file PDF
                 var p = new Process
@@ -342,17 +346,17 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public Bill GetLatestUnpaidBill(Guid renterId)
+        public async Task <Bill> GetLatestUnpaidBillAsync(Guid renterId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.Bills 
+                    return await context.Bills 
                         .Include(b => b.Payment)
                         .Where(b => b.IdPerson == renterId && (b.Payment == null || b.Payment.Amount < b.TotalMoney))
                         .OrderByDescending(b => b.PaymentDate)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
                 }
             }
             catch (Exception ex)
@@ -362,7 +366,7 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public Dictionary<string, decimal> GetMonthlySpending(Guid renterId)
+        public async Task <Dictionary<string, decimal> >GetMonthlySpendingAsync(Guid renterId)
         {
             try
             {
@@ -370,14 +374,14 @@ namespace QuanLyPhongTro.src.Services1
                 {
                     DateTime oneYearAgo = DateTime.Now.AddYears(-1);
 
-                    var paidBills = context.Bills 
+                    var paidBills =  await context.Bills 
                         .Include(b => b.Payment)
                         .Where(b => b.IdPerson == renterId &&
                                     b.Payment != null && 
                                     b.Payment.Amount >= b.TotalMoney &&
                                     b.PaymentDate.HasValue &&
                                     b.PaymentDate.Value >= oneYearAgo) 
-                        .ToList();
+                        .ToListAsync();
 
                     var spendingData = paidBills
                         .GroupBy(b => new { b.PaymentDate.Value.Year, b.PaymentDate.Value.Month }) // Sửa
@@ -398,13 +402,13 @@ namespace QuanLyPhongTro.src.Services1
             }
         }
 
-        public bool UpdateBillAndDetails(Guid billId, List<BillDetail> details, decimal newTotalMoney)
+        public async Task <bool> UpdateBillAndDetails(Guid billId, List<BillDetail> details, decimal newTotalMoney)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    using (var transaction = context.Database.BeginTransaction())
+                    using (var transaction =  await context.Database.BeginTransactionAsync())
                     {
                         try
                         {
@@ -414,17 +418,17 @@ namespace QuanLyPhongTro.src.Services1
                             foreach (var detail in details)
                             {
                                 detail.IdBill = billId;
-                                context.BillDetails.Add(detail); // Sửa
+                              await  context.BillDetails.AddAsync(detail); // Sửa
                             }
 
-                            var bill = context.Bills.Find(billId); // Sửa
+                            var bill = await context.Bills.FindAsync(billId); // Sửa
                             if (bill != null)
                             {
                                 bill.TotalMoney = newTotalMoney;
                             }
 
-                            context.SaveChanges();
-                            transaction.Commit();
+                             await context.SaveChangesAsync();
+                           await transaction.CommitAsync();
                             return true;
                         }
                         catch (Exception ex)

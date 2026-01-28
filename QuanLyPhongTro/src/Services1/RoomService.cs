@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro.src.Services1
@@ -13,19 +14,19 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Tạo phòng mới và lưu các hình ảnh liên quan
         /// </summary>
-        public bool CreateRoom(Room room, List<string> imageUrls)
+        public async Task<bool> CreateRoomAsync(Room room, List<string> imageUrls)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    using (var transaction = context.Database.BeginTransaction())
+                    using (var transaction = await context.Database.BeginTransactionAsync()) // ⭐ BeginTransaction() → BeginTransactionAsync()
                     {
                         try
                         {
                             // 1. Lưu phòng
-                            context.Rooms.Add(room); 
-                            context.SaveChanges();
+                            await context.Rooms.AddAsync(room); // ⭐ Add() → AddAsync()
+                            await context.SaveChangesAsync(); // ⭐ SaveChanges() → SaveChangesAsync()
 
                             // 2. Lưu các hình ảnh
                             if (imageUrls != null && imageUrls.Count > 0)
@@ -34,21 +35,22 @@ namespace QuanLyPhongTro.src.Services1
                                 {
                                     var roomImage = new RoomImage
                                     {
+                                        Id = Guid.NewGuid(),
                                         IdRoom = room.Id,
                                         ImageUrl = url
                                     };
-                                    context.RoomImages.Add(roomImage); 
+                                    await context.RoomImages.AddAsync(roomImage); // ⭐ Add() → AddAsync()
                                 }
-                                context.SaveChanges();
+                                await context.SaveChangesAsync(); // ⭐ SaveChanges() → SaveChangesAsync()
                             }
 
-                            transaction.Commit();
+                            await transaction.CommitAsync(); // ⭐ Commit() → CommitAsync()
                             return true;
                         }
                         catch (Exception ex)
                         {
-                            transaction.Rollback();
-                            Console.WriteLine($"Lỗi CreateRoom: {ex.Message}");
+                            await transaction.RollbackAsync(); // ⭐ Rollback() → RollbackAsync()
+                            Console.WriteLine($"Lỗi CreateRoomAsync: {ex.Message}");
                             return false;
                         }
                     }
@@ -56,51 +58,58 @@ namespace QuanLyPhongTro.src.Services1
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi CreateRoom (Outer): {ex.Message}");
+                Console.WriteLine($"Lỗi CreateRoomAsync (Outer): {ex.Message}");
                 return false;
             }
         }
-        ///<summary>
-        /// Lấy Dãy Trọ
-        ///</summary>
-        public ListRoom? GetListRoom(Guid ownerID)
-        {
-            ListRoom? room;
-
-            using (var context = new AppContextDB())
-            {
-                room = context.ListRooms.FirstOrDefault(p => p.IdOwnerNavigation!.Id == ownerID);
-            }
-
-            return room;
-        } 
 
         /// <summary>
-        /// Cập nhật thông tin TEXT (Tên, Giá, Trạng thái...)
+        /// Lấy Dãy Trọ
         /// </summary>
-        public bool UpdateRoom(Room roomData)
+        public async Task<ListRoom?> GetListRoomAsync(Guid ownerId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var existingRoom = context.Rooms.Find(roomData.Id);
+                    return await context.ListRooms // ⭐ Thêm await
+                        .FirstOrDefaultAsync(p => p.IdOwnerNavigation!.Id == ownerId); // ⭐ FirstOrDefault() → FirstOrDefaultAsync()
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetListRoomAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin TEXT (Tên, Giá, Trạng thái...)
+        /// </summary>
+        public async Task<bool> UpdateRoomAsync(Room roomData)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    var existingRoom = await context.Rooms.FindAsync(roomData.Id); // ⭐ Find() → FindAsync()
                     if (existingRoom == null) return false;
 
                     // Cập nhật các thuộc tính
                     existingRoom.Name = roomData.Name;
                     existingRoom.Price = roomData.Price;
-                    existingRoom.Area = roomData.Area; 
+                    existingRoom.Area = roomData.Area;
                     existingRoom.Status = roomData.Status;
+                    existingRoom.Description = roomData.Description;
 
-                    context.Rooms.Update(existingRoom); 
-                    context.SaveChanges();
+                    context.Rooms.Update(existingRoom);
+                    await context.SaveChangesAsync(); // ⭐ SaveChanges() → SaveChangesAsync()
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi UpdateRoom: {ex.Message}");
+                Console.WriteLine($"Lỗi UpdateRoomAsync: {ex.Message}");
                 return false;
             }
         }
@@ -108,25 +117,25 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Xóa mềm phòng (cập nhật Status = "Deleted")
         /// </summary>
-        public bool DeleteRoom(Guid roomId)
+        public async Task<bool> DeleteRoomAsync(Guid roomId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var room = context.Rooms.Find(roomId);
+                    var room = await context.Rooms.FindAsync(roomId); // ⭐ Find() → FindAsync()
                     if (room == null) return false;
 
                     room.Status = "Deleted";
                     context.Rooms.Update(room);
 
-                    context.SaveChanges();
+                    await context.SaveChangesAsync(); // ⭐ SaveChanges() → SaveChangesAsync()
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi DeleteRoom: {ex.Message}");
+                Console.WriteLine($"Lỗi DeleteRoomAsync: {ex.Message}");
                 return false;
             }
         }
@@ -134,21 +143,23 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Lấy thông tin chi tiết một phòng (BAO GỒM ẢNH)
         /// </summary>
-        public Room GetRoomWithDetails(Guid roomId)
+        public async Task<Room> GetRoomWithDetailsAsync(Guid roomId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var room = context.Rooms 
+                    var room = await context.Rooms // ⭐ Thêm await
                         .Include(r => r.RoomImages)
-                        .FirstOrDefault(r => r.Id == roomId);
+                        .Include(r => r.IdOwnerNavigation)
+                        .FirstOrDefaultAsync(r => r.Id == roomId); // ⭐ FirstOrDefault() → FirstOrDefaultAsync()
+
                     return room;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi GetRoomWithDetails: {ex.Message}");
+                Console.WriteLine($"Lỗi GetRoomWithDetailsAsync: {ex.Message}");
                 return null;
             }
         }
@@ -156,21 +167,21 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Lấy tất cả phòng của một chủ trọ
         /// </summary>
-        public List<Room> GetAllRoomsByOwner(Guid ownerId)
+        public async Task<List<Room>> GetAllRoomsByOwnerAsync(Guid ownerId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.Rooms
+                    return await context.Rooms // ⭐ Thêm await
                         .Where(r => r.IdOwner == ownerId && r.Status != "Deleted")
                         .OrderBy(r => r.Name)
-                        .ToList();
+                        .ToListAsync(); // ⭐ ToList() → ToListAsync()
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi GetAllRoomsByOwner: {ex.Message}");
+                Console.WriteLine($"Lỗi GetAllRoomsByOwnerAsync: {ex.Message}");
                 return new List<Room>();
             }
         }
@@ -178,25 +189,27 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Thêm một ảnh mới vào phòng (dùng cho FormEditRoom)
         /// </summary>
-        public RoomImage AddImageToRoom(Guid roomId, string imageUrl)
+        public async Task<RoomImage> AddImageToRoomAsync(Guid roomId, string imageUrl)
         {
             try
             {
                 var newImage = new RoomImage
                 {
+                    Id = Guid.NewGuid(),
                     IdRoom = roomId,
                     ImageUrl = imageUrl
                 };
+
                 using (var context = new AppContextDB())
                 {
-                    context.RoomImages.Add(newImage);
-                    context.SaveChanges();
+                    await context.RoomImages.AddAsync(newImage); // ⭐ Add() → AddAsync()
+                    await context.SaveChangesAsync(); // ⭐ SaveChanges() → SaveChangesAsync()
                     return newImage;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi AddImageToRoom: {ex.Message}");
+                Console.WriteLine($"Lỗi AddImageToRoomAsync: {ex.Message}");
                 return null;
             }
         }
@@ -204,37 +217,41 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Xóa một ảnh khỏi CSDL (dùng cho FormEditRoom)
         /// </summary>
-        public bool DeleteRoomImage(Guid imageId)
+        public async Task<bool> DeleteRoomImageAsync(Guid imageId)
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    var image = context.RoomImages.Find(imageId);
+                    var image = await context.RoomImages.FindAsync(imageId); // ⭐ Find() → FindAsync()
                     if (image == null) return false;
 
                     context.RoomImages.Remove(image);
-                    context.SaveChanges();
+                    await context.SaveChangesAsync(); // ⭐ SaveChanges() → SaveChangesAsync()
 
-                    try
+                    // ⭐ Xóa file trong Task.Run để tránh block
+                    await Task.Run(() =>
                     {
-                        string fullPath = Path.Combine(Application.StartupPath, image.ImageUrl);
-                        if (File.Exists(fullPath))
+                        try
                         {
-                            File.Delete(fullPath);
+                            string fullPath = Path.Combine(Application.StartupPath, image.ImageUrl);
+                            if (File.Exists(fullPath))
+                            {
+                                File.Delete(fullPath);
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Lỗi xóa file ảnh: {ex.Message}");
-                    }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Lỗi xóa file ảnh: {ex.Message}");
+                        }
+                    });
 
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi DeleteRoomImage: {ex.Message}");
+                Console.WriteLine($"Lỗi DeleteRoomImageAsync: {ex.Message}");
                 return false;
             }
         }
@@ -242,24 +259,339 @@ namespace QuanLyPhongTro.src.Services1
         /// <summary>
         /// Lấy tất cả các phòng đang "Còn trống"
         /// </summary>
-        public List<Room> GetAllAvailableRooms()
+        public async Task<List<Room>> GetAllAvailableRoomsAsync()
         {
             try
             {
                 using (var context = new AppContextDB())
                 {
-                    return context.Rooms
+                    return await context.Rooms // ⭐ Thêm await
                         .Include(r => r.RoomImages)
                         .Where(r => r.Status == "Trống")
                         .OrderBy(r => r.Price)
-                        .ToList();
+                        .ToListAsync(); // ⭐ ToList() → ToListAsync()
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi GetAllAvailableRooms: {ex.Message}");
+                Console.WriteLine($"Lỗi GetAllAvailableRoomsAsync: {ex.Message}");
                 return new List<Room>();
             }
         }
+
+        /// <summary>
+        /// Lấy Room theo ID (đơn giản, không include)
+        /// </summary>
+        public async Task<Room> GetRoomByIdAsync(Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.Rooms.FindAsync(roomId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetRoomByIdAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Tìm kiếm phòng theo từ khóa
+        /// </summary>
+        public async Task<List<Room>> SearchRoomsAsync(Guid ownerId, string keyword)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.Rooms
+                        .Where(r => r.IdOwner == ownerId &&
+                                   r.Status != "Deleted" &&
+                                   (r.Name.Contains(keyword) ||
+                                    (r.Description != null && r.Description.Contains(keyword))))
+                        .OrderBy(r => r.Name)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi SearchRoomsAsync: {ex.Message}");
+                return new List<Room>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy phòng theo trạng thái
+        /// </summary>
+        public async Task<List<Room>> GetRoomsByStatusAsync(Guid ownerId, string status)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.Rooms
+                        .Where(r => r.IdOwner == ownerId && r.Status == status)
+                        .OrderBy(r => r.Name)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetRoomsByStatusAsync: {ex.Message}");
+                return new List<Room>();
+            }
+        }
+
+        /// <summary>
+        /// Đếm số phòng theo trạng thái
+        /// </summary>
+        public async Task<int> CountRoomsByStatusAsync(Guid ownerId, string status)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.Rooms
+                        .CountAsync(r => r.IdOwner == ownerId && r.Status == status);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi CountRoomsByStatusAsync: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Lấy thống kê phòng
+        /// </summary>
+        public async Task<RoomStatistics> GetRoomStatisticsAsync(Guid ownerId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    var rooms = await context.Rooms
+                        .Where(r => r.IdOwner == ownerId && r.Status != "Deleted")
+                        .ToListAsync();
+
+                    return new RoomStatistics
+                    {
+                        TotalRooms = rooms.Count,
+                        AvailableRooms = rooms.Count(r => r.Status == "Trống"),
+                        OccupiedRooms = rooms.Count(r => r.Status == "Đã thuê"),
+                        MaintenanceRooms = rooms.Count(r => r.Status == "Bảo trì"),
+                        AveragePrice = rooms.Any() ? rooms.Average(r => r.Price ?? 0) : 0,
+                        LowestPrice = rooms.Any() ? rooms.Min(r => r.Price ?? 0) : 0,
+                        HighestPrice = rooms.Any() ? rooms.Max(r => r.Price ?? 0) : 0,
+                        TotalArea = rooms.Sum(r => r.Area ?? 0)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetRoomStatisticsAsync: {ex.Message}");
+                return new RoomStatistics();
+            }
+        }
+
+        /// <summary>
+        /// Lấy phòng theo khoảng giá
+        /// </summary>
+        public async Task<List<Room>> GetRoomsByPriceRangeAsync(
+            Guid ownerId,
+            decimal minPrice,
+            decimal maxPrice)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.Rooms
+                        .Include(r => r.RoomImages)
+                        .Where(r => r.IdOwner == ownerId &&
+                                   r.Status != "Deleted" &&
+                                   r.Price >= minPrice &&
+                                   r.Price <= maxPrice)
+                        .OrderBy(r => r.Price)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetRoomsByPriceRangeAsync: {ex.Message}");
+                return new List<Room>();
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật trạng thái phòng
+        /// </summary>
+        public async Task<bool> UpdateRoomStatusAsync(Guid roomId, string newStatus)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    var room = await context.Rooms.FindAsync(roomId);
+                    if (room == null) return false;
+
+                    room.Status = newStatus;
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi UpdateRoomStatusAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Kiểm tra phòng có đang được thuê không
+        /// </summary>
+        public async Task<bool> IsRoomOccupiedAsync(Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.Contracts
+                        .AnyAsync(c => c.IdRoom == roomId && c.Status == "Active");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi IsRoomOccupiedAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách ảnh của phòng
+        /// </summary>
+        public async Task<List<RoomImage>> GetRoomImagesAsync(Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    return await context.RoomImages
+                        .Where(ri => ri.IdRoom == roomId)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetRoomImagesAsync: {ex.Message}");
+                return new List<RoomImage>();
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật nhiều ảnh cùng lúc
+        /// </summary>
+        public async Task<bool> UpdateRoomImagesAsync(Guid roomId, List<string> imageUrls)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    using (var transaction = await context.Database.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            // Xóa tất cả ảnh cũ
+                            var oldImages = await context.RoomImages
+                                .Where(ri => ri.IdRoom == roomId)
+                                .ToListAsync();
+
+                            context.RoomImages.RemoveRange(oldImages);
+
+                            // Thêm ảnh mới
+                            foreach (var url in imageUrls)
+                            {
+                                var newImage = new RoomImage
+                                {
+                                    Id = Guid.NewGuid(),
+                                    IdRoom = roomId,
+                                    ImageUrl = url
+                                };
+                                await context.RoomImages.AddAsync(newImage);
+                            }
+
+                            await context.SaveChangesAsync();
+                            await transaction.CommitAsync();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            await transaction.RollbackAsync();
+                            Console.WriteLine($"Lỗi UpdateRoomImagesAsync (Transaction): {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi UpdateRoomImagesAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Xóa cứng phòng (thật sự xóa khỏi database)
+        /// </summary>
+        public async Task<bool> HardDeleteRoomAsync(Guid roomId)
+        {
+            try
+            {
+                using (var context = new AppContextDB())
+                {
+                    using (var transaction = await context.Database.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            var room = await context.Rooms
+                                .Include(r => r.RoomImages)
+                                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+                            if (room == null) return false;
+
+                            // Xóa tất cả ảnh
+                            if (room.RoomImages.Any())
+                            {
+                                context.RoomImages.RemoveRange(room.RoomImages);
+                            }
+
+                            // Xóa phòng
+                            context.Rooms.Remove(room);
+
+                            await context.SaveChangesAsync();
+                            await transaction.CommitAsync();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            await transaction.RollbackAsync();
+                            Console.WriteLine($"Lỗi HardDeleteRoomAsync (Transaction): {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi HardDeleteRoomAsync: {ex.Message}");
+                return false;
+            }
+        }
     }
+
+    
 }

@@ -1,17 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongTro.src.Models;
+using ScottPlot.Finance;
+using System.Threading.Tasks;
 
 namespace QuanLyPhongTro.src.Services1
 {
     public class BillDetailServices
     {
         /// <summary>
-        /// L?y danh s�ch chi ti?t h�a don theo BillId (bao g?m th�ng tin d?ch v?)
+        /// L?y danh sách chi ti?t hóa don theo BillId (bao g?m thông tin d?ch v?)
         /// </summary>
-        public List<BillDetail> GetBillDetailsByBillId(Guid billId)
+        public async Task<List<BillDetail>> GetBillDetailsByBillIdAsync(Guid billId)
         {
             try
             {
@@ -19,12 +21,12 @@ namespace QuanLyPhongTro.src.Services1
 
                 {
 
-                    // ? L?y chi ti?t h�a don theo IdBill
-                    return context.BillDetails
+                    // ? L?y chi ti?t hóa don theo IdBill
+                    return await context.BillDetails
                                   .Where(d => d.IdBill == billId)
-                                  .Include(d => d.IdServiceNavigation) // L?y th�ng tin d?ch v? li�n quan
-                                  .ToList();
-                }    
+                                  .Include(d => d.IdServiceNavigation) // L?y thông tin d?ch v? liên quan
+                                  .ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -34,15 +36,15 @@ namespace QuanLyPhongTro.src.Services1
         }
 
         /// <summary>
-        /// Th�m nhi?u chi ti?t h�a don c�ng l�c
+        /// Thêm nhi?u chi ti?t hóa don cùng lúc
         /// </summary>
-        public bool AddBillDetails(List<BillDetail> details)
+        public async Task<bool> AddBillDetailsAsync(List<BillDetail> details)
         {
             try
             {
                 using var context = new AppContextDB();
-                context.BillDetails.AddRange(details);
-                context.SaveChanges();
+                await context.BillDetails.AddRangeAsync(details);
+                await context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
@@ -51,18 +53,18 @@ namespace QuanLyPhongTro.src.Services1
                 return false;
             }
         }
-        public Bill? GetBillWithDetails(Guid billId)
+        public async Task<Bill?> GetBillWithDetailsAsync(Guid billId)
         {
             try
             {
                 using var context = new AppContextDB();
 
-                var billWithDetails = context.Bills
+                var billWithDetails = await context.Bills
     .Where(b => b.Id == billId)
-    .Include(b => b.BillDetail) // L?y chi ti?t h�a don
+    .Include(b => b.BillDetail) // L?y chi ti?t hóa don
         .ThenInclude(d => d.IdServiceNavigation) // L?y d?ch v?
-    .Include(b => b.Payment) // L?y th�ng tin thanh to�n
-    .FirstOrDefault();
+    .Include(b => b.Payment) // L?y thông tin thanh toán
+    .FirstOrDefaultAsync();
 
                 System.Diagnostics.Debug.WriteLine($"\n\n\tL?y du?c BillWithDetails: {billWithDetails}\n\n");
 
@@ -77,20 +79,29 @@ namespace QuanLyPhongTro.src.Services1
 
 
         /// <summary>
-        /// C?p nh?t th�ng tin chi ti?t h�a don
+        /// C?p nh?t thông tin chi ti?t hóa don
         /// </summary>
-        public bool UpdateBillDetail(BillDetail detail)
+        public async Task<bool> UpdateBillDetailAsync(BillDetail detail)
         {
             try
             {
                 using var context = new AppContextDB();
-                var existing = context.BillDetails.Find(detail.Id);
+                var existing = await context.BillDetails.FindAsync(detail.Id);
                 if (existing == null) return false;
 
-                existing = detail;
+                existing.IdService = detail.IdService;
+                existing.Quantity = detail.Quantity;
+                existing.Id = detail.Id;
+                existing.IdBill = detail.IdBill;
+                existing.Total = detail.Total;
+                existing.Electricity = detail.Electricity;
+                existing.Water = detail.Water;
+                existing.IdBillNavigation = detail.IdBillNavigation;
+                existing.IdServiceNavigation = detail.IdServiceNavigation;
+
                 context.BillDetails.Update(existing);
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
@@ -101,23 +112,79 @@ namespace QuanLyPhongTro.src.Services1
         }
 
         /// <summary>
-        /// X�a chi ti?t h�a don theo ID
+        /// Xóa chi ti?t hóa don theo ID
         /// </summary>
-        public bool DeleteBillDetail(Guid id)
+        public async Task<bool> DeleteBillDetailAsync(Guid id)
         {
             try
             {
                 using var context = new AppContextDB();
-                var detail = context.BillDetails.Find(id);
+                var detail = await context.BillDetails.FindAsync(id);
                 if (detail == null) return false;
 
                 context.BillDetails.Remove(detail);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"L?i DeleteBillDetail: {ex.Message}");
+                return false;
+            }
+        }
+        ///<summary>
+        ///lấy tổng số tiền của một hoá đơn
+        /// </summary>
+        public async Task<decimal> GetTotalAmountByBillIdAsync(Guid billID)
+        {
+            try
+            {
+                using var context = new AppContextDB();
+                var Total = await context.BillDetails
+                    .Where(d => d.IdBill == billID)
+                    .SumAsync(d => d.Total ?? 0);
+                return Total;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi GetTotalAmountByBillIdAsync: {ex.Message}");
+                return 0;
+            }
+        }
+        ///<summary>
+        /// Kiểm tra chi tiết hoá đơn có tồn tại không
+        ///</summary>
+        public async Task<bool> ExitsAsync(Guid Id)
+        {
+            try
+            {
+                using var context = new AppContextDB();
+                return await context.BillDetails.AnyAsync(d => d.Id == Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi ExitsAsync: {ex.Message}");
+                return false;
+
+            }
+        }
+        ///<summary>
+        /// Xoá tất cả chi tiết hoá đơn theo BillId
+        ///</summary>
+        public async Task<bool> DeleteBillDetailsByBillIdAsync(Guid billId)
+        {
+            try
+            {
+                using var context = new AppContextDB();
+                var details = await context.BillDetails.Where(d => d.IdBill == billId).ToListAsync();
+                if (details.Count == 0) return true;
+                context.BillDetails.RemoveRange(details);
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi DeleteBillDetailsByBillIdAsync: {ex.Message}");
                 return false;
             }
         }

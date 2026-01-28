@@ -2,13 +2,22 @@
 using System;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace QuanLyPhongTro.src.Services1
 {
     public class QRPaymentService
     {
+        private readonly HttpClient _httpClient;
+
+        public QRPaymentService()
+        {
+            _httpClient = new HttpClient();
+        }
+
         /// <summary>
-        /// Tạo QR Code theo chuẩn VietQR (EMVCo)
+        /// Tạo QR Code theo chuẩn VietQR (EMVCo) - Async version
         /// </summary>
         /// <param name="bankBin">Mã BIN ngân hàng (VD: "970422" = MB Bank)</param>
         /// <param name="accountNo">Số tài khoản</param>
@@ -16,33 +25,37 @@ namespace QuanLyPhongTro.src.Services1
         /// <param name="amount">Số tiền (ĐÚNG = _bill.TotalMoney)</param>
         /// <param name="description">Nội dung chuyển khoản</param>
         /// <returns>Bitmap QR Code chuẩn VietQR</returns>
-        public Bitmap GenerateVietQR(string bankBin, string accountNo, string accountName, 
+        public async Task<Bitmap> GenerateVietQRAsync(string bankBin, string accountNo, string accountName,
             decimal amount, string description)
         {
             try
             {
-                // --- TẠO QR THEO CHUẨN EMVCo (VietQR) ---
-                string qrContent = BuildVietQRContent(bankBin, accountNo, accountName, amount, description);
-
-                // Log để kiểm tra
-                System.Diagnostics.Debug.WriteLine($"=== QR Content ===");
-                System.Diagnostics.Debug.WriteLine(qrContent);
-                System.Diagnostics.Debug.WriteLine($"Số tiền: {amount:N0} VND");
-
-                // Tạo QR Code
-                using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+                // ⭐ Wrap trong Task.Run để tránh block UI thread
+                return await Task.Run(() =>
                 {
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrContent, QRCodeGenerator.ECCLevel.M);
-                    using (QRCode qrCode = new QRCode(qrCodeData))
+                    // --- TẠO QR THEO CHUẨN EMVCo (VietQR) ---
+                    string qrContent = BuildVietQRContent(bankBin, accountNo, accountName, amount, description);
+
+                    // Log để kiểm tra
+                    System.Diagnostics.Debug.WriteLine($"=== QR Content ===");
+                    System.Diagnostics.Debug.WriteLine(qrContent);
+                    System.Diagnostics.Debug.WriteLine($"Số tiền: {amount:N0} VND");
+
+                    // Tạo QR Code
+                    using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
                     {
-                        Bitmap qrCodeImage = qrCode.GetGraphic(10);
-                        return new Bitmap(qrCodeImage);
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrContent, QRCodeGenerator.ECCLevel.M);
+                        using (QRCode qrCode = new QRCode(qrCodeData))
+                        {
+                            Bitmap qrCodeImage = qrCode.GetGraphic(10);
+                            return new Bitmap(qrCodeImage);
+                        }
                     }
-                }
+                });
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Lỗi GenerateVietQR: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Lỗi GenerateVietQRAsync: {ex.Message}");
                 return null;
             }
         }
@@ -100,10 +113,10 @@ namespace QuanLyPhongTro.src.Services1
         private string BuildVietQRMerchantInfo(string bankBin, string accountNo)
         {
             StringBuilder merchant = new StringBuilder();
-            
+
             // 00: GUID (VietQR)
             merchant.Append(BuildTLV("00", "A000000727"));
-            
+
             // 01: Beneficiary Organization (Bank BIN + Account Number)
             string beneficiary = bankBin + accountNo;
             merchant.Append(BuildTLV("01", beneficiary));
@@ -196,7 +209,7 @@ namespace QuanLyPhongTro.src.Services1
             // Giới hạn 25 ký tự (chuẩn VietQR)
             string shortId = billId.ToString().Substring(0, 8).ToUpper();
             string desc = $"THANHTOAN {roomName} {shortId}";
-            
+
             // Bỏ dấu và giới hạn độ dài
             desc = NormalizeVietnamese(desc);
             if (desc.Length > 25)
@@ -206,12 +219,15 @@ namespace QuanLyPhongTro.src.Services1
         }
 
         /// <summary>
-        /// Kiểm tra thanh toán qua Bank API (TODO: Tích hợp thực tế)
+        /// Kiểm tra thanh toán qua Bank API (Async version)
         /// </summary>
-        public bool VerifyPaymentFromBank(string transactionDescription, decimal expectedAmount)
+        /// <param name="transactionDescription">Nội dung chuyển khoản</param>
+        /// <param name="expectedAmount">Số tiền mong đợi</param>
+        /// <returns>True nếu tìm thấy giao dịch khớp</returns>
+        public async Task<bool> VerifyPaymentFromBankAsync(string transactionDescription, decimal expectedAmount)
         {
             // ==========================================
-            // ⚠️ ĐÂY LÀ DEMO - KHÔNG HOẠT ĐỘNG THẬT
+            // ⚠️ ĐÂY LÀ DEMO - TÍCH HỢP THẬT CẦN API KEY
             // ==========================================
             // Để kiểm tra thanh toán THẬT, bạn cần:
             // 1. Đăng ký API với ngân hàng (MB Bank, VietcomBank, VietQR API...)
@@ -221,8 +237,211 @@ namespace QuanLyPhongTro.src.Services1
             // 5. Trả về true nếu tìm thấy
 
             System.Diagnostics.Debug.WriteLine($"[TODO] Verify payment: {transactionDescription} - {expectedAmount:N0} VND");
-            
+
+            // Giả lập delay như gọi API thật
+            await Task.Delay(500);
+
             return false; // Mặc định: chưa thanh toán
         }
+
+        /// <summary>
+        /// Kiểm tra thanh toán qua VietQR API (Template cho tích hợp thật)
+        /// </summary>
+        /// <param name="bankBin">Mã BIN ngân hàng</param>
+        /// <param name="accountNo">Số tài khoản</param>
+        /// <param name="transactionDescription">Nội dung chuyển khoản</param>
+        /// <param name="expectedAmount">Số tiền mong đợi</param>
+        /// <param name="fromDate">Từ ngày</param>
+        /// <param name="toDate">Đến ngày</param>
+        /// <returns>Thông tin giao dịch nếu tìm thấy</returns>
+        public async Task<PaymentVerificationResult> VerifyPaymentViaAPIAsync(
+            string bankBin,
+            string accountNo,
+            string transactionDescription,
+            decimal expectedAmount,
+            DateTime fromDate,
+            DateTime toDate)
+        {
+            try
+            {
+                // ⭐ TEMPLATE - Thay thế bằng API thật của ngân hàng
+
+                // VD: Gọi VietQR API hoặc API ngân hàng
+                // var url = "https://api.vietqr.io/v2/transactions";
+                // var request = new HttpRequestMessage(HttpMethod.Post, url);
+                // request.Headers.Add("Authorization", "Bearer YOUR_API_KEY");
+                // request.Content = new StringContent(JsonSerializer.Serialize(new
+                // {
+                //     bankBin = bankBin,
+                //     accountNo = accountNo,
+                //     fromDate = fromDate.ToString("yyyy-MM-dd"),
+                //     toDate = toDate.ToString("yyyy-MM-dd")
+                // }), Encoding.UTF8, "application/json");
+
+                // var response = await _httpClient.SendAsync(request);
+                // if (response.IsSuccessStatusCode)
+                // {
+                //     var jsonResponse = await response.Content.ReadAsStringAsync();
+                //     var transactions = JsonSerializer.Deserialize<List<Transaction>>(jsonResponse);
+                //     
+                //     // Tìm giao dịch khớp
+                //     var matchedTransaction = transactions.FirstOrDefault(t =>
+                //         t.Description.Contains(transactionDescription) &&
+                //         Math.Abs(t.Amount - expectedAmount) < 0.01m);
+                //     
+                //     if (matchedTransaction != null)
+                //     {
+                //         return new PaymentVerificationResult
+                //         {
+                //             IsVerified = true,
+                //             TransactionId = matchedTransaction.Id,
+                //             Amount = matchedTransaction.Amount,
+                //             TransactionDate = matchedTransaction.Date,
+                //             Description = matchedTransaction.Description
+                //         };
+                //     }
+                // }
+
+                // Giả lập delay
+                await Task.Delay(1000);
+
+                System.Diagnostics.Debug.WriteLine($"[TODO] Verify via API: {transactionDescription}");
+
+                return new PaymentVerificationResult
+                {
+                    IsVerified = false,
+                    Message = "Chưa tích hợp API ngân hàng"
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi VerifyPaymentViaAPIAsync: {ex.Message}");
+                return new PaymentVerificationResult
+                {
+                    IsVerified = false,
+                    Message = $"Lỗi: {ex.Message}"
+                };
+            }
+        }
+
+        /// <summary>
+        /// Tạo QR Code đơn giản (không theo chuẩn VietQR)
+        /// </summary>
+        public async Task<Bitmap> GenerateSimpleQRAsync(string content)
+        {
+            try
+            {
+                return await Task.Run(() =>
+                {
+                    using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+                    {
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.M);
+                        using (QRCode qrCode = new QRCode(qrCodeData))
+                        {
+                            Bitmap qrCodeImage = qrCode.GetGraphic(10);
+                            return new Bitmap(qrCodeImage);
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi GenerateSimpleQRAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách ngân hàng hỗ trợ VietQR
+        /// </summary>
+        public async Task<List<BankInfo>> GetSupportedBanksAsync()
+        {
+            // Có thể lấy từ API hoặc database
+            await Task.Delay(100); // Giả lập async
+
+            return new List<BankInfo>
+            {
+                new BankInfo { BankBin = "970422", BankCode = "MB", BankName = "MB Bank" },
+                new BankInfo { BankBin = "970436", BankCode = "VCB", BankName = "Vietcombank" },
+                new BankInfo { BankBin = "970415", BankCode = "VTB", BankName = "Vietinbank" },
+                new BankInfo { BankBin = "970405", BankCode = "ACB", BankName = "ACB" },
+                new BankInfo { BankBin = "970407", BankCode = "TCB", BankName = "Techcombank" },
+                new BankInfo { BankBin = "970416", BankCode = "ACB", BankName = "ACB" },
+                new BankInfo { BankBin = "970418", BankCode = "BIDV", BankName = "BIDV" },
+                new BankInfo { BankBin = "970403", BankCode = "SHB", BankName = "SHB" },
+                new BankInfo { BankBin = "970423", BankCode = "TPB", BankName = "TPBank" },
+                new BankInfo { BankBin = "970432", BankCode = "VPB", BankName = "VPBank" }
+            };
+        }
+
+        /// <summary>
+        /// Validate thông tin tài khoản ngân hàng
+        /// </summary>
+        public async Task<BankAccountValidation> ValidateBankAccountAsync(string bankBin, string accountNo)
+        {
+            try
+            {
+                // ⭐ Template - Tích hợp với API validate tài khoản thật
+                await Task.Delay(500);
+
+                // Validate cơ bản
+                if (string.IsNullOrWhiteSpace(bankBin) || string.IsNullOrWhiteSpace(accountNo))
+                {
+                    return new BankAccountValidation
+                    {
+                        IsValid = false,
+                        Message = "Thông tin không hợp lệ"
+                    };
+                }
+
+                if (accountNo.Length < 6 || accountNo.Length > 20)
+                {
+                    return new BankAccountValidation
+                    {
+                        IsValid = false,
+                        Message = "Số tài khoản phải từ 6-20 ký tự"
+                    };
+                }
+
+                return new BankAccountValidation
+                {
+                    IsValid = true,
+                    Message = "Hợp lệ"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BankAccountValidation
+                {
+                    IsValid = false,
+                    Message = $"Lỗi: {ex.Message}"
+                };
+            }
+        }
+    }
+
+    // DTO Classes
+    public class PaymentVerificationResult
+    {
+        public bool IsVerified { get; set; }
+        public string TransactionId { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime? TransactionDate { get; set; }
+        public string Description { get; set; }
+        public string Message { get; set; }
+    }
+
+    public class BankInfo
+    {
+        public string BankBin { get; set; }
+        public string BankCode { get; set; }
+        public string BankName { get; set; }
+    }
+
+    public class BankAccountValidation
+    {
+        public bool IsValid { get; set; }
+        public string Message { get; set; }
+        public string AccountName { get; set; }
     }
 }

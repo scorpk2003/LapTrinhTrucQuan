@@ -19,5 +19,7 @@ public partial class Notice
 
     public Guid? Idreport { get; set; }
 
+    public DateTime? DateCreated { get; set; }
+
     public virtual Report? IdreportNavigation { get; set; }
 }
