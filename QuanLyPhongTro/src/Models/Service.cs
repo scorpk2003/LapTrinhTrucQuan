@@ -13,5 +13,5 @@ public partial class Service
 
     public decimal? PricePerUnit { get; set; }
 
-    public virtual ICollection<BillDetail>? BillDetails { get; set; };
+    public virtual ICollection<BillDetail>? BillDetails { get; set; }
 }
