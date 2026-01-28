@@ -1,6 +1,142 @@
-@API_Server_HostAddress = http://localhost:5274
+﻿@API_Server_HostAddress = http://localhost:5000
+@OwnerId = 9ABE5296-C067-4132-8064-5356EE3E5740
+@RenterId =0DCDFD5F-B412-4FF4-A73D-A6EE0D8345F9
+@RoomId = AB492249-A532-41F0-8CD9-60E124689C74
+@ServiceId_Dien = 11111111-1111-1111-1111-111111111111
+@ServiceId_Nuoc = 22222222-2222-2222-2222-222222222222
+@RequestId = da0bbdec-bc89-49f2-ace6-efd5d0d5070c
 
-GET {{API_Server_HostAddress}}/weatherforecast/
+### ==========================================
+### BOOKING REQUEST API TESTS
+GET {{API_Server_HostAddress}}/api/BookingRequest/owner/{{OwnerId}}/pending
+
+### ==========================================
+
+GET http://localhost:5000/api/BookingRequest/da0bbdec-bc89-49f2-ace6-efd5d0d5070c
 Accept: application/json
+
+###
+
+### 2. Lấy tất cả yêu cầu Pending của Owner
+GET {{API_Server_HostAddress}}/api/BookingRequest/owner/{{OwnerId}}/pending
+Accept: application/json
+
+###
+
+### 3. Lấy chi tiết yêu cầu theo ID
+GET {{API_Server_HostAddress}}/api/BookingRequest/{{RequestId}}
+Accept: application/json
+
+###
+
+### 4. Cập nhật trạng thái yêu cầu thành Approved
+PUT {{API_Server_HostAddress}}/api/BookingRequest/{{RequestId}}/status?status=Approved
+
+###
+
+### 5. Cập nhật trạng thái yêu cầu thành Rejected
+PUT {{API_Server_HostAddress}}/api/BookingRequest/{{RequestId}}/status?status=Rejected
+
+###
+
+### 6. Lấy lịch sử yêu cầu của Renter
+GET {{API_Server_HostAddress}}/api/BookingRequest/renter/{{RenterId}}
+Accept: application/json
+
+###
+
+### 7. Lấy yêu cầu theo trạng thái Approved
+GET {{API_Server_HostAddress}}/api/BookingRequest/owner/{{OwnerId}}/status/Approved
+Accept: application/json
+
+###
+
+### 8. Lấy yêu cầu theo trạng thái Rejected
+GET {{API_Server_HostAddress}}/api/BookingRequest/owner/{{OwnerId}}/status/Rejected
+Accept: application/json
+
+###
+
+### 9. Lấy yêu cầu theo trạng thái Pending
+GET {{API_Server_HostAddress}}/api/BookingRequest/owner/{{OwnerId}}/status/Pending
+Accept: application/json
+
+###
+
+### 10. Kiểm tra Renter có yêu cầu Pending cho phòng chưa
+GET {{API_Server_HostAddress}}/api/BookingRequest/check-pending?renterId={{RenterId}}&roomId={{RoomId}}
+Accept: application/json
+
+###
+
+### 11. Đếm số yêu cầu Pending của Owner
+GET {{API_Server_HostAddress}}/api/BookingRequest/owner/{{OwnerId}}/count-pending
+Accept: application/json
+
+###
+
+### 12. Lấy yêu cầu gần nhất của Renter cho phòng
+GET {{API_Server_HostAddress}}/api/BookingRequest/latest?renterId={{RenterId}}&roomId={{RoomId}}
+Accept: application/json
+
+###
+
+### 13. Xóa yêu cầu
+DELETE {{API_Server_HostAddress}}/api/BookingRequest/{{RequestId}}
+
+###
+
+### ==========================================
+### TEST CASES - CÁC TRƯỜNG HỢP KHÁC NHAU
+### ==========================================
+
+### TC1: Tạo yêu cầu thuê 6 tháng
+POST {{API_Server_HostAddress}}/api/BookingRequest
+Content-Type: application/json
+
+{
+  
+  "idRenter": "{{RenterId}}",
+  "idRoom": "{{RoomId}}",
+  "desiredStartDate": "2026-03-01T00:00:00",
+  "desiredDurationMonths": 6,
+  "note": "Thuê ngắn hạn 6 tháng",
+  "status": "Pending",
+  "dateCreated": "2026-01-28T10:00:00"
+}
+
+###
+
+### TC2: Tạo yêu cầu không có ghi chú
+POST {{API_Server_HostAddress}}/api/BookingRequest
+Content-Type: application/json
+
+{
+ 
+  "idRenter": "{{RenterId}}",
+  "idRoom": "{{RoomId}}",
+  "desiredStartDate": "2026-04-01T00:00:00",
+  "desiredDurationMonths": 12,
+  "note": null,
+  "status": "Pending",
+  "dateCreated": "2026-01-28T10:00:00"
+}
+
+###
+
+### TC3: Tạo yêu cầu thuê dài hạn 24 tháng
+POST {{API_Server_HostAddress}}/api/BookingRequest
+Content-Type: application/json
+
+{
+  
+  "idRenter": "{{RenterId}}",
+  "idRoom": "{{RoomId}}",
+  "desiredStartDate": "2026-05-01T00:00:00",
+  "desiredDurationMonths": 24,
+  "note": "Muốn thuê dài hạn 2 năm, có thể trả tiền trước 3 tháng",
+  "status": "Pending",
+  "dateCreated": "2026-01-28T10:00:00"
+}
 
 ###
