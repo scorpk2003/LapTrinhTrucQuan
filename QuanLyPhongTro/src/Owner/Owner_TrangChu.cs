@@ -363,8 +363,8 @@ namespace QuanLyPhongTro
             {
                 UserSession.Instance.Logout();
                 Loginmain form = new();
-                form.Show();
                 this.Hide();
+                form.Show();
             }
         }
 

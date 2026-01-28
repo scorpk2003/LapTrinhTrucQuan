@@ -1,0 +1,114 @@
+﻿namespace QuanLyPhongTro.src.Components
+{
+    partial class ucBillDetail
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            name_lb = new Label();
+            groupBox1 = new GroupBox();
+            pay_btn = new Button();
+            btnSendBill = new Button();
+            btnExportPDF = new Button();
+            groupBox1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // name_lb
+            // 
+            name_lb.AutoSize = true;
+            name_lb.Font = new Font("Rockwell", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            name_lb.Location = new Point(136, 51);
+            name_lb.Name = "name_lb";
+            name_lb.Size = new Size(69, 23);
+            name_lb.TabIndex = 0;
+            name_lb.Text = "label1";
+            // 
+            // groupBox1
+            // 
+            groupBox1.BackColor = Color.FromArgb(176, 210, 236);
+            groupBox1.Controls.Add(btnExportPDF);
+            groupBox1.Controls.Add(btnSendBill);
+            groupBox1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            groupBox1.Location = new Point(22, 119);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(404, 361);
+            groupBox1.TabIndex = 1;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Chi tiết hoá đơn";
+            // 
+            // pay_btn
+            // 
+            pay_btn.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            pay_btn.Location = new Point(103, 486);
+            pay_btn.Name = "pay_btn";
+            pay_btn.Size = new Size(223, 46);
+            pay_btn.TabIndex = 2;
+            pay_btn.Text = "Chưa Thanh Toán";
+            pay_btn.UseVisualStyleBackColor = true;
+            pay_btn.Click += pay_btn_Click;
+            // 
+            // btnSendBill
+            // 
+            btnSendBill.Location = new Point(250, 265);
+            btnSendBill.Name = "btnSendBill";
+            btnSendBill.Size = new Size(148, 42);
+            btnSendBill.TabIndex = 0;
+            btnSendBill.Text = "Xuất Hoá Đơn";
+            btnSendBill.UseVisualStyleBackColor = true;
+            // 
+            // btnExportPDF
+            // 
+            btnExportPDF.Location = new Point(250, 313);
+            btnExportPDF.Name = "btnExportPDF";
+            btnExportPDF.Size = new Size(148, 42);
+            btnExportPDF.TabIndex = 1;
+            btnExportPDF.Text = "Xuất PDF";
+            btnExportPDF.UseVisualStyleBackColor = true;
+            // 
+            // ucBillDetail
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(217, 245, 240);
+            Controls.Add(pay_btn);
+            Controls.Add(groupBox1);
+            Controls.Add(name_lb);
+            Name = "ucBillDetail";
+            Size = new Size(450, 542);
+            groupBox1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        #endregion
+
+        private Label name_lb;
+        private GroupBox groupBox1;
+        private Button pay_btn;
+        private Button btnExportPDF;
+        private Button btnSendBill;
+    }
+}

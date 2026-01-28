@@ -60,6 +60,20 @@ namespace QuanLyPhongTro.src.Services1
                 return false;
             }
         }
+        ///<summary>
+        /// Lấy Dãy Trọ
+        ///</summary>
+        public ListRoom? GetListRoom(Guid ownerID)
+        {
+            ListRoom? room;
+
+            using (var context = new AppContextDB())
+            {
+                room = context.ListRooms.FirstOrDefault(p => p.IdOwnerNavigation!.Id == ownerID);
+            }
+
+            return room;
+        } 
 
         /// <summary>
         /// Cập nhật thông tin TEXT (Tên, Giá, Trạng thái...)
@@ -75,11 +89,8 @@ namespace QuanLyPhongTro.src.Services1
 
                     // Cập nhật các thuộc tính
                     existingRoom.Name = roomData.Name;
-                    //existingRoom.Address = roomData.Address;
                     existingRoom.Price = roomData.Price;
-
                     existingRoom.Area = roomData.Area; 
-
                     existingRoom.Status = roomData.Status;
 
                     context.Rooms.Update(existingRoom); 

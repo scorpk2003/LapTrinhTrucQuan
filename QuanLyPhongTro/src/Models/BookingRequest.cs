@@ -1,37 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ScottPlot;
 
-namespace QuanLyPhongTro.src.Models
+namespace QuanLyPhongTro.Entities;
+
+public partial class BookingRequest
 {
-    public class BookingRequest
-    {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
 
-        public Guid IdRenter { get; set; } // Người yêu cầu
-        [ForeignKey("IdRenter")]
-        public Person Renter { get; set; }
+    public Guid IdRenter { get; set; }
 
-        public Guid IdRoom { get; set; } // Phòng muốn thuê
-        [ForeignKey("IdRoom")]
-        public Room Room { get; set; }
+    public Guid IdRoom { get; set; }
 
-        public DateTime DesiredStartDate { get; set; } // Ngày muốn bắt đầu
-        public int DesiredDurationMonths { get; set; } // Thời hạn (ví dụ: 6, 12)
+    public DateTime DesiredStartDate { get; set; }
 
-        public string Note { get; set; } // Ghi chú của người thuê
+    public int DesiredDurationMonths { get; set; }
 
-        [MaxLength(50)]
-        public string Status { get; set; } = "Pending"; // "Pending", "Approved", "Rejected"
+    public string? Note { get; set; }
 
-        public DateTime DateCreated { get; set; } = DateTime.Now;
-    }
+    public string Status { get; set; } = null!;
 
+    public DateTime DateCreated { get; set; }
+
+    public virtual Person IdRenterNavigation { get; set; } = null!;
+
+    public virtual Room IdRoomNavigation { get; set; } = null!;
 }
-

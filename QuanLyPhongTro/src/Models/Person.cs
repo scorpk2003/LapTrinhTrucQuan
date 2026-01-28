@@ -1,40 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
-namespace QuanLyPhongTro.src.Models;
+namespace QuanLyPhongTro.Entities;
 
-[Table("Person")]
 public partial class Person
 {
-    [Key]
     public Guid Id { get; set; }
 
-    [StringLength(50)]
-    public string? Username { get; set; }
+    public string Username { get; set; } = null!;
 
-    [StringLength(255)]
-    public string? Password { get; set; }
+    public string Password { get; set; } = null!;
 
-    [StringLength(20)]
     public string? Role { get; set; }
 
     public Guid? IdDetail { get; set; }
 
-    [InverseProperty("IdPersonNavigation")]
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
-    [InverseProperty("IdRenterNavigation")]
+    public virtual ICollection<BookingRequest> BookingRequests { get; set; } = new List<BookingRequest>();
+
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
-    [ForeignKey("IdDetail")]
+    public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+
     public virtual PersonDetail? IdDetailNavigation { get; set; }
 
-    [InverseProperty("IdReporterNavigation")]
+    public virtual ICollection<ListRoom> ListRooms { get; set; } = new List<ListRoom>();
+
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
-    [InverseProperty("IdOwnerNavigation")]
     public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

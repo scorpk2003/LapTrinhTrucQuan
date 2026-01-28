@@ -92,7 +92,7 @@ namespace QuanLyPhongTro
                 return;
             }
 
-            await Mediator.Instance.PublishList<Bill>("ucBillCard", bills, async (controls) =>
+            await Mediator.Instance.PublishList<Bill>("ucBill", bills, async (controls) =>
             {
                 foreach (var control in controls)
                 {

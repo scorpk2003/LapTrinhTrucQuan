@@ -1,29 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace QuanLyPhongTro.src.Models
+namespace QuanLyPhongTro.Entities;
+
+public partial class ListRoom
 {
-    [Table("ListRoom")]
-    public partial class ListRoom
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public Guid IdOwner { get; set; }
+    public Guid IdOwner { get; set; }
 
-        public string Name { get; set; } = "";
+    public string Name { get; set; } = null!;
 
-        public string Address { get; set; } = "";
+    public string Address { get; set; } = null!;
 
-        public string Status { get; set; } = "";
+    public string Status { get; set; } = null!;
 
-        [ForeignKey("IdOwner")]
-        public virtual Person? Owner { get; set; }
+    public virtual Person IdOwnerNavigation { get; set; } = null!;
 
-        [InverseProperty("ListRooms")]
-        public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
-    }
+    public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

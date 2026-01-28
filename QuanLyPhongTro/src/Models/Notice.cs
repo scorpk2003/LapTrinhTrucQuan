@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
-namespace QuanLyPhongTro.src.Models;
+namespace QuanLyPhongTro.Entities;
 
-[Table("Notice")]
 public partial class Notice
 {
-    [Key]
     public Guid Id { get; set; }
 
-    [StringLength(200)]
     public string? Title { get; set; }
 
     public string? Description { get; set; }
@@ -21,12 +15,9 @@ public partial class Notice
 
     public DateTime? CreatedAt { get; set; }
 
-    public string? Status { get; set; } = "Chưa đọc";
+    public string? Status { get; set; }
 
-    [Column("IDReport")]
     public Guid? Idreport { get; set; }
 
-    [ForeignKey("Idreport")]
-    [InverseProperty("Notice")]
     public virtual Report? IdreportNavigation { get; set; }
 }
