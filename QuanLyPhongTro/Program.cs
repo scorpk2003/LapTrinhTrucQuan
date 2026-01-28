@@ -1,7 +1,8 @@
+using QuanLyPhongTro.src;
+using QuanLyPhongTro.src.Components;
 using QuanLyPhongTro.src.Login;
 using QuanLyPhongTro.src.Mediator;
-using QuanLyPhongTro.src.Components;
-using QuanLyPhongTro.src;
+using System.Globalization;
 
 namespace QuanLyPhongTro
 {
@@ -22,9 +23,20 @@ namespace QuanLyPhongTro
 
         static void RegisterFactory()
         {
+            // Owner UserControls
             Mediator.Instance.RegisterFactory("UcBillManagement", () => new ucBillManagement());
             Mediator.Instance.RegisterFactory("UcContractManagement", () => new ucContractManagement());
+            Mediator.Instance.RegisterFactory("UcReportManagement", () => new ucReportManagement());
             Mediator.Instance.RegisterFactory("UcIncidentManagement", () => new ucIncidentManagement());
+
+            // Renter UserControls
+            Mediator.Instance.RegisterFactory("UcMyRoom", () => new ucMyRoom());
+            Mediator.Instance.RegisterFactory("UcMyBills", () => new ucMyBills());
+            Mediator.Instance.RegisterFactory("UcMyContract", () => new ucMyContract());
+            Mediator.Instance.RegisterFactory("UcMyReports", () => new ucMyReports());
+            Mediator.Instance.RegisterFactory("UcPendingContracts", () => new ucPendingContracts());
+
+            // Component UserControls (legacy)
             Mediator.Instance.RegisterFactory("ucBill", () => new ucBill());
             Mediator.Instance.RegisterFactory("ucBillDetail", () => new ucBillDetail());
             Mediator.Instance.RegisterFactory("ucListRoom", () => new ucListRoom());

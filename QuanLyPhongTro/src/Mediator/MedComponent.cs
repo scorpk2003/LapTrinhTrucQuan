@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +11,8 @@ namespace QuanLyPhongTro.src.Mediator
         public string Type { get; set; }
         public Control control { get; set; }
         public MedComponent() { 
-            this.Type = "";
-            this.control = new Control();
+            Type = "";
+            control = new Control();
         }
         public MedComponent(string Type, Control control) {
             this.Type = Type;
