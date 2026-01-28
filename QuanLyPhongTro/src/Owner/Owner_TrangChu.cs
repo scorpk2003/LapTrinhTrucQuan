@@ -7,7 +7,6 @@ using QuanLyPhongTro.src.UserSession;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,9 +15,8 @@ namespace QuanLyPhongTro
 {
     public partial class Owner_TrangChu : Form
     {
+        private readonly ApiService _apiService;
         private readonly Person _currentOwner;
-        private readonly RoomService _roomService;
-        private readonly ContractService _contractService;
         private List<Room> _allRooms;
 
         private ucBillManagement _billControl;
@@ -39,8 +37,7 @@ namespace QuanLyPhongTro
         public Owner_TrangChu()
         {
             InitializeComponent();
-            _roomService = new RoomService();
-            _contractService = new ContractService();
+            _apiService = new ApiService();
 
             this.Load += Owner_TrangChu_Load;
             this.FormClosed += (s, e) => Application.Exit();
@@ -128,6 +125,9 @@ namespace QuanLyPhongTro
                 }
             }
 
+            // Dispose ApiService
+            _apiService?.Dispose();
+
             base.OnFormClosing(e);
         }
 
@@ -155,12 +155,11 @@ namespace QuanLyPhongTro
                     _reportControl?.Hide();
                     _incidentControl?.Hide();
 
-                    var rooms = await Task.Run(() =>
-                    {
-                        token.ThrowIfCancellationRequested();
-                        return _roomService.GetAllRoomsByOwner(
-                            UserSession.Instance._user!.Id);
-                    }, token);
+                    // ✅ Gọi API thay vì service
+                    var rooms = await _apiService.GetRoomsByOwnerAsync(
+                        UserSession.Instance._user!.Id, 
+                        token
+                    );
 
                     token.ThrowIfCancellationRequested();
 
@@ -171,6 +170,10 @@ namespace QuanLyPhongTro
             }
             catch (OperationCanceledException)
             {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -373,12 +376,24 @@ namespace QuanLyPhongTro
 
         #region Xử lý Phòng (Tải, Vẽ và Lọc/Tìm kiếm)
 
-        private void LoadRooms()
+        private async void LoadRooms()
         {
-            _allRooms = _roomService.GetAllRoomsByOwner(UserSession.Instance._user!.Id);
-            // (Nạp lại bộ lọc Max/Min dựa trên dữ liệu mới)
-            InitializeFilters();
-            FilterAndDisplayRooms();
+            try
+            {
+                var ownerId = UserSession.Instance._user!.Id;
+
+                // ✅ Gọi API thay vì service
+                var rooms = await _apiService.GetRoomsByOwnerAsync(ownerId);
+
+                _allRooms = rooms;
+
+                InitializeFilters();
+                FilterAndDisplayRooms();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"LoadRooms lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -416,17 +431,16 @@ namespace QuanLyPhongTro
             cboFilterStatus.SelectedIndex = 0; // Set về "Tất cả"
         }
 
-        // Helper: lấy địa chỉ ListRoom theo Owner hiện tại
-        private string GetOwnerAddress()
-        {
-            var user = UserSession.Instance._user;
-            if (user == null) return string.Empty;
-            try
-            {
-                return _roomService.GetListRoomAddressByOwner(user.Id) ?? string.Empty;
-            }
-            catch { return string.Empty; }
-        }
+        //private string GetOwnerAddress()
+        //{
+        //    var user = UserSession.Instance._user;
+        //    if (user == null) return string.Empty;
+        //    try
+        //    {
+        //        return _roomService.GetListRoomAddressByOwner(user.Id) ?? string.Empty;
+        //    }
+        //    catch { return string.Empty; }
+        //}
 
         private async void FilterAndDisplayRooms()
         {
@@ -461,7 +475,7 @@ namespace QuanLyPhongTro
                 filteredList = filteredList.Where(r =>
                     (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
                     (r.Price.HasValue && r.Price.Value.ToString("N0").Contains(keyword)) ||
-                    (r.ListRooms != null && r.ListRooms.Address != null && r.ListRooms.Address.ToLower().Contains(keyword))
+                    (r.IdListRoomNavigation != null && r.IdListRoomNavigation.Address != null && r.IdListRoomNavigation.Address.ToLower().Contains(keyword))
                 );
             }
 
@@ -491,7 +505,7 @@ namespace QuanLyPhongTro
         private void AddRoomButtonUI(Room room)
         {
             // Lấy địa chỉ của ListRoom chứa phòng này
-            var address = room.ListRooms?.Address ?? "N/A";
+            var address = room.IdListRoomNavigation?.Address ?? "N/A";
 
             Panel card = new Panel
             {

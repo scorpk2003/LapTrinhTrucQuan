@@ -9,17 +9,21 @@ namespace QuanLyPhongTro.src.Services1
 {
     public class PersonService
     {
-        public async Task< Person?> GetAccountAsync(string username, string password)
+        public Task< Person?> GetAccountAsync(string username, string password)
         {
             using (var context = new AppContextDB())
             {
                 try
                 {
-                
-                    Person? person = await context.People
+
+                    return context.People
+                        .AsNoTracking()
                         .Include(p => p.IdDetailNavigation)
-                        .FirstOrDefaultAsync(p => p.IdDetailNavigation!.Gmail == username && p.Password == password);
-                    return person;
+                        .FirstOrDefaultAsync(p =>
+                            p.IdDetailNavigation != null &&
+                            p.IdDetailNavigation.Gmail == username &&
+                            p.Password == password
+                        );
                 }
                 catch (Exception ex)
                 {
@@ -443,6 +447,27 @@ namespace QuanLyPhongTro.src.Services1
                 Console.WriteLine($"Lỗi ResetPasswordAsync: {ex.Message}");
                 return false;
             }
+        }
+
+        // Synchronous wrapper methods for backward compatibility
+        public Person? GetAccount(string username, string password)
+        {
+            return GetAccountAsync(username, password).GetAwaiter().GetResult();
+        }
+
+        public bool SignUp(Person? person)
+        {
+            return SignUpAsync(person).GetAwaiter().GetResult();
+        }
+
+        public PersonDetail GetPersonDetail(Guid detailId)
+        {
+            return GetPersonDetailAsync(detailId).GetAwaiter().GetResult();
+        }
+
+        public bool UpdatePersonDetail(PersonDetail detailData)
+        {
+            return UpdatePersonDetailAsync(detailData).GetAwaiter().GetResult();
         }
     }
 }

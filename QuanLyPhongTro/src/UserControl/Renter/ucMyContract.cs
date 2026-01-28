@@ -47,6 +47,16 @@ namespace QuanLyPhongTro
         {
             try
             {
+                // TODO: Contract model doesn't have ImageUrl property
+                // Need to add ImageUrl property to Contract model or use alternative approach
+                picContractImage.Image = null;
+                picContractImage.Visible = false;
+                lblNoImage.Text = "Chức năng ảnh hợp đồng chưa được hỗ trợ";
+                lblNoImage.Visible = true;
+                lblNoImage.BringToFront();
+                return;
+                
+                /* Commented out until Contract model is updated with ImageUrl property
                 // Kiểm tra xem hợp đồng có ảnh không
                 if (string.IsNullOrEmpty(_contract.ImageUrl))
                 {
@@ -88,6 +98,7 @@ namespace QuanLyPhongTro
                     lblNoImage.Visible = true;
                     lblNoImage.BringToFront();
                 }
+                */
             }
             catch (Exception ex)
             {

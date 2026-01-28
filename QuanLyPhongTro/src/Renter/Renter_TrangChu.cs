@@ -17,10 +17,7 @@ namespace QuanLyPhongTro
     public partial class Renter_TrangChu : Form
     {
         private readonly Person _currentRenter;
-        private readonly RoomService _roomService;
-        private readonly PersonService _personService;
-        private readonly ContractService _contractService;
-        private readonly BookingRequestService _requestService; // Thêm service
+        private readonly ApiService _apiService;
 
         private List<Room> _allAvailableRooms;
         private const string PlaceholderText = "Nhập tên, địa chỉ...";
@@ -41,10 +38,7 @@ namespace QuanLyPhongTro
         {
             InitializeComponent();
             _currentRenter = UserSession.Instance._user;
-            _roomService = new RoomService();
-            _personService = new PersonService();
-            _contractService = new ContractService();
-            _requestService = new BookingRequestService(); 
+            _apiService = new ApiService();
 
             this.Load += Renter_TrangChu_Load;
 
@@ -58,15 +52,16 @@ namespace QuanLyPhongTro
             btnLogoutFindRoom.Click += BtnLogout_Click; 
         }
 
-        private void Renter_TrangChu_Load(object sender, EventArgs e)
+        private async void Renter_TrangChu_Load(object sender, EventArgs e)
         {
             lblRenterName.Text = $"Chào mừng, {_currentRenter.Username}";
 
-            _activeContract = _contractService.GetActiveContractByRenter(_currentRenter.Id);
+            _activeContract = await _apiService.GetActiveContractByRenterAsync(_currentRenter.Id);
             
             if (_activeContract == null)
             {
-                _activeContract = _contractService.GetPendingContractsByRenter(_currentRenter.Id).FirstOrDefault();
+                var pendingContracts = await _apiService.GetPendingContractsByRenterAsync(_currentRenter.Id);
+                _activeContract = pendingContracts.FirstOrDefault();
             }
 
             if (_activeContract == null)
@@ -271,10 +266,10 @@ namespace QuanLyPhongTro
         /// <summary>
         /// Phương thức reload lại giao diện sau khi upload hợp đồng thành công
         /// </summary>
-        public void ReloadAfterContractActivation()
+        public async void ReloadAfterContractActivation()
         {
             // Reload lại contract từ database
-            _activeContract = _contractService.GetActiveContractByRenter(_currentRenter.Id);
+            _activeContract = await _apiService.GetActiveContractByRenterAsync(_currentRenter.Id);
             
             if (_activeContract != null && _activeContract.Status == "Đang hoạt động")
             {
@@ -294,9 +289,9 @@ namespace QuanLyPhongTro
         /// <summary>
         /// Khởi tạo sự kiện, giá trị cho bộ lọc và tải phòng lần đầu
         /// </summary>
-        private void InitializeFilterLogic()
+        private async void InitializeFilterLogic()
         {
-            _allAvailableRooms = _roomService.GetAllAvailableRooms();
+            _allAvailableRooms = await _apiService.GetAvailableRoomsAsync();
 
             decimal maxPrice = (_allAvailableRooms.Any() && _allAvailableRooms.Max(r => r.Price) > 0) ? _allAvailableRooms.Max(r => r.Price ?? 0) : 10000000;
             decimal maxArea = (_allAvailableRooms.Any() && _allAvailableRooms.Max(r => r.Area) > 0) ? (_allAvailableRooms.Max(r => r.Area ?? 0)) : 100;
@@ -340,10 +335,10 @@ namespace QuanLyPhongTro
         /// <summary>
         /// Hàm lọc và tìm kiếm chính
         /// </summary>
-        private void FilterAndDisplayRooms()
+        private async void FilterAndDisplayRooms()
         {
             if (_allAvailableRooms == null) return;
-            _allAvailableRooms = _roomService.GetAllAvailableRooms();
+            _allAvailableRooms = await _apiService.GetAvailableRoomsAsync();
             IEnumerable<Room> filteredList = _allAvailableRooms;
 
             decimal priceFrom = nudPriceFrom.Value;
@@ -373,7 +368,7 @@ namespace QuanLyPhongTro
                 filteredList = filteredList.Where(r =>
                     (r.Name != null && r.Name.ToLower().Contains(keyword)) ||
                     (r.Price.HasValue && r.Price.Value.ToString("N0").Contains(keyword)) ||
-                    (r.ListRooms != null && r.ListRooms.Address != null && r.ListRooms.Address.ToLower().Contains(keyword))
+                    (r.IdListRoomNavigation != null && r.IdListRoomNavigation.Address != null && r.IdListRoomNavigation.Address.ToLower().Contains(keyword))
                 );
             }
 
@@ -384,7 +379,7 @@ namespace QuanLyPhongTro
         /// <summary>
         /// Hàm vẽ giao diện các Card phòng
         /// </summary>
-        private void DisplayRoomsUI(List<Room> rooms)
+        private async void DisplayRoomsUI(List<Room> rooms)
         {
             flowPanelRooms.Controls.Clear();
 
@@ -471,7 +466,7 @@ namespace QuanLyPhongTro
                 };
 
                 // Kiểm tra xem renter đã gửi yêu cầu cho phòng này chưa
-                bool hasPendingRequest = _requestService.HasPendingRequestForRoom(_currentRenter.Id, room.Id);
+                bool hasPendingRequest = await _apiService.HasPendingRequestForRoomAsync(_currentRenter.Id, room.Id);
 
                 Button btnBook = new Button
                 {

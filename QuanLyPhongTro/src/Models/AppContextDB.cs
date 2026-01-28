@@ -46,7 +46,7 @@ public partial class AppContextDB : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=database-1.cxcm0uk2un5e.ap-southeast-2.rds.amazonaws.com;Database=QLPT;User ID=admin;Password=6251071045;Trust Server Certificate=True;Persist Security Info=True;Encrypt=True;");
+        => optionsBuilder.UseSqlServer("Server=LAPTOP-79S96USJ\\MSSQLSERVER2022;Database=QLPT_Local;User ID=sa;Password=1234567;Trust Server Certificate=True;Encrypt=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

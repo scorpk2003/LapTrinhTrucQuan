@@ -131,8 +131,8 @@ namespace QuanLyPhongTro
             foreach (var req in _pendingRequests)
             {
                 int row = dgvRequests.Rows.Add(
-                    req.Renter?.Username ?? "N/A",
-                    req.Room?.Name ?? "N/A",
+                    req.IdRenterNavigation?.Username ?? "N/A",
+                    req.IdRoomNavigation?.Name ?? "N/A",
                     req.DesiredStartDate.ToString("dd/MM/yyyy"),
                     req.DesiredDurationMonths,
                     req.Note ?? string.Empty

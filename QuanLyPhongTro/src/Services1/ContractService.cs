@@ -356,6 +356,39 @@ namespace QuanLyPhongTro.src.Services1
                 return 0;
             }
         }
+
+        // Synchronous wrapper methods for backward compatibility
+        public bool CreateContract(Contract contract)
+        {
+            return CreateContractAsync(contract).GetAwaiter().GetResult();
+        }
+
+        public bool EndContract(Guid contractId)
+        {
+            return EndContractAsync(contractId).GetAwaiter().GetResult();
+        }
+
+        public bool RenewContract(Guid roomId, int monthsToAdd)
+        {
+            return RenewContractAsync(roomId, monthsToAdd).GetAwaiter().GetResult();
+        }
+
+        public List<Contract> GetAllActiveContractsByOwner(Guid ownerId)
+        {
+            return GetAllActiveContractsByOwnerAsync(ownerId).GetAwaiter().GetResult();
+        }
+
+        public List<Contract> GetPendingContractsByRenter(Guid renterId)
+        {
+            return GetContractsByRenterAsync(renterId).GetAwaiter().GetResult();
+        }
+
+        public bool UploadContractImage(Guid contractId, string imagePath)
+        {
+            // Placeholder implementation - Contract model doesn't have ImageUrl property
+            // This would need to be added to the Contract model
+            return false;
+        }
     }
 }
         

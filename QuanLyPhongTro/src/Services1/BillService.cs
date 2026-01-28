@@ -204,7 +204,7 @@ namespace QuanLyPhongTro.src.Services1
         {
             try
             {
-                var activeContracts = _contractService.GetAllActiveContractsByOwnerAsync(ownerId);
+                var activeContracts = await _contractService.GetAllActiveContractsByOwnerAsync(ownerId);
                 using (var context = new AppContextDB())
                 {
                     foreach (var contract in activeContracts)
@@ -400,6 +400,52 @@ namespace QuanLyPhongTro.src.Services1
                 Console.WriteLine($"Lỗi GetMonthlySpending: {ex.Message}");
                 return new Dictionary<string, decimal>();
             }
+        }
+
+        // Synchronous wrapper methods for backward compatibility
+        public List<Bill> GetBillsByMonth(int month, int year, Guid ownerId)
+        {
+            return GetBillsByMonthAsync(month, year, ownerId).GetAwaiter().GetResult();
+        }
+
+        public List<Bill> GetUnpaidBills(Guid ownerId)
+        {
+            return GetUnpaidBillsAsync(ownerId).GetAwaiter().GetResult();
+        }
+
+        public List<Bill> GetBillsByRenter(Guid renterId)
+        {
+            return GetBillsByRenterAsync(renterId).GetAwaiter().GetResult();
+        }
+
+        public Bill GetBillWithDetails(Guid billId)
+        {
+            return GetBillWithDetailsAsync(billId).GetAwaiter().GetResult();
+        }
+
+        public bool PayBill(Guid billId, decimal amount, string paymentMethod)
+        {
+            return PayBillAsync(billId, amount, paymentMethod).GetAwaiter().GetResult();
+        }
+
+        public bool GenerateMonthlyBills(Guid ownerId, int month, int year)
+        {
+            return GenerateMonthlyBillsAsync(ownerId, month, year).GetAwaiter().GetResult();
+        }
+
+        public bool ExportBillToPDF(Guid billId)
+        {
+            return ExportBillToPDFAsync(billId).GetAwaiter().GetResult();
+        }
+
+        public Bill GetLatestUnpaidBill(Guid renterId)
+        {
+            return GetLatestUnpaidBillAsync(renterId).GetAwaiter().GetResult();
+        }
+
+        public Dictionary<string, decimal> GetMonthlySpending(Guid renterId)
+        {
+            return GetMonthlySpendingAsync(renterId).GetAwaiter().GetResult();
         }
 
         public async Task <bool> UpdateBillAndDetails(Guid billId, List<BillDetail> details, decimal newTotalMoney)

@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
 {
     public partial class FormEditRoom : Form
     {
-        private readonly RoomService _roomService;
-        private readonly ListRoomService _listRoomService;
+        private readonly ApiService _apiService;
         private Room _roomToEdit;
 
         private readonly Dictionary<string, RoomImage> _imageMap = new Dictionary<string, RoomImage>();
@@ -20,8 +20,7 @@ namespace QuanLyPhongTro
         public FormEditRoom(Room roomToEdit)
         {
             InitializeComponent();
-            _roomService = new RoomService();
-            _listRoomService = new ListRoomService();
+            _apiService = new ApiService();
             _roomToEdit = roomToEdit;
 
             this.Load += FormEditRoom_Load;
@@ -33,20 +32,22 @@ namespace QuanLyPhongTro
             this.btnCancel.Click += (s, e) => this.Close();
         }
 
-        private void FormEditRoom_Load(object sender, EventArgs e)
+        private async void FormEditRoom_Load(object sender, EventArgs e)
         {
-            // 1. Tải chi tiết phòng (bao gồm ảnh) từ CSDL
-            _roomToEdit = _roomService.GetRoomWithDetails(_roomToEdit.Id);
-
-            if (_roomToEdit == null)
+            try
             {
-                MessageBox.Show("Lỗi: Không tìm thấy chi tiết phòng.");
-                this.Close();
-                return;
-            }
+                // 1. Tải chi tiết phòng (bao gồm ảnh) từ CSDL
+                _roomToEdit = await _apiService.GetRoomByIdAsync(_roomToEdit.Id);
 
-            // 2. Load danh sách ListRoom
-            LoadListRoomComboBox();
+                if (_roomToEdit == null)
+                {
+                    MessageBox.Show("Lỗi: Không tìm thấy chi tiết phòng.");
+                    this.Close();
+                    return;
+                }
+
+                // 2. Load danh sách ListRoom
+                await LoadListRoomComboBoxAsync();
 
             // 3. Đổ dữ liệu vào form
             txtRoomName.Text = _roomToEdit.Name;
@@ -61,36 +62,49 @@ namespace QuanLyPhongTro
             cboStatus.SelectedItem = _roomToEdit.Status;
             if (cboStatus.SelectedIndex == -1) cboStatus.SelectedItem = "Trống";
 
-            // 4. Đổ dữ liệu ảnh
-            LoadImageList();
-        }
-
-        private void LoadListRoomComboBox()
-        {
-            var listRooms = _listRoomService.GetListRoomsByOwner(_roomToEdit.IdOwner.Value);
-            
-            cboListRoom.DataSource = null;
-            cboListRoom.Items.Clear();
-            
-            cboListRoom.DataSource = listRooms;
-            cboListRoom.DisplayMember = "Name";
-            cboListRoom.ValueMember = "Id";
-
-            // Chọn ListRoom hiện tại của phòng
-            if (_roomToEdit.IdListRoom.HasValue)
+                // 4. Đổ dữ liệu ảnh
+                LoadImageList();
+            }
+            catch (Exception ex)
             {
-                for (int i = 0; i < cboListRoom.Items.Count; i++)
-                {
-                    if (((ListRoom)cboListRoom.Items[i]).Id == _roomToEdit.IdListRoom.Value)
-                    {
-                        cboListRoom.SelectedIndex = i;
-                        break;
-                    }
-                }
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
             }
         }
 
-        private void BtnEditListRoom_Click(object sender, EventArgs e)
+        private async Task LoadListRoomComboBoxAsync()
+        {
+            try
+            {
+                var listRooms = await _apiService.GetListRoomsByOwnerAsync(_roomToEdit.IdOwner.Value);
+            
+                cboListRoom.DataSource = null;
+                cboListRoom.Items.Clear();
+            
+                cboListRoom.DataSource = listRooms;
+                cboListRoom.DisplayMember = "Name";
+                cboListRoom.ValueMember = "Id";
+
+                // Chọn ListRoom hiện tại của phòng
+                if (_roomToEdit.IdListRoom.HasValue)
+                {
+                    for (int i = 0; i < cboListRoom.Items.Count; i++)
+                    {
+                        if (((ListRoom)cboListRoom.Items[i]).Id == _roomToEdit.IdListRoom.Value)
+                        {
+                            cboListRoom.SelectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải dãy trọ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void BtnEditListRoom_Click(object sender, EventArgs e)
         {
             if (cboListRoom.SelectedItem == null) return;
 
@@ -100,7 +114,7 @@ namespace QuanLyPhongTro
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadListRoomComboBox();
+                    await LoadListRoomComboBoxAsync();
                 }
             }
         }
@@ -134,7 +148,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        private void BtnUpdate_Click(object sender, EventArgs e)
+        private async void BtnUpdate_Click(object sender, EventArgs e)
         {
             if (cboListRoom.SelectedItem == null)
             {
@@ -150,7 +164,7 @@ namespace QuanLyPhongTro
             _roomToEdit.Status = cboStatus.SelectedItem.ToString();
             _roomToEdit.IdListRoom = selectedListRoom.Id;
 
-            bool success = _roomService.UpdateRoom(_roomToEdit);
+            bool success = await _apiService.UpdateRoomAsync(_roomToEdit);
 
             if (success)
             {
@@ -164,7 +178,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        private void BtnAddImage_Click(object sender, EventArgs e)
+        private async void BtnAddImage_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -182,8 +196,8 @@ namespace QuanLyPhongTro
 
                     string relativePath = Path.Combine("RoomImages", newFileName);
 
-                    // 2. GỌI SERVICE: Thêm ảnh mới vào CSDL
-                    RoomImage newImage = _roomService.AddImageToRoom(_roomToEdit.Id, relativePath);
+                    // 2. GỌI API: Thêm ảnh mới vào CSDL
+                    RoomImage newImage = await _apiService.AddImageToRoomAsync(_roomToEdit.Id, relativePath);
 
                     if (newImage != null)
                     {
@@ -209,7 +223,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        private void BtnDeleteImage_Click(object sender, EventArgs e)
+        private async void BtnDeleteImage_Click(object sender, EventArgs e)
         {
             if (lstImages.SelectedItem == null)
             {
@@ -224,8 +238,8 @@ namespace QuanLyPhongTro
                 var confirm = MessageBox.Show($"Bạn có chắc muốn xóa ảnh '{displayName}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirm == DialogResult.No) return;
 
-                // 1. GỌI SERVICE: Xóa ảnh
-                bool success = _roomService.DeleteRoomImage(imageToDelete.Id);
+                // 1. GỌI API: Xóa ảnh
+                bool success = await _apiService.DeleteRoomImageAsync(imageToDelete.Id);
 
                 if (success)
                 {
@@ -280,6 +294,10 @@ namespace QuanLyPhongTro
             {
                 picPreview.Image.Dispose();
             }
+            
+            // Dispose ApiService
+            _apiService?.Dispose();
+            
             base.OnFormClosing(e);
         }
     }

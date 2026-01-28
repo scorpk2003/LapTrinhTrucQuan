@@ -53,7 +53,7 @@
             stat_btn.TabIndex = 1;
             stat_btn.Text = "Xem";
             stat_btn.UseVisualStyleBackColor = false;
-            stat_btn.Click += stat_btn_Click;
+            stat_btn.Click += async (s, e) => await stat_btn_Click(s, e);
             // 
             // ucNotice
             // 

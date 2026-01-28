@@ -15,8 +15,7 @@ namespace QuanLyPhongTro
         private readonly Person _user;
         private readonly bool _isRenterView;
 
-        private readonly RoomService _roomService;
-        private readonly ContractService _contractService;
+        private readonly ApiService _apiService;
 
         public bool DataChanged { get; private set; } = false;
 
@@ -30,8 +29,7 @@ namespace QuanLyPhongTro
             _user = user;
             _isRenterView = isRenter;
 
-            _roomService = new RoomService();
-            _contractService = new ContractService();
+            _apiService = new ApiService();
 
             this.Load += FormInfoRoom_Load;
             this.btnEdit.Click += BtnEdit_Click;
@@ -42,9 +40,9 @@ namespace QuanLyPhongTro
             this.btnBook.Click += BtnBook_Click;
         }
 
-        private void FormInfoRoom_Load(object sender, EventArgs e)
+        private async void FormInfoRoom_Load(object sender, EventArgs e)
         {
-            _roomToView = _roomService.GetRoomWithDetails(_roomToView.Id);
+            _roomToView = await _apiService.GetRoomByIdAsync(_roomToView.Id);
             if (_roomToView == null)
             {
                 MessageBox.Show("Phòng này có thể đã bị xóa.");
@@ -81,14 +79,16 @@ namespace QuanLyPhongTro
             lblRoomName.Text = _roomToView.Name;
             lblPrice.Text = $"Giá: {_roomToView.Price:N0} VND";
             lblArea.Text = $"Diện tích: {_roomToView.Area:N2} m²";
-            lblAddress.Text = $"Địa chỉ: {_roomToView.ListRooms?.Address ?? "N/A"}";
+            lblAddress.Text = $"Địa chỉ: {_roomToView.IdListRoomNavigation?.Address ?? "N/A"}";
             lblStatus.Text = $"Trạng thái: {_roomToView.Status}";
 
             if (_roomToView.Status == "Đã thuê") 
             {
                 lblStatus.ForeColor = Color.DarkRed;
                 grpContractInfo.Visible = true;
-                Contract activeContract = _contractService.GetActiveContractByRoom(_roomToView.Id);
+                
+                // ✅ Gọi API lấy contract theo room ID
+                Contract activeContract = await _apiService.GetActiveContractByRoomAsync(_roomToView.Id);
                 if (activeContract != null)
                 {
                     lblRenterName.Text = $"Người thuê: {activeContract.IdRenterNavigation?.Username ?? "N/A"}";
@@ -199,14 +199,14 @@ namespace QuanLyPhongTro
             }
         }
 
-        private void BtnDelete_Click(object sender, EventArgs e)
+        private async void BtnDelete_Click(object sender, EventArgs e)
         {
             // SỬA LỖI 2 (Encoding)
             var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa phòng '{_roomToView.Name}' không?",
                                           "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                bool success = _roomService.DeleteRoom(_roomToView.Id);
+                bool success = await _apiService.DeleteRoomAsync(_roomToView.Id);
                 if (success)
                 {
                     MessageBox.Show("Xóa phòng thành công!");
@@ -227,6 +227,10 @@ namespace QuanLyPhongTro
             {
                 picRoomPreview.Image.Dispose();
             }
+            
+            // Dispose ApiService
+            _apiService?.Dispose();
+            
             base.OnFormClosing(e);
         }
     }

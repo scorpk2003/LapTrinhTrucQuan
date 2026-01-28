@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
@@ -12,8 +13,7 @@ namespace QuanLyPhongTro
     public partial class FormCreateRoom : Form
     {
         private readonly Guid _ownerId;
-        private readonly RoomService _roomService;
-        private readonly ListRoomService _listRoomService;
+        private readonly ApiService _apiService;
 
         private readonly Dictionary<string, string> _imagePaths = new Dictionary<string, string>();
         private List<string> _copiedImagePaths = new List<string>();
@@ -23,8 +23,7 @@ namespace QuanLyPhongTro
             InitializeComponent();
 
             _ownerId = ownerId;
-            _roomService = new RoomService();
-            _listRoomService = new ListRoomService();
+            _apiService = new ApiService();
 
             this.Load += FormCreateRoom_Load;
             this.btnSave.Click += BtnSave_Click;
@@ -35,45 +34,60 @@ namespace QuanLyPhongTro
             this.lstImages.SelectedIndexChanged += LstImages_SelectedIndexChanged;
         }
 
-        private void FormCreateRoom_Load(object sender, EventArgs e)
+        private async void FormCreateRoom_Load(object sender, EventArgs e)
         {
-            LoadListRoomComboBox();
+            await LoadListRoomComboBoxAsync();
         }
 
-        private void LoadListRoomComboBox()
+        private async Task LoadListRoomComboBoxAsync()
         {
-            var listRooms = _listRoomService.GetListRoomsByOwner(_ownerId);
-            
-            cboListRoom.DataSource = null;
-            cboListRoom.Items.Clear();
-            
-            if (listRooms.Count == 0)
+            try
             {
-                // Nếu chưa có ListRoom nào, tự động tạo mới
-                var defaultListRoom = _listRoomService.GetOrCreateDefaultListRoom(_ownerId);
-                if (defaultListRoom != null)
+                var listRooms = await _apiService.GetListRoomsByOwnerAsync(_ownerId);
+            
+                cboListRoom.DataSource = null;
+                cboListRoom.Items.Clear();
+            
+                if (listRooms.Count == 0)
                 {
-                    listRooms.Add(defaultListRoom);
+                    // Tạo ListRoom mặc định nếu chưa có
+                    var defaultListRoom = new ListRoom
+                    {
+                        Id = Guid.NewGuid(),
+                        IdOwner = _ownerId,
+                        Name = "Dãy trọ mặc định",
+                        Address = "Chưa cập nhật",
+                        Status = "Active"
+                    };
+                    
+                    if (await _apiService.CreateListRoomAsync(defaultListRoom))
+                    {
+                        listRooms.Add(defaultListRoom);
+                    }
+                }
+
+                cboListRoom.DataSource = listRooms;
+                cboListRoom.DisplayMember = "Name";
+                cboListRoom.ValueMember = "Id";
+
+                if (cboListRoom.Items.Count > 0)
+                {
+                    cboListRoom.SelectedIndex = 0;
                 }
             }
-
-            cboListRoom.DataSource = listRooms;
-            cboListRoom.DisplayMember = "Name";
-            cboListRoom.ValueMember = "Id";
-
-            if (cboListRoom.Items.Count > 0)
+            catch (Exception ex)
             {
-                cboListRoom.SelectedIndex = 0;
+                MessageBox.Show($"Lỗi tải dãy trọ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void BtnNewListRoom_Click(object sender, EventArgs e)
+        private async void BtnNewListRoom_Click(object sender, EventArgs e)
         {
             using (var frm = new FormListRoomEditor(_ownerId))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadListRoomComboBox();
+                    await LoadListRoomComboBoxAsync();
                     
                     // Chọn ListRoom mới tạo
                     if (frm.ResultListRoom != null)
@@ -157,7 +171,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+        private async void BtnSave_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtRoomName.Text))
             {
@@ -220,8 +234,8 @@ namespace QuanLyPhongTro
                 return;
             }
 
-            // 3. Gọi Service để lưu vào CSDL
-            bool success = _roomService.CreateRoom(newRoom, relativeImagePaths);
+            // 3. Gọi API để lưu vào CSDL
+            bool success = await _apiService.CreateRoomAsync(newRoom, relativeImagePaths);
 
             if (success)
             {
@@ -272,6 +286,10 @@ namespace QuanLyPhongTro
             {
                 picPreview.Image.Dispose();
             }
+            
+            // Dispose ApiService
+            _apiService?.Dispose();
+            
             base.OnFormClosing(e);
         }
     }

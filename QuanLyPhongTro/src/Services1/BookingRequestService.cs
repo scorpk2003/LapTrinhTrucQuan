@@ -302,5 +302,21 @@ namespace QuanLyPhongTro.src.Services1
                 return null;
             }
         }
+
+        // Synchronous wrapper methods for backward compatibility
+        public bool CreateRequest(BookingRequest request)
+        {
+            return CreateRequestAsync(request).GetAwaiter().GetResult();
+        }
+
+        public List<BookingRequest> GetPendingRequestsByOwner(Guid ownerId)
+        {
+            return GetPendingRequestsByOwnerAsync(ownerId).GetAwaiter().GetResult();
+        }
+
+        public bool UpdateRequestStatus(Guid requestId, string newStatus)
+        {
+            return UpdateRequestStatusAsync(requestId, newStatus).GetAwaiter().GetResult();
+        }
     }
 }

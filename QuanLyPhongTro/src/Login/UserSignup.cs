@@ -183,7 +183,7 @@ namespace QuanLyPhongTro.src.Login
             }
             else
             {
-                personService.SignUp(people);
+                personService.SignUpAsync(people);
             }
                 // Hiển thị lại form login gốc
 

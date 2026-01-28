@@ -483,6 +483,32 @@ namespace QuanLyPhongTro.src.Services1
                 return false;
             }
         }
+
+        // Synchronous wrapper methods for backward compatibility
+        public bool CreateReport(Report report)
+        {
+            return CreateReportAsync(report).GetAwaiter().GetResult();
+        }
+
+        public Report GetReport(Guid noticeId)
+        {
+            return GetReportAsync(noticeId).GetAwaiter().GetResult();
+        }
+
+        public List<Report> GetReportsByOwner(Guid? ownerId)
+        {
+            return GetReportsByOwnerAsync(ownerId).GetAwaiter().GetResult();
+        }
+
+        public bool UpdateReportStatus(Guid reportId, string newStatus)
+        {
+            return UpdateReportStatusAsync(reportId, newStatus).GetAwaiter().GetResult();
+        }
+
+        public List<Report> GetReportsByRenter(Guid? renterId)
+        {
+            return GetReportsByRenterAsync(renterId).GetAwaiter().GetResult();
+        }
     }
 }
     

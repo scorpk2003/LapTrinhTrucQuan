@@ -22,7 +22,7 @@ namespace QuanLyPhongTro.src.UserSession
         public void Login(string Gmail, string pass)
         {
             PersonService personService = new PersonService();
-            Person? user = personService.GetAccount(Gmail, pass);
+            Person? user = personService.GetAccountAsync(Gmail, pass);
             if(user != null)
             {
                 _user = user;

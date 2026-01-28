@@ -1,13 +1,14 @@
 ﻿using QuanLyPhongTro.src.Models;
 using QuanLyPhongTro.src.Services1;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
 {
     public partial class FormListRoomEditor : Form
     {
-        private readonly ListRoomService _listRoomService;
+        private readonly ApiService _apiService;
         private readonly Guid _ownerId;
         private ListRoom _listRoomToEdit;
         private bool _isEditMode;
@@ -18,7 +19,7 @@ namespace QuanLyPhongTro
         public FormListRoomEditor(Guid ownerId)
         {
             InitializeComponent();
-            _listRoomService = new ListRoomService();
+            _apiService = new ApiService();
             _ownerId = ownerId;
             _isEditMode = false;
 
@@ -31,7 +32,7 @@ namespace QuanLyPhongTro
         public FormListRoomEditor(ListRoom listRoom)
         {
             InitializeComponent();
-            _listRoomService = new ListRoomService();
+            _apiService = new ApiService();
             _listRoomToEdit = listRoom;
             _ownerId = listRoom.IdOwner;
             _isEditMode = true;
@@ -51,7 +52,7 @@ namespace QuanLyPhongTro
             }
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+        private async void BtnSave_Click(object sender, EventArgs e)
         {
             // Validate
             if (string.IsNullOrWhiteSpace(txtName.Text))
@@ -75,7 +76,7 @@ namespace QuanLyPhongTro
                 // Ch? ?? ch?nh s?a
                 _listRoomToEdit.Name = txtName.Text.Trim();
                 _listRoomToEdit.Address = txtAddress.Text.Trim();
-                success = _listRoomService.UpdateListRoom(_listRoomToEdit);
+                success = await _apiService.UpdateListRoomAsync(_listRoomToEdit);
                 ResultListRoom = _listRoomToEdit;
             }
             else
@@ -90,7 +91,7 @@ namespace QuanLyPhongTro
                     Status = "Active"
                 };
 
-                success = _listRoomService.CreateListRoom(newListRoom);
+                success = await _apiService.CreateListRoomAsync(newListRoom);
                 ResultListRoom = newListRoom;
             }
 

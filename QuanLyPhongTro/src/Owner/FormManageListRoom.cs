@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyPhongTro
@@ -11,14 +12,14 @@ namespace QuanLyPhongTro
     public partial class FormManageListRoom : Form
     {
         private readonly Guid _ownerId;
-        private readonly ListRoomService _listRoomService;
+        private readonly ApiService _apiService;
         private List<ListRoom> _allListRooms;
 
         public FormManageListRoom(Guid ownerId)
         {
             InitializeComponent();
             _ownerId = ownerId;
-            _listRoomService = new ListRoomService();
+            _apiService = new ApiService();
 
             this.Load += FormManageListRoom_Load;
             this.btnCreate.Click += BtnCreate_Click;
@@ -28,14 +29,16 @@ namespace QuanLyPhongTro
             this.dgvListRooms.SelectionChanged += DgvListRooms_SelectionChanged;
         }
 
-        private void FormManageListRoom_Load(object sender, EventArgs e)
+        private async void FormManageListRoom_Load(object sender, EventArgs e)
         {
-            LoadListRooms();
+            await LoadListRoomsAsync();
         }
 
-        private void LoadListRooms()
+        private async Task LoadListRoomsAsync()
         {
-            _allListRooms = _listRoomService.GetListRoomsByOwner(_ownerId);
+            try
+            {
+                _allListRooms = await _apiService.GetListRoomsByOwnerAsync(_ownerId);
 
             dgvListRooms.DataSource = null;
             dgvListRooms.Rows.Clear();
@@ -81,9 +84,14 @@ namespace QuanLyPhongTro
                 Width = 100
             });
 
-            dgvListRooms.DataSource = _allListRooms;
+                dgvListRooms.DataSource = _allListRooms;
 
-            UpdateButtonStates();
+                UpdateButtonStates();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void DgvListRooms_SelectionChanged(object sender, EventArgs e)
@@ -98,20 +106,20 @@ namespace QuanLyPhongTro
             btnDelete.Enabled = hasSelection;
         }
 
-        private void BtnCreate_Click(object sender, EventArgs e)
+        private async void BtnCreate_Click(object sender, EventArgs e)
         {
             using (var frm = new FormListRoomEditor(_ownerId))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadListRooms();
+                    await LoadListRoomsAsync();
                     MessageBox.Show("Tạo dãy trọ mới thành công!", "Thông báo",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
+        private async void BtnEdit_Click(object sender, EventArgs e)
         {
             if (dgvListRooms.SelectedRows.Count == 0)
             {
@@ -126,14 +134,14 @@ namespace QuanLyPhongTro
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadListRooms();
+                    await LoadListRoomsAsync();
                     MessageBox.Show("Cập nhật dãy trọ thành công!", "Thông báo",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
-        private void BtnDelete_Click(object sender, EventArgs e)
+        private async void BtnDelete_Click(object sender, EventArgs e)
         {
             if (dgvListRooms.SelectedRows.Count == 0)
             {
@@ -153,11 +161,11 @@ namespace QuanLyPhongTro
 
             if (confirm == DialogResult.Yes)
             {
-                bool success = _listRoomService.DeleteListRoom(selectedListRoom.Id);
+                bool success = await _apiService.DeleteListRoomAsync(selectedListRoom.Id);
 
                 if (success)
                 {
-                    LoadListRooms();
+                    await LoadListRoomsAsync();
                     MessageBox.Show("Xóa dãy trọ thành công!", "Thông báo",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

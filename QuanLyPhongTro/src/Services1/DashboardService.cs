@@ -345,5 +345,21 @@ namespace QuanLyPhongTro.src.Services1
                 return new Dictionary<string, int>();
             }
         }
+
+        // Synchronous wrapper method for backward compatibility
+        public Dictionary<string, decimal> GetMonthlyRevenue(Guid ownerId, int year)
+        {
+            return GetMonthlyRevenueAsync(ownerId, year).GetAwaiter().GetResult();
+        }
+
+        public (int Occupied, int Total) GetOccupancyStats(Guid ownerId)
+        {
+            return GetOccupancyStatsAsync(ownerId).GetAwaiter().GetResult();
+        }
+
+        public List<Bill> GetUnpaidBills(Guid ownerId)
+        {
+            return GetUnpaidBillsAsync(ownerId).GetAwaiter().GetResult();
+        }
     }
     }
