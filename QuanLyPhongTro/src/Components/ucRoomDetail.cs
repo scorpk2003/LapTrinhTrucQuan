@@ -42,6 +42,7 @@ namespace QuanLyPhongTro.src.Components
                 avatar_img.Image = null;
             }
             tbNameuser.Text = room_session.Bills.First().IdPersonNavigation?.Username;
+
             tbdien.Text = room_session.Status;
             await Task.CompletedTask;
         }
