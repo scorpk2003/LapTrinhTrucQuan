@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QuanLyPhongTro.Entities;
+namespace API_Server.src.Models;
 
 public partial class Service
 {
@@ -13,5 +13,5 @@ public partial class Service
 
     public decimal? PricePerUnit { get; set; }
 
-    public virtual ICollection<BillDetail>? BillDetails { get; set; };
+    public virtual ICollection<BillDetail> BillDetails { get; set; } = new List<BillDetail>();
 }

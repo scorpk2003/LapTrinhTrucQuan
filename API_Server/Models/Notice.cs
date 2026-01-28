@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QuanLyPhongTro.Entities;
+namespace API_Server.src.Models;
 
 public partial class Notice
 {
@@ -18,8 +18,6 @@ public partial class Notice
     public string? Status { get; set; }
 
     public Guid? Idreport { get; set; }
-
-    public DateTime? DateCreated { get; set; }
 
     public virtual Report? IdreportNavigation { get; set; }
 }

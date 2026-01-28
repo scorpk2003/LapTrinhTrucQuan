@@ -9,6 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="src\Controllers\**" />
+    <Compile Remove="src\DTO\**" />
+    <EmbeddedResource Remove="src\Controllers\**" />
+    <EmbeddedResource Remove="src\DTO\**" />
+    <None Remove="src\Controllers\**" />
+    <None Remove="src\DTO\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="image\" />
   </ItemGroup>
 
